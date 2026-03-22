@@ -13,7 +13,8 @@ function AppLayout() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Inicio />} />
+        <Route path="/" element={<Navigate to="/inicio" replace />} />
+        <Route path="/inicio" element={<Inicio />} />
         <Route path="/buscar" element={<Buscar />} />
         <Route path="/mapa" element={<Mapa />} />
         <Route path="/cursada" element={<Cursada />} />

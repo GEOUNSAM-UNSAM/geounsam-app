@@ -6,3 +6,49 @@
 body {
   background-color: #e1e2e1;
 }
+
+/* Ocultar scrollbar horizontal en chips */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ocultar atribución de Leaflet */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* Limpiar estilos por defecto de marcadores Leaflet */
+.custom-marker {
+  background: none !important;
+  border: none !important;
+}
+
+/* Pulso del punto GPS */
+.leaflet-interactive[stroke="transparent"] {
+  animation: gps-pulse 2s ease-out infinite;
+}
+@keyframes gps-pulse {
+  0% { opacity: 0.15; }
+  50% { opacity: 0.08; }
+  100% { opacity: 0.15; }
+}
+
+/* Tooltip del marcador seleccionado */
+.marker-tooltip {
+  font-family: 'Saira', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #111827;
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+.marker-tooltip::before {
+  border-top-color: white;
+}
