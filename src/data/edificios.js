@@ -127,7 +127,12 @@ export const MARCADORES = [
     nombre: "Tornavía",
     coords: [-34.578594084664026, -58.526804980280325],
     descripcion: "ECyT, EayP, Biblioteca Central, Instituto de Transporte, OSUNSAM",
-    pisos: ["Planta baja", "Subsuelo", "Primer piso"],
+    planoId: "tornavias",
+    pisos: [
+      { nombre: "Planta baja", slug: "pb" },
+      { nombre: "Subsuelo", slug: "s1" },
+      { nombre: "Primer piso", slug: "p1" },
+    ],
   },
   {
     id: 201,
@@ -135,7 +140,7 @@ export const MARCADORES = [
     sede: "miguelete",
     nombre: "Edificio de Containers",
     coords: [-34.57960847870527, -58.52610654225366],
-    pisos: ["Planta baja"],
+    pisos: [{ nombre: "Planta baja", slug: "pb" }],
   },
   {
     id: 202,
