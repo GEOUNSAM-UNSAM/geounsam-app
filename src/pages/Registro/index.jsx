@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { ChevronDown } from 'lucide-react'
 import geounsam from '../../assets/geounsam.svg'
 import arrowLeft from '../../assets/arrow_left.svg'
 import AuthInput from '../../components/AuthInput/index.jsx'
@@ -67,9 +68,7 @@ export default function Registro() {
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
-            <svg className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 6L8 10L12 6" stroke="#00205b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ChevronDown size={16} color="#00205b" className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
 

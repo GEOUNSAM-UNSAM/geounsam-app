@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowLeft, Map } from "lucide-react";
 import DetalleSeleccion from "../../../components/Mapa/DetalleSeleccion";
 import PLANOS from "../../../components/Planos";
 
@@ -18,18 +19,7 @@ export default function VistaPlano({ edificio, onBack }) {
             onClick={onBack}
             className="flex items-center justify-center w-[30px] h-[30px]"
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#00bcd4"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
+            <ArrowLeft size={24} color="#00bcd4" />
           </button>
           <h2 className="font-saira font-semibold text-[22px] text-base leading-8">
             {edificio.nombre}
@@ -62,18 +52,7 @@ export default function VistaPlano({ edificio, onBack }) {
           <Plano key={pisoSlug} pisoSlug={pisoSlug} />
         ) : (
           <div className="flex flex-col items-center gap-4 p-6">
-            <svg
-              width="64"
-              height="64"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#808285"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
+            <Map size={64} color="#808285" strokeWidth={1.5} />
             <p className="font-saira font-semibold text-neutral-main text-center">
               {pisos[pisoActivo].nombre}
             </p>
