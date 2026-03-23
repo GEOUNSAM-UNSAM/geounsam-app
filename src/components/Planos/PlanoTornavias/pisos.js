@@ -34,8 +34,8 @@ export const ESTRUCTURA = {
   rotacion: 98,    // grados de rotación del plano completo (ajustar para orientar)
   radios: calcRadios(ESPESORES),
   entradas: [
-    { angle: 39, halfSpan: 7, nombre: "25 DE MAYO" },
-    { angle: 287, halfSpan: 9, nombre: "MARTÍN IRIGOYEN" },
+    { angle: 39, halfSpan: 7, nombre: "25 DE MAYO", label: ["Entrada", "Av. 25 Mayo"] },
+    { angle: 287, halfSpan: 9, nombre: "MARTÍN IRIGOYEN", label: "Entrada Irigoyen" },
   ],
 }
 
@@ -45,7 +45,7 @@ export const PISOS = {
     secciones: [
       // ── T4 (biblioteca) ──
       {
-        id: "T4", name: "Tornavias 4", etapa: "En obra", color: "#5B21B6",
+        id: "T4", name: "Tornavias 4", etapa: "En obra", color: "#00205b",
         start: 178, end: 222, obra: true,
         outer: [
           { id: "BIB", s: 179, e: 221, tipo: "biblioteca" },

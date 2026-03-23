@@ -17,7 +17,6 @@ export const ESTADOS_AULAS = {
       "24": "ocupada",
       "27": "libre",
       "29": "ocupada",
-      "BIB": "libre",
     },
     // s1: {},  ← Subsuelo (cuando se agregue)
     // p1: {},  ← Primer piso (cuando se agregue)
