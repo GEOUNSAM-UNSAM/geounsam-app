@@ -1,7 +1,7 @@
 import { ICONOS_SVG } from "../../../data/iconosSvg";
 
 function ChipIcon({ tipo, selected }) {
-  const color = selected ? "white" : "#111827";
+  const color = selected ? "#00205b" : "white";
   const getSvg = ICONOS_SVG[tipo] || ICONOS_SVG["todos"];
   return (
     <svg
@@ -16,7 +16,7 @@ function ChipIcon({ tipo, selected }) {
 
 export default function FiltrosCategorias({ categorias, categoriaActiva, onCategoriaChange }) {
   return (
-    <div className="bg-neutral-white px-4 pb-3 pt-1">
+    <div className="bg-identity px-4 h-[76px] flex items-center">
       <div className="flex gap-2 overflow-x-auto no-scrollbar">
         {categorias.map((cat) => {
           const isActive = categoriaActiva === cat.id;
@@ -24,10 +24,10 @@ export default function FiltrosCategorias({ categorias, categoriaActiva, onCateg
             <button
               key={cat.id}
               onClick={() => onCategoriaChange(cat.id)}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full font-saira font-medium text-[13px] whitespace-nowrap transition-all ${
+              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-saira font-medium text-lg leading-8 whitespace-nowrap transition-all ${
                 isActive
-                  ? "bg-identity text-white"
-                  : "bg-neutral-white border border-neutral-light text-neutral-dark"
+                  ? "bg-action text-identity"
+                  : "bg-identity text-white"
               }`}
             >
               <ChipIcon tipo={cat.id} selected={isActive} />

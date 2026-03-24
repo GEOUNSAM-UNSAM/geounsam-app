@@ -1,3 +1,5 @@
+import { Navigation } from "lucide-react";
+
 export default function BotonGPS({ gpsActivo, onClick }) {
   return (
     <button
@@ -6,15 +8,11 @@ export default function BotonGPS({ gpsActivo, onClick }) {
         gpsActivo ? "bg-identity" : "bg-neutral-white"
       }`}
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
+      <Navigation
+        size={18}
         fill={gpsActivo ? "white" : "#111827"}
-        stroke="none"
-      >
-        <path d="M3 11.5l17.5-9L12.5 20v-8.5H3z" />
-      </svg>
+        color={gpsActivo ? "white" : "#111827"}
+      />
     </button>
   );
 }

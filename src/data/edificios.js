@@ -2,10 +2,10 @@ export const CATEGORIAS = [
   { id: "todos", label: "Todos" },
   { id: "Edificios", label: "Edificios" },
   { id: "Unidades Académicas", label: "Unidades Académicas" },
-  { id: "Vida Universitaria", label: "Vida Universitaria" },
-  { id: "Estacionamientos", label: "Estacionamientos" },
-  { id: "Oficinas Administrativas", label: "Oficinas" },
-  { id: "Auditorios", label: "Auditorios" },
+  // { id: "Vida Universitaria", label: "Vida Universitaria" },
+  // { id: "Estacionamientos", label: "Estacionamientos" },
+  // { id: "Oficinas Administrativas", label: "Oficinas" },
+  // { id: "Auditorios", label: "Auditorios" },
 ];
 
 export const COLORES_CATEGORIA = {

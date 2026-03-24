@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { Map } from "lucide-react";
 import { ESTRUCTURA, PISOS } from "./pisos";
 import { getEstadosEdificio } from "../../../services/aulas";
 
@@ -7,14 +8,15 @@ import { getEstadosEdificio } from "../../../services/aulas";
 const { centro, rotacion: ROT, radios: R, entradas } = ESTRUCTURA;
 const CX = centro.cx;
 const CY = centro.cy;
-const ENTRANCE_COLOR = "#16A34A";
+const ENTRANCE_COLOR = "#00205b";
 
 // ── Colores por estado de sala ──
 const ESTADOS = {
-  "mi-clase":  { color: "#00bcd4", label: "Mi clase" },
-  "ocupada":   { color: "#EF4444", label: "Ocupada" },
-  "libre":     { color: "#22C55E", label: "Libre" },
-  "sin-info":  { color: "#00205b", label: "Sin info" },
+  "mi-clase":    { color: "#00bcd4", label: "Mi clase" },
+  "cambio":      { color: "#F97316", label: "Cambio" },
+  "libre":       { color: "#22C55E", label: "Libre" },
+  "ocupada":     { color: "#EF4444", label: "Ocupada" },
+  "espacios":    { color: "#00205b", label: "Espacios" },
 };
 
 // ── Matemáticas SVG ──
@@ -70,7 +72,7 @@ function roomName(room) {
 }
 
 function getRoomStyle(estado, active) {
-  const c = ESTADOS[estado]?.color || ESTADOS["sin-info"].color;
+  const c = ESTADOS[estado]?.color || ESTADOS["espacios"].color;
   if (active) {
     return { fill: c, stroke: c, strokeWidth: 2, textFill: "#fff" };
   }
@@ -86,14 +88,17 @@ function Room({ room, ri, ro, selected, onSelect }) {
   const gap = span < 10 ? 0.2 : span < 16 ? 0.35 : 0.6;
   const { pos } = midPoint(ri, ro, ra1, ra2);
   const showLabel = ro - ri >= 18 && span >= 9;
-  const estado = room.estado || "sin-info";
-  const c = ESTADOS[estado]?.color || ESTADOS["sin-info"].color;
+  const estado = room.estado || "libre";
+  const c = ESTADOS[estado]?.color || ESTADOS["espacios"].color;
 
+  const isBiblio = room.tipo === "biblioteca";
   const style = selected
     ? getRoomStyle(estado, true)
     : hovered
-      ? { ...getRoomStyle(estado, false), fill: c + "44", stroke: c, strokeWidth: 1.5 }
-      : getRoomStyle(estado, false);
+      ? { ...getRoomStyle(estado, false), fill: isBiblio ? c : c + "44", stroke: c, strokeWidth: 1.5 }
+      : isBiblio
+        ? { fill: c, stroke: c, strokeWidth: 0.75, textFill: "#fff" }
+        : getRoomStyle(estado, false);
 
   return (
     <g
@@ -137,19 +142,25 @@ export default function PlanoTornavias({ pisoSlug }) {
   }, []);
 
   // Estados de todas las salas del edificio (una sola consulta)
+  // Cada valor puede ser un objeto { estado, materia, comision, horario } o undefined
   const todosEstados = useMemo(() => getEstadosEdificio("tornavias"), []);
-  const estados = todosEstados[pisoSlug] || {};
+  const estadosRaw = todosEstados[pisoSlug] || {};
 
-  // Lista plana de todas las salas con su estado
+  // Lista plana de todas las salas con su estado e info de materia
   const allRooms = useMemo(() => {
     if (!datoPiso) return [];
     const rooms = [];
+    const resolveEstado = (rm) => {
+      const data = estadosRaw[rm.id];
+      if (data) return { estado: data.estado, materia: data.materia, comision: data.comision, horario: data.horario };
+      return { estado: rm.tipo === "biblioteca" ? "espacios" : "libre" };
+    };
     datoPiso.secciones.forEach((s) => {
-      s.outer.forEach((rm) => rooms.push({ ...rm, estado: estados[rm.id] || "sin-info" }));
-      s.inner.forEach((rm) => rooms.push({ ...rm, estado: estados[rm.id] || "sin-info" }));
+      s.outer.forEach((rm) => rooms.push({ ...rm, ...resolveEstado(rm) }));
+      s.inner.forEach((rm) => rooms.push({ ...rm, ...resolveEstado(rm) }));
     });
     return rooms;
-  }, [datoPiso, estados]);
+  }, [datoPiso, estadosRaw]);
 
   const selectedRoom = allRooms.find((r) => r.id === selectedId);
 
@@ -157,9 +168,7 @@ export default function PlanoTornavias({ pisoSlug }) {
   if (!datoPiso) {
     return (
       <div className="flex flex-col items-center gap-4 p-6">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#808285" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-        </svg>
+        <Map size={64} color="#808285" strokeWidth={1.5} />
         <p className="font-saira text-sm text-neutral-main text-center">
           Plano próximamente disponible
         </p>
@@ -208,33 +217,23 @@ export default function PlanoTornavias({ pisoSlug }) {
           const angle = rv(ent.angle);
           const a1 = angle - ent.halfSpan;
           const a2 = angle + ent.halfSpan;
-          const lg = a2 - a1 > 180 ? 1 : 0;
           const j1i = polar(R.iRoomIn, a1), j1o = polar(R.outerWall, a1);
           const j2i = polar(R.iRoomIn, a2), j2o = polar(R.outerWall, a2);
-          const pi1 = polar(R.iRoomIn, a1), pi2 = polar(R.iRoomIn, a2);
-          const labelPt = polar(R.outerWall + 30, angle);
+          const midPt = polar((R.iRoomIn + R.outerWall) / 2, angle);
 
           return (
             <g key={`ent-${idx}`}>
               <path d={sectorPath(R.iRoomIn, R.outerWall + 2, a1, a2)} fill="#F2F0E8" />
-              <path d={sectorPath(R.iRoomIn, R.outerWall, a1, a2)} fill="#D1FAE5" opacity="0.7" />
+              <path d={sectorPath(R.iRoomIn, R.outerWall, a1, a2)} fill={ENTRANCE_COLOR} />
               <line x1={j1i.x} y1={j1i.y} x2={j1o.x} y2={j1o.y} stroke={ENTRANCE_COLOR} strokeWidth="2" strokeLinecap="round" />
               <line x1={j2i.x} y1={j2i.y} x2={j2o.x} y2={j2o.y} stroke={ENTRANCE_COLOR} strokeWidth="2" strokeLinecap="round" />
-              <path
-                d={`M${pi1.x},${pi1.y} A${R.iRoomIn},${R.iRoomIn} 0 ${lg},1 ${pi2.x},${pi2.y}`}
-                fill="none" stroke={ENTRANCE_COLOR} strokeWidth="1" strokeDasharray="4 2"
-              />
-              <text x={labelPt.x} y={labelPt.y - 4} textAnchor="middle" dominantBaseline="central"
-                fontSize="5.5" fontWeight="bold" fill={ENTRANCE_COLOR}
-                style={{ userSelect: "none" }}
+              <text x={midPt.x} y={midPt.y} textAnchor="middle" dominantBaseline="central"
+                fontSize="5" fontWeight="bold" fill="#fff"
+                style={{ userSelect: "none", pointerEvents: "none" }}
               >
-                ENTRADA
-              </text>
-              <text x={labelPt.x} y={labelPt.y + 4} textAnchor="middle" dominantBaseline="central"
-                fontSize="5" fill={ENTRANCE_COLOR + "BB"}
-                style={{ userSelect: "none" }}
-              >
-                {ent.nombre}
+                {Array.isArray(ent.label) ? ent.label.map((line, i) => (
+                  <tspan key={i} x={midPt.x} dy={i === 0 ? "-0.5em" : "1.1em"}>{line}</tspan>
+                )) : ent.label}
               </text>
             </g>
           );
@@ -243,18 +242,26 @@ export default function PlanoTornavias({ pisoSlug }) {
         {/* 9. Salas (interactivas) */}
         {secciones.map((s) => (
           <g key={`rooms-${s.id}`}>
-            {s.outer.map((rm) => (
-              <Room key={rm.id} room={{ ...rm, estado: estados[rm.id] || "sin-info" }}
-                ri={R.oRoomIn} ro={R.oRoomOut}
-                selected={selectedId === rm.id} onSelect={handleSelect}
-              />
-            ))}
-            {s.inner.map((rm) => (
-              <Room key={rm.id} room={{ ...rm, estado: estados[rm.id] || "sin-info" }}
-                ri={R.iRoomIn} ro={R.iRoomOut}
-                selected={selectedId === rm.id} onSelect={handleSelect}
-              />
-            ))}
+            {s.outer.map((rm) => {
+              const info = estadosRaw[rm.id];
+              const estado = info ? info.estado : (rm.tipo === "biblioteca" ? "espacios" : "libre");
+              return (
+                <Room key={rm.id} room={{ ...rm, estado }}
+                  ri={R.oRoomIn} ro={R.oRoomOut}
+                  selected={selectedId === rm.id} onSelect={handleSelect}
+                />
+              );
+            })}
+            {s.inner.map((rm) => {
+              const info = estadosRaw[rm.id];
+              const estado = info ? info.estado : (rm.tipo === "biblioteca" ? "espacios" : "libre");
+              return (
+                <Room key={rm.id} room={{ ...rm, estado }}
+                  ri={R.iRoomIn} ro={R.iRoomOut}
+                  selected={selectedId === rm.id} onSelect={handleSelect}
+                />
+              );
+            })}
           </g>
         ))}
 
@@ -283,13 +290,23 @@ export default function PlanoTornavias({ pisoSlug }) {
               <span
                 className="text-xs px-2 py-0.5 rounded-full font-semibold"
                 style={{
-                  backgroundColor: ESTADOS[selectedRoom.estado || "sin-info"].color + "22",
-                  color: ESTADOS[selectedRoom.estado || "sin-info"].color,
+                  backgroundColor: ESTADOS[selectedRoom.estado || "libre"].color + "22",
+                  color: ESTADOS[selectedRoom.estado || "libre"].color,
                 }}
               >
-                {ESTADOS[selectedRoom.estado || "sin-info"].label}
+                {ESTADOS[selectedRoom.estado || "libre"].label}
               </span>
             </div>
+            {selectedRoom.materia && (
+              <div className="mt-2 flex flex-col gap-0.5">
+                <p className="font-saira font-semibold text-sm text-neutral-dark">
+                  {selectedRoom.materia}
+                </p>
+                <p className="font-saira text-xs text-neutral-main">
+                  {selectedRoom.comision} · {selectedRoom.horario}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
