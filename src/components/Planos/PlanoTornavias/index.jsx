@@ -142,20 +142,25 @@ export default function PlanoTornavias({ pisoSlug }) {
   }, []);
 
   // Estados de todas las salas del edificio (una sola consulta)
+  // Cada valor puede ser un objeto { estado, materia, comision, horario } o undefined
   const todosEstados = useMemo(() => getEstadosEdificio("tornavias"), []);
-  const estados = todosEstados[pisoSlug] || {};
+  const estadosRaw = todosEstados[pisoSlug] || {};
 
-  // Lista plana de todas las salas con su estado
+  // Lista plana de todas las salas con su estado e info de materia
   const allRooms = useMemo(() => {
     if (!datoPiso) return [];
     const rooms = [];
-    const defaultEstado = (rm) => rm.tipo === "biblioteca" ? "espacios" : "libre";
+    const resolveEstado = (rm) => {
+      const data = estadosRaw[rm.id];
+      if (data) return { estado: data.estado, materia: data.materia, comision: data.comision, horario: data.horario };
+      return { estado: rm.tipo === "biblioteca" ? "espacios" : "libre" };
+    };
     datoPiso.secciones.forEach((s) => {
-      s.outer.forEach((rm) => rooms.push({ ...rm, estado: estados[rm.id] || defaultEstado(rm) }));
-      s.inner.forEach((rm) => rooms.push({ ...rm, estado: estados[rm.id] || defaultEstado(rm) }));
+      s.outer.forEach((rm) => rooms.push({ ...rm, ...resolveEstado(rm) }));
+      s.inner.forEach((rm) => rooms.push({ ...rm, ...resolveEstado(rm) }));
     });
     return rooms;
-  }, [datoPiso, estados]);
+  }, [datoPiso, estadosRaw]);
 
   const selectedRoom = allRooms.find((r) => r.id === selectedId);
 
@@ -238,7 +243,8 @@ export default function PlanoTornavias({ pisoSlug }) {
         {secciones.map((s) => (
           <g key={`rooms-${s.id}`}>
             {s.outer.map((rm) => {
-              const estado = estados[rm.id] || (rm.tipo === "biblioteca" ? "espacios" : "libre");
+              const info = estadosRaw[rm.id];
+              const estado = info ? info.estado : (rm.tipo === "biblioteca" ? "espacios" : "libre");
               return (
                 <Room key={rm.id} room={{ ...rm, estado }}
                   ri={R.oRoomIn} ro={R.oRoomOut}
@@ -247,7 +253,8 @@ export default function PlanoTornavias({ pisoSlug }) {
               );
             })}
             {s.inner.map((rm) => {
-              const estado = estados[rm.id] || (rm.tipo === "biblioteca" ? "espacios" : "libre");
+              const info = estadosRaw[rm.id];
+              const estado = info ? info.estado : (rm.tipo === "biblioteca" ? "espacios" : "libre");
               return (
                 <Room key={rm.id} room={{ ...rm, estado }}
                   ri={R.iRoomIn} ro={R.iRoomOut}
@@ -290,6 +297,16 @@ export default function PlanoTornavias({ pisoSlug }) {
                 {ESTADOS[selectedRoom.estado || "libre"].label}
               </span>
             </div>
+            {selectedRoom.materia && (
+              <div className="mt-2 flex flex-col gap-0.5">
+                <p className="font-saira font-semibold text-sm text-neutral-dark">
+                  {selectedRoom.materia}
+                </p>
+                <p className="font-saira text-xs text-neutral-main">
+                  {selectedRoom.comision} · {selectedRoom.horario}
+                </p>
+              </div>
+            )}
           </div>
         )}
 

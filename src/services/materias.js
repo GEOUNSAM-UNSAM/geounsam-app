@@ -1,4 +1,5 @@
 import { MATERIAS } from "../data/materias";
+import { DIAS, minutosDelDia } from "../utils/tiempo";
 
 export function getMaterias() {
   return MATERIAS;
@@ -26,14 +27,6 @@ export function buscarMaterias(query) {
   });
 
   return resultados;
-}
-
-// Materias próximas a empezar según fecha/hora actual, máximo 4
-const DIAS = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
-
-function minutosDelDia(hora) {
-  const [h, m] = hora.split(":").map(Number);
-  return h * 60 + m;
 }
 
 // TO DO: esto tendria que venir del backend
