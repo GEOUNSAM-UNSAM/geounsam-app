@@ -8,10 +8,14 @@ import Onboarding from './pages/Onboarding/index.jsx'
 import Registro from './pages/Registro/index.jsx'
 import Login from './pages/Login/index.jsx'
 import Navbar from './components/Navbar/index.jsx'
+import logotipoWhite from './assets/logotipo_white.svg'
 
 function AppLayout() {
   return (
     <>
+      <header className="bg-identity px-5 h-16 flex items-center justify-center">
+        <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
+      </header>
       <Routes>
         <Route path="/" element={<Navigate to="/inicio" replace />} />
         <Route path="/inicio" element={<Inicio />} />
@@ -27,7 +31,7 @@ function AppLayout() {
 
 function App() {
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-base relative">
+    <div className="w-full min-h-screen bg-base relative">
       <Routes>
         <Route path="/" element={<Navigate to="/onboarding" />} />
         <Route path="/onboarding" element={<Onboarding />} />

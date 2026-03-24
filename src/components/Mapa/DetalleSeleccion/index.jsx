@@ -4,9 +4,9 @@ import { COLORES_CATEGORIA } from "../../../data/edificios";
 
 export default function DetalleSeleccion({ marcadorSeleccionado, onVerPlano, mostrarBoton = true }) {
   return (
-    <div className="bg-neutral-white border-b border-neutral-main px-5 py-3">
+    <div className="bg-neutral-white border-b border-neutral-main px-5 h-[100px] flex items-center">
       {marcadorSeleccionado ? (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: COLORES_CATEGORIA[marcadorSeleccionado.tipo] || "#16325c" }}

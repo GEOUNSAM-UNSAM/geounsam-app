@@ -65,14 +65,7 @@ export default function Mapa() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-68px)] relative bg-neutral-white">
-      {/* Header */}
-      <div className="bg-neutral-white px-5 pt-4 pb-2">
-        <h1 className="font-saira font-bold text-2xl text-neutral-dark">
-          Campus UNSAM
-        </h1>
-      </div>
-
+    <div className="flex flex-col h-[calc(100dvh-68px-64px)] relative bg-neutral-white">
       <FiltrosCategorias
         categorias={categorias}
         categoriaActiva={categoriaActiva}
