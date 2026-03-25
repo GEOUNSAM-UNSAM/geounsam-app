@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import BotonGoogle from '../../components/BotonGoogle/index.jsx'
 import logo from '../../assets/logo-geounsam.svg'
 
 export default function Onboarding() {
@@ -20,6 +21,7 @@ export default function Onboarding() {
       </div>
 
       <div className="flex-1 flex flex-col gap-4 justify-end w-full pb-4">
+        <BotonGoogle texto="Registrarme con Google" className="border border-identity text-identity" />
         <Link
           to="/registro"
           className="bg-action text-neutral-dark font-saira font-semibold text-lg text-center py-3 rounded-xl w-full block"

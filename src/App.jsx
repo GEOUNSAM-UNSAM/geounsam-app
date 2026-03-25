@@ -7,15 +7,16 @@ import Inicio from './pages/Inicio/index.jsx'
 import Onboarding from './pages/Onboarding/index.jsx'
 import Registro from './pages/Registro/index.jsx'
 import Login from './pages/Login/index.jsx'
+import AuthCallback from './pages/AuthCallback/index.jsx'
+import SeleccionCarrera from './pages/SeleccionCarrera/index.jsx'
+import Logout from './pages/Logout/index.jsx'
 import Navbar from './components/Navbar/index.jsx'
-import logotipoWhite from './assets/logotipo_white.svg'
+import Header from './components/Header/index.jsx'
 
 function AppLayout() {
   return (
     <>
-      <header className="bg-identity px-5 h-16 flex items-center justify-center">
-        <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
-      </header>
+      <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/inicio" replace />} />
         <Route path="/inicio" element={<Inicio />} />
@@ -37,6 +38,9 @@ function App() {
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/seleccionar-carrera" element={<SeleccionCarrera />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/*" element={<AppLayout />} />
       </Routes>
     </div>

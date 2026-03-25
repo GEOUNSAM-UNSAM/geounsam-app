@@ -1,33 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import geounsam from '../../assets/geounsam.svg'
 import arrowLeft from '../../assets/arrow_left.svg'
 import AuthInput from '../../components/AuthInput/index.jsx'
-
-const carreras = [
-  'Ingeniería Ambiental',
-  'Ingeniería Biomédica',
-  'Ingeniería Electrónica',
-  'Ingeniería en Energía',
-  'Ingeniería Industrial',
-  'Ingeniería en Sistemas Espaciales',
-  'Ingeniería en Telecomunicaciones',
-  'Ingeniería en Transporte',
-  'Ingeniería en Desarrollo de Software',
-  'Licenciatura en Biotecnología',
-  'Licenciatura en Ciencia de Datos',
-  'Licenciatura en Física Médica',
-]
+import { getCarreras } from '../../services/alumnos'
 
 export default function Registro() {
   const navigate = useNavigate()
+  const [carreras, setCarreras] = useState([])
   const [form, setForm] = useState({
     carrera: '',
     dni: '',
     nombre: '',
     password: '',
   })
+
+  useEffect(() => {
+    getCarreras().then(setCarreras).catch(console.error)
+  }, [])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -65,7 +56,7 @@ export default function Registro() {
             >
               <option value="" disabled>Ingrese su carrera</option>
               {carreras.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c.id} value={c.id}>{c.nombre}</option>
               ))}
             </select>
             <ChevronDown size={16} color="#00205b" className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
