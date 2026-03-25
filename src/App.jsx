@@ -15,18 +15,20 @@ import Header from './components/Header/index.jsx'
 
 function AppLayout() {
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Header />
-      <Routes>
-        <Route path="/" element={<Navigate to="/inicio" replace />} />
-        <Route path="/inicio" element={<Inicio />} />
-        <Route path="/buscar" element={<Buscar />} />
-        <Route path="/mapa" element={<Mapa />} />
-        <Route path="/cursada" element={<Cursada />} />
-        <Route path="/perfil" element={<Perfil />} />
-      </Routes>
+      <main className="flex-1 overflow-y-auto">
+        <Routes>
+          <Route path="/" element={<Navigate to="/inicio" replace />} />
+          <Route path="/inicio" element={<Inicio />} />
+          <Route path="/buscar" element={<Buscar />} />
+          <Route path="/mapa" element={<Mapa />} />
+          <Route path="/cursada" element={<Cursada />} />
+          <Route path="/perfil" element={<Perfil />} />
+        </Routes>
+      </main>
       <Navbar />
-    </>
+    </div>
   )
 }
 
