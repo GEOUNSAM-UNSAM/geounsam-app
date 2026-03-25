@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../../assets/logo-geounsam.svg'
 import AuthInput from '../../components/AuthInput/index.jsx'
+import BotonGoogle from '../../components/BotonGoogle/index.jsx'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -16,7 +17,8 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    navigate('/buscar')
+    // TODO: login con DNI + password via Supabase
+    navigate('/inicio')
   }
 
   return (
@@ -44,6 +46,17 @@ export default function Login() {
           >
             Iniciar sesión
           </button>
+
+          {/* Separador */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-neutral-main" />
+            <span className="font-saira text-sm text-neutral-main">o</span>
+            <div className="flex-1 h-px bg-neutral-main" />
+          </div>
+
+          {/* Google OAuth */}
+          <BotonGoogle className="border border-identity text-identity" />
+
           <Link
             to="/registro"
             className="font-faustina font-medium text-[16px] text-action text-center py-2"
