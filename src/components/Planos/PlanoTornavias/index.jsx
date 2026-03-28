@@ -191,13 +191,14 @@ export default function PlanoTornavias({ pisoSlug }) {
         minScale={0.6}
         maxScale={4}
         centerOnInit
+        limitToBounds={false}
         wheel={{ step: 0.08 }}
         pinch={{ step: 5 }}
         doubleClick={{ mode: "reset" }}
       >
         <TransformComponent
           wrapperStyle={{ width: "100%", flex: 1, minHeight: 0 }}
-          contentStyle={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+          contentStyle={{ width: "100%", height: "100%" }}
         >
       <svg viewBox="-25 -20 580 580" className="w-full">
         <defs>
