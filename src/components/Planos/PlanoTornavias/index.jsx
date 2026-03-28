@@ -1,8 +1,9 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Map } from "lucide-react";
 import { ESTRUCTURA, PISOS } from "./pisos";
 import { getEstadosEdificio } from "../../../services/aulas";
+import { useAuth } from "../../../context/AuthContext";
 
 // ── Constantes ──
 const { centro, rotacion: ROT, radios: R, entradas } = ESTRUCTURA;
@@ -134,16 +135,21 @@ function Room({ room, ri, ro, selected, onSelect }) {
 
 // ── Componente principal ──
 export default function PlanoTornavias({ pisoSlug }) {
+  const { user } = useAuth();
   const [selectedId, setSelectedId] = useState(null);
+  const [todosEstados, setTodosEstados] = useState({});
   const datoPiso = PISOS[pisoSlug];
 
   const handleSelect = useCallback((room) => {
     setSelectedId((prev) => (prev === room.id ? null : room.id));
   }, []);
 
-  // Estados de todas las salas del edificio (una sola consulta)
-  // Cada valor puede ser un objeto { estado, materia, comision, horario } o undefined
-  const todosEstados = useMemo(() => getEstadosEdificio("tornavias"), []);
+  useEffect(() => {
+    getEstadosEdificio("tornavias", user?.id)
+      .then(setTodosEstados)
+      .catch(console.error);
+  }, [user?.id]);
+
   const estadosRaw = todosEstados[pisoSlug] || {};
 
   // Lista plana de todas las salas con su estado e info de materia
