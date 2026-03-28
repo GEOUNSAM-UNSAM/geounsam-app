@@ -8,8 +8,6 @@ export async function getEstadosEdificio(edificioId, userId) {
   const diaHoy = DIAS[ahora.getDay()];
   const horaAhora = `${String(ahora.getHours()).padStart(2, "0")}:${String(ahora.getMinutes()).padStart(2, "0")}:00`;
 
-  console.log("[aulas] getEstadosEdificio →", { edificioId, userId, diaHoy, horaAhora });
-
   const { data, error } = await supabase
     .from("horarios")
     .select(`
@@ -24,12 +22,7 @@ export async function getEstadosEdificio(edificioId, userId) {
     .lte("inicio", horaAhora)
     .gt("fin", horaAhora);
 
-  if (error) {
-    console.error("[aulas] error en query horarios:", error);
-    throw error;
-  }
-
-  console.log("[aulas] horarios activos:", data);
+  if (error) throw error;
 
   const pisos = {};
 
@@ -47,11 +40,7 @@ export async function getEstadosEdificio(edificioId, userId) {
       comision: comision.codigo,
       horario: `${inicio.slice(0, 5)} - ${fin.slice(0, 5)}`,
     };
-
-    console.log(`[aulas] ✓ ocupada: piso=${pisoSlug} aula=${aulaId} materia="${comision.materia.nombre}"`);
   });
-
-  console.log("[aulas] resultado final pisos:", pisos);
 
   return pisos;
 }

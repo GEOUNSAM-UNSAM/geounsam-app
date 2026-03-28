@@ -1,26 +1,54 @@
-import { MATERIAS } from "../data/materias";
+import { supabase } from "../lib/supabase";
 import { DIAS, minutosDelDia } from "../utils/tiempo";
+import { getMateriasCarreraConHorarios, getAlumnoCarreras } from "./alumnos";
 
-export function getMaterias() {
-  return MATERIAS;
+const normalizar = (str) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+let _materiasCache = null;
+
+async function _cargarMaterias() {
+  if (_materiasCache) return _materiasCache;
+  const { data, error } = await supabase
+    .from("materias")
+    .select(`
+      id, nombre,
+      comisiones(
+        id, codigo,
+        aula:aulas(id, nombre, edificio:edificios(nombre)),
+        horarios(dia, inicio, fin)
+      )
+    `);
+  if (error) throw error;
+  _materiasCache = data;
+  return _materiasCache;
 }
 
-export function buscarMaterias(query) {
+export async function buscarMaterias(query) {
   if (!query || query.trim().length === 0) return [];
 
-  const normalizar = (str) =>
-    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
   const q = normalizar(query.trim());
+  const materias = await _cargarMaterias();
 
   const resultados = [];
-  MATERIAS.forEach((materia) => {
+  materias.forEach((materia) => {
     if (normalizar(materia.nombre).includes(q)) {
-      materia.comisiones.forEach((comision) => {
+      materia.comisiones?.forEach((comision) => {
+        const nombreAula = comision.aula?.nombre;
+        const aulaLabel = nombreAula
+          ? /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula
+          : "";
         resultados.push({
           materiaId: materia.id,
           nombre: materia.nombre,
-          ...comision,
+          codigo: comision.codigo,
+          horarios: (comision.horarios ?? []).map((h) => ({
+            dia: h.dia,
+            inicio: h.inicio.slice(0, 5),
+            fin: h.fin.slice(0, 5),
+          })),
+          aula: aulaLabel,
+          edificio: comision.aula?.edificio?.nombre ?? "",
         });
       });
     }
@@ -29,34 +57,31 @@ export function buscarMaterias(query) {
   return resultados;
 }
 
-// TO DO: esto tendria que venir del backend
-export function getMateriasSugeridas() {
+export async function getMateriasSugeridasDeCarrera(userId) {
+  const [materias, carreraData] = await Promise.all([
+    getMateriasCarreraConHorarios(userId),
+    getAlumnoCarreras(userId),
+  ]);
+
+  const carreraNombre = carreraData[0]?.carreras?.nombre ?? "";
+
   const ahora = new Date();
   const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
-
-  // Orden de días a partir de hoy (hoy primero, luego los siguientes)
   const diaIdx = ahora.getDay();
-  const diasOrdenados = [];
-  for (let i = 0; i < 7; i++) {
-    diasOrdenados.push(DIAS[(diaIdx + i) % 7]);
-  }
+  const diasOrdenados = Array.from({ length: 7 }, (_, i) => DIAS[(diaIdx + i) % 7]);
 
-  // Para cada materia, encontrar la próxima comisión con horario más cercano
   const proximas = [];
 
-  MATERIAS.forEach((m) => {
+  materias.forEach((m) => {
     let mejorPrioridad = Infinity;
     let mejorComision = null;
 
-    m.comisiones.forEach((com) => {
-      com.horarios.forEach((h) => {
+    m.comisiones?.forEach((com) => {
+      com.horarios?.forEach((h) => {
         const indiceDia = diasOrdenados.indexOf(h.dia);
+        if (indiceDia === -1) return;
         const minInicio = minutosDelDia(h.inicio);
-
-        // Si es hoy, solo contar si aún no empezó
         if (indiceDia === 0 && minInicio <= minutosAhora) return;
-
-        // Prioridad: día más cercano, luego hora más temprana
         const prioridad = indiceDia * 1440 + minInicio;
         if (prioridad < mejorPrioridad) {
           mejorPrioridad = prioridad;
@@ -66,16 +91,26 @@ export function getMateriasSugeridas() {
     });
 
     if (mejorComision) {
+      const nombreAula = mejorComision.aula?.nombre;
+      const aulaLabel = nombreAula
+        ? /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula
+        : null;
+      const edificioNombre = mejorComision.aula?.edificio?.nombre ?? "";
+      const detalle = aulaLabel
+        ? `${aulaLabel}${edificioNombre ? ` · ${edificioNombre}` : ""}`
+        : edificioNombre || "Sin aula";
+
       proximas.push({
         id: m.id,
         nombre: m.nombre,
-        detalle: `${m.comisiones.length} ${m.comisiones.length === 1 ? "comisión" : "comisiones"} - ${mejorComision.edificio}`,
+        detalle,
         prioridad: mejorPrioridad,
       });
     }
   });
 
-  return proximas
-    .sort((a, b) => a.prioridad - b.prioridad)
-    .slice(0, 4);
+  return {
+    materias: proximas.sort((a, b) => a.prioridad - b.prioridad).slice(0, 4),
+    carreraNombre,
+  };
 }

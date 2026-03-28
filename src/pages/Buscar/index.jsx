@@ -1,5 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
-import { getMateriasSugeridas, buscarMaterias } from "../../services/materias";
+import { useState, useEffect } from "react";
+import { getMateriasSugeridasDeCarrera, buscarMaterias } from "../../services/materias";
+import { useAuth } from "../../context/AuthContext";
 
 import Toast from "../../components/Buscar/Toast";
 import Buscador from "../../components/Buscar/Buscador";
@@ -7,13 +8,30 @@ import VistaSugeridas from "./VistaSugeridas";
 import VistaResultados from "./VistaResultados";
 
 export default function Buscar() {
+  const { user } = useAuth();
   const [query, setQuery] = useState("");
   const [favoritos, setFavoritos] = useState(new Set());
   const [toast, setToast] = useState({ visible: false, mensaje: "" });
+  const [materiasSugeridas, setMateriasSugeridas] = useState([]);
+  const [carreraNombre, setCarreraNombre] = useState("");
 
-  const resultados = useMemo(() => buscarMaterias(query), [query]);
-  const materiasSugeridas = useMemo(() => getMateriasSugeridas(), []);
+  const [resultados, setResultados] = useState([]);
   const buscando = query.trim().length > 0;
+
+  useEffect(() => {
+    if (!buscando) { setResultados([]); return; }
+    buscarMaterias(query).then(setResultados).catch(console.error);
+  }, [query]);
+
+  useEffect(() => {
+    if (!user) return;
+    getMateriasSugeridasDeCarrera(user.id)
+      .then(({ materias, carreraNombre }) => {
+        setMateriasSugeridas(materias);
+        setCarreraNombre(carreraNombre);
+      })
+      .catch(console.error);
+  }, [user]);
 
   useEffect(() => {
     if (toast.visible) {
@@ -50,7 +68,7 @@ export default function Buscar() {
         />
       ) : (
         <div className="flex-1 overflow-y-auto px-8 pt-7">
-          <VistaSugeridas materiasSugeridas={materiasSugeridas} />
+          <VistaSugeridas materiasSugeridas={materiasSugeridas} carreraNombre={carreraNombre} />
         </div>
       )}
 
