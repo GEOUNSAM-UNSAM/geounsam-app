@@ -1,7 +1,7 @@
 import { Brain } from "lucide-react";
 import CardSugerida from "../../../components/Buscar/CardSugerida";
 
-export default function VistaSugeridas({ materiasSugeridas }) {
+export default function VistaSugeridas({ materiasSugeridas, carreraNombre }) {
   return (
     <>
       <div className="flex gap-2 items-start mb-6">
@@ -10,9 +10,9 @@ export default function VistaSugeridas({ materiasSugeridas }) {
           <h2 className="font-saira font-semibold text-lg leading-8 text-identity">
             Materias sugeridas
           </h2>
-          <p className="font-saira text-sm text-identity">
-            Licenciatura en Desarrollo de Software
-          </p>
+          {carreraNombre && (
+            <p className="font-saira text-sm text-identity">{carreraNombre}</p>
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-3">

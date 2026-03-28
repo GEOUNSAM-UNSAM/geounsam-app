@@ -27,3 +27,30 @@ export async function setAlumnoCarrera(userId, carreraId) {
 
   if (error) throw error
 }
+
+export async function getMateriasCarreraConHorarios(userId) {
+  const { data: carreraData, error: carreraError } = await supabase
+    .from('alumno_carreras')
+    .select('carrera_id')
+    .eq('alumno_id', userId)
+    .single()
+
+  if (carreraError || !carreraData) return []
+
+  const { data, error } = await supabase
+    .from('carrera_materias')
+    .select(`
+      materia:materias!inner(
+        id, nombre,
+        comisiones(
+          id, codigo,
+          aula:aulas(id, nombre, edificio:edificios(nombre)),
+          horarios(dia, inicio, fin)
+        )
+      )
+    `)
+    .eq('carrera_id', carreraData.carrera_id)
+
+  if (error) throw error
+  return data.map((d) => d.materia)
+}
