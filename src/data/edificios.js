@@ -130,8 +130,8 @@ export const MARCADORES = [
     planoId: "tornavias",
     pisos: [
       { nombre: "Planta baja", slug: "pb" },
-      { nombre: "Subsuelo", slug: "s1" },
       { nombre: "Primer piso", slug: "p1" },
+      { nombre: "Subsuelo", slug: "s1" },
     ],
   },
   {

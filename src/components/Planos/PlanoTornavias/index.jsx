@@ -1,132 +1,111 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Map } from "lucide-react";
-import { ESTRUCTURA, PISOS } from "./pisos";
 import { getEstadosEdificio } from "../../../services/aulas";
 import { useAuth } from "../../../context/AuthContext";
 
-// ── Constantes ──
-const { centro, rotacion: ROT, radios: R, entradas } = ESTRUCTURA;
-const CX = centro.cx;
-const CY = centro.cy;
-const ENTRANCE_COLOR = "#00205b";
+import * as dataPb from "./svgData_pb";
+import * as dataP1 from "./svgData_p1";
+import * as dataS1 from "./svgData_s1";
 
-// ── Colores por estado de sala ──
-const ESTADOS = {
-  "mi-clase":    { color: "#00bcd4", label: "Mi clase" },
-  "cambio":      { color: "#F97316", label: "Cambio" },
-  "libre":       { color: "#22C55E", label: "Libre" },
-  "ocupada":     { color: "#EF4444", label: "Ocupada" },
-  "espacios":    { color: "#00205b", label: "Espacios" },
+const PISOS_DATA = {
+  pb: dataPb,
+  p1: dataP1,
+  s1: dataS1,
 };
 
-// ── Matemáticas SVG ──
-const toRad = (d) => ((d - 90) * Math.PI) / 180;
-const polar = (r, d) => ({
-  x: +(CX + r * Math.cos(toRad(d))).toFixed(2),
-  y: +(CY + r * Math.sin(toRad(d))).toFixed(2),
-});
-const rv = (a) => a + ROT;
+// ── Colores por estado ──
+const ESTADOS = {
+  "mi-clase": { color: "#00bcd4", label: "Mi clase" },
+  "libre":    { color: "#22C55E", label: "Libre" },
+  "ocupada":  { color: "#EF4444", label: "Ocupada" },
+  "espacios": { color: "#00205b", label: "Espacios" },
+};
 
-function arcPath(ri, ro, a1, a2, gap = 0.5) {
-  const A1 = a1 + gap;
-  const A2 = (a2 <= a1 ? a2 + 360 : a2) - gap;
-  const s1 = polar(ro, A1),
-    s2 = polar(ro, A2),
-    e2 = polar(ri, A2),
-    e1 = polar(ri, A1);
-  const lg = A2 - A1 > 180 ? 1 : 0;
-  return `M${s1.x},${s1.y} A${ro},${ro} 0 ${lg},1 ${s2.x},${s2.y} L${e2.x},${e2.y} A${ri},${ri} 0 ${lg},0 ${e1.x},${e1.y}Z`;
+const ENTRANCE_COLOR = "#00205b";
+const STAIR_COLOR = "#b0b0b0";
+
+// Labels que representan espacios de servicio (color sólido "espacios")
+const ESPACIOS_LABELS = new Set([
+  "biblioteca", "bathroom", "buffet", "banco", "bedelia",
+  "bienestar", "punto", "deposito", "limpieza", "fotocopiadora",
+  "patio", "informacion",
+]);
+
+function esEspacio(label) {
+  if (!label) return false;
+  const lower = label.toLowerCase();
+  return [...ESPACIOS_LABELS].some((k) => lower.includes(k));
 }
 
-function sectorPath(ri, ro, a1, a2) {
-  const s1 = polar(ro, a1),
-    s2 = polar(ro, a2),
-    e2 = polar(ri, a2),
-    e1 = polar(ri, a1);
-  const e = a2 <= a1 ? a2 + 360 : a2;
-  const lg = e - a1 > 180 ? 1 : 0;
-  return `M${s1.x},${s1.y} A${ro},${ro} 0 ${lg},1 ${s2.x},${s2.y} L${e2.x},${e2.y} A${ri},${ri} 0 ${lg},0 ${e1.x},${e1.y}Z`;
+// ── Normalizar nombre para match SVG ↔ Supabase ──
+const ROMAN = { I: "1", II: "2", III: "3", IV: "4", V: "5", VI: "6" };
+
+function normalize(name) {
+  if (!name) return "";
+  return name
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // quitar acentos
+    .replace(/^A(\d)/i, "$1")                           // A10 → 10
+    .replace(/laboratorio/gi, "lab")                    // Laboratorio → lab
+    .replace(/_/g, " ")
+    .replace(/\b(VI|IV|V?I{1,3})\b/g, (m) => ROMAN[m] || m) // romanos → arábigos
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .trim();
 }
 
-function midPoint(ri, ro, a1, a2) {
-  const e = a2 <= a1 ? a2 + 360 : a2;
-  const m = (a1 + e) / 2;
-  return {
-    pos: polar((ri + ro) / 2, m),
-    rot: m > 90 && m < 270 ? m + 90 : m - 90,
-  };
-}
-
-// ── Helpers de salas ──
-function roomName(room) {
-  const nombres = {
-    lab: "Lab",
-    deposito: "Dep.",
-    biblioteca: "Biblioteca",
-    "aula-grande": "Aula",
-    aula: "Aula",
-    sala: "Sala",
-  };
-  if (room.tipo === "biblioteca") return "Biblioteca";
-  return `${nombres[room.tipo] || room.tipo} ${room.id}`;
-}
-
-function getRoomStyle(estado, active) {
-  const c = ESTADOS[estado]?.color || ESTADOS["espacios"].color;
-  if (active) {
-    return { fill: c, stroke: c, strokeWidth: 2, textFill: "#fff" };
-  }
-  return { fill: c + "22", stroke: c + "AA", strokeWidth: 0.75, textFill: c };
-}
-
-// ── Componente Sala ──
-function Room({ room, ri, ro, selected, onSelect }) {
+// ── Room interactivo ──
+function SvgRoom({ pathData, estado, isEspacio, selected, onSelect }) {
   const [hovered, setHovered] = useState(false);
-  const ra1 = rv(room.s);
-  const ra2 = rv(room.e);
-  const span = room.e < room.s ? room.e + 360 - room.s : room.e - room.s;
-  const gap = span < 10 ? 0.2 : span < 16 ? 0.35 : 0.6;
-  const { pos } = midPoint(ri, ro, ra1, ra2);
-  const showLabel = ro - ri >= 18 && span >= 9;
-  const estado = room.estado || "libre";
-  const c = ESTADOS[estado]?.color || ESTADOS["espacios"].color;
+  const c = ESTADOS[estado]?.color || ESTADOS["libre"].color;
 
-  const isBiblio = room.tipo === "biblioteca";
-  const style = selected
-    ? getRoomStyle(estado, true)
-    : hovered
-      ? { ...getRoomStyle(estado, false), fill: isBiblio ? c : c + "44", stroke: c, strokeWidth: 1.5 }
-      : isBiblio
-        ? { fill: c, stroke: c, strokeWidth: 0.75, textFill: "#fff" }
-        : getRoomStyle(estado, false);
+  let fill, stroke, strokeWidth;
+  if (selected) {
+    fill = c; stroke = c; strokeWidth = 1;
+  } else if (hovered) {
+    fill = isEspacio ? c : c + "44";
+    stroke = c; strokeWidth = 0.6;
+  } else if (isEspacio) {
+    fill = c; stroke = c; strokeWidth = 0.3;
+  } else {
+    fill = c + "22"; stroke = c + "AA"; strokeWidth = 0.3;
+  }
+
+  const textFill = (selected || isEspacio) ? "#fff" : c;
 
   return (
     <g
       style={{ cursor: "pointer" }}
-      onClick={() => onSelect(room)}
+      onClick={() => onSelect(pathData.id)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <path
-        d={arcPath(ri, ro, ra1, ra2, gap)}
-        fill={style.fill}
-        stroke={style.stroke}
-        strokeWidth={style.strokeWidth}
+        d={pathData.d}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
       />
-      {showLabel && (
+      {pathData.label && (
         <text
-          x={pos.x}
-          y={pos.y}
+          x={pathData.labelX}
+          y={pathData.labelY}
           textAnchor="middle"
           dominantBaseline="central"
-          fontSize={room.tipo === "biblioteca" ? 7 : 5.6}
-          fontFamily={room.tipo === "biblioteca" ? "system-ui, sans-serif" : "monospace"}
+          fontSize={3.5}
+          fontFamily="system-ui, sans-serif"
           fontWeight="bold"
-          fill={style.textFill}
+          fill={textFill}
           style={{ userSelect: "none", pointerEvents: "none" }}
         >
-          {room.tipo === "biblioteca" ? "Biblioteca" : room.id}
+          {pathData.label.includes("\n") ? (
+            pathData.label.split("\n").map((line, i) => (
+              <tspan key={i} x={pathData.labelX} dy={i === 0 ? 0 : "1.2em"}>
+                {line}
+              </tspan>
+            ))
+          ) : (
+            pathData.label
+          )}
         </text>
       )}
     </g>
@@ -138,11 +117,8 @@ export default function PlanoTornavias({ pisoSlug }) {
   const { user } = useAuth();
   const [selectedId, setSelectedId] = useState(null);
   const [todosEstados, setTodosEstados] = useState({});
-  const datoPiso = PISOS[pisoSlug];
 
-  const handleSelect = useCallback((room) => {
-    setSelectedId((prev) => (prev === room.id ? null : room.id));
-  }, []);
+  const data = PISOS_DATA[pisoSlug];
 
   useEffect(() => {
     getEstadosEdificio("tornavias", user?.id)
@@ -152,45 +128,42 @@ export default function PlanoTornavias({ pisoSlug }) {
 
   const estadosRaw = todosEstados[pisoSlug] || {};
 
-  // Lista plana de todas las salas con su estado e info de materia
-  const allRooms = useMemo(() => {
-    if (!datoPiso) return [];
-    const rooms = [];
-    const resolveEstado = (rm) => {
-      const data = estadosRaw[rm.id];
-      if (data) return { estado: data.estado, materia: data.materia, comision: data.comision, horario: data.horario };
-      return { estado: rm.tipo === "biblioteca" ? "espacios" : "libre" };
-    };
-    datoPiso.secciones.forEach((s) => {
-      s.outer.forEach((rm) => rooms.push({ ...rm, ...resolveEstado(rm) }));
-      s.inner.forEach((rm) => rooms.push({ ...rm, ...resolveEstado(rm) }));
-    });
-    return rooms;
-  }, [datoPiso, estadosRaw]);
-
-  const selectedRoom = allRooms.find((r) => r.id === selectedId);
-
-  // Placeholder si no hay datos para este piso
-  if (!datoPiso) {
-    return (
-      <div className="flex flex-col items-center gap-4 p-6">
-        <Map size={64} color="#808285" strokeWidth={1.5} />
-        <p className="font-saira text-sm text-neutral-main text-center">
-          Plano próximamente disponible
-        </p>
-      </div>
-    );
+  // Pre-computar mapa normalizado de estados del backend
+  const estadosNorm = {};
+  for (const [nombre, info] of Object.entries(estadosRaw)) {
+    estadosNorm[normalize(nombre)] = info;
   }
 
-  const { secciones } = datoPiso;
+  const handleSelect = (id) => {
+    setSelectedId((prev) => (prev === id ? null : id));
+  };
+
+  if (!data) return null;
+
+  const rooms = data.ROOM_PATHS.map((p) => {
+    const key = normalize(p.label);
+    const info = estadosNorm[key] || null;
+    const esp = esEspacio(p.label);
+    const estado = info ? info.estado : esp ? "espacios" : "libre";
+    return { path: p, estado, info, isEspacio: esp };
+  });
+
+  const entrances = data.ENTRANCE_PATHS.map((p) => ({
+    path: p, estado: "espacios", info: null, isEspacio: true,
+  }));
+
+  const allRooms = [...rooms, ...entrances];
+  const selectedRoom = allRooms.find((r) => r.path.id === selectedId);
 
   return (
     <div className="flex flex-col w-full h-full">
       <TransformWrapper
-        initialScale={1.15}
-        minScale={0.6}
-        maxScale={4}
-        centerOnInit
+        initialScale={0.8}
+        initialPositionX={80}
+        initialPositionY={-20}
+        minScale={0.5}
+        maxScale={6}
+        centerOnInit={false}
         limitToBounds={false}
         wheel={{ step: 0.08 }}
         pinch={{ step: 5 }}
@@ -200,91 +173,58 @@ export default function PlanoTornavias({ pisoSlug }) {
           wrapperStyle={{ width: "100%", flex: 1, minHeight: 0 }}
           contentStyle={{ width: "100%", height: "100%" }}
         >
-      <svg viewBox="-25 -20 580 580" className="w-full">
-        <defs>
-          <pattern id="obra" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <line x1="0" y1="0" x2="0" y2="7" stroke="#bbb" strokeWidth="2" />
-          </pattern>
-        </defs>
-
-        {/* 1. Base */}
-        <circle cx={CX} cy={CY} r={R.outerWall} fill="#F2F0E8" stroke="#999" strokeWidth="2" />
-
-        {/* 2. Pasillo */}
-        <circle cx={CX} cy={CY} r={R.corridor + 1} fill="#C5C2B8" />
-        <circle cx={CX} cy={CY} r={R.corridorIn} fill="#EAE8E0" />
-        <circle cx={CX} cy={CY} r={R.corridor} fill="none" stroke="#aaa" strokeWidth="0.75" />
-        <circle cx={CX} cy={CY} r={R.corridorIn} fill="none" stroke="#aaa" strokeWidth="0.75" />
-
-        {/* Patio central */}
-        <circle cx={CX} cy={CY} r={R.patio} fill="#D4D1C6" stroke="#bbb" strokeWidth="0.5" />
-
-        {/* 8. Entradas */}
-        {entradas.map((ent, idx) => {
-          const angle = rv(ent.angle);
-          const a1 = angle - ent.halfSpan;
-          const a2 = angle + ent.halfSpan;
-          const j1i = polar(R.iRoomIn, a1), j1o = polar(R.outerWall, a1);
-          const j2i = polar(R.iRoomIn, a2), j2o = polar(R.outerWall, a2);
-          const midPt = polar((R.iRoomIn + R.outerWall) / 2, angle);
-
-          return (
-            <g key={`ent-${idx}`}>
-              <path d={sectorPath(R.iRoomIn, R.outerWall + 2, a1, a2)} fill="#F2F0E8" />
-              <path d={sectorPath(R.iRoomIn, R.outerWall, a1, a2)} fill={ENTRANCE_COLOR} />
-              <line x1={j1i.x} y1={j1i.y} x2={j1o.x} y2={j1o.y} stroke={ENTRANCE_COLOR} strokeWidth="2" strokeLinecap="round" />
-              <line x1={j2i.x} y1={j2i.y} x2={j2o.x} y2={j2o.y} stroke={ENTRANCE_COLOR} strokeWidth="2" strokeLinecap="round" />
-              <text x={midPt.x} y={midPt.y} textAnchor="middle" dominantBaseline="central"
-                fontSize="5" fontWeight="bold" fill="#fff"
-                style={{ userSelect: "none", pointerEvents: "none" }}
-              >
-                {Array.isArray(ent.label) ? ent.label.map((line, i) => (
-                  <tspan key={i} x={midPt.x} dy={i === 0 ? "-0.5em" : "1.1em"}>{line}</tspan>
-                )) : ent.label}
-              </text>
+          <svg viewBox={data.SVG_VIEWBOX} className="w-full" fill="none">
+            {/* Salas interactivas (dentro de layer transform) */}
+            <g transform={data.LAYER_TRANSFORM || undefined}>
+              {rooms.map((r) => (
+                <SvgRoom
+                  key={r.path.id}
+                  pathData={r.path}
+                  estado={r.estado}
+                  isEspacio={r.isEspacio}
+                  selected={selectedId === r.path.id}
+                  onSelect={handleSelect}
+                />
+              ))}
             </g>
-          );
-        })}
 
-        {/* 9. Salas (interactivas) */}
-        {secciones.map((s) => (
-          <g key={`rooms-${s.id}`}>
-            {s.outer.map((rm) => {
-              const info = estadosRaw[rm.id];
-              const estado = info ? info.estado : (rm.tipo === "biblioteca" ? "espacios" : "libre");
-              return (
-                <Room key={rm.id} room={{ ...rm, estado }}
-                  ri={R.oRoomIn} ro={R.oRoomOut}
-                  selected={selectedId === rm.id} onSelect={handleSelect}
-                />
-              );
-            })}
-            {s.inner.map((rm) => {
-              const info = estadosRaw[rm.id];
-              const estado = info ? info.estado : (rm.tipo === "biblioteca" ? "espacios" : "libre");
-              return (
-                <Room key={rm.id} room={{ ...rm, estado }}
-                  ri={R.iRoomIn} ro={R.iRoomOut}
-                  selected={selectedId === rm.id} onSelect={handleSelect}
-                />
-              );
-            })}
-          </g>
-        ))}
+            {/* Escaleras (decorativas, fuera de layer, con sus propios transforms) */}
+            {data.STAIR_GROUPS.map((group) => (
+              <g key={group.id} transform={group.transform || undefined}>
+                {group.paths.map((p) => (
+                  <path
+                    key={p.id}
+                    d={p.d}
+                    stroke={STAIR_COLOR}
+                    strokeWidth="0.26"
+                    fill="none"
+                  />
+                ))}
+              </g>
+            ))}
 
-        {/* 10. Contornos */}
-        <circle cx={CX} cy={CY} r={R.outerWall} fill="none" stroke="#888" strokeWidth="2" />
-      </svg>
+            {/* Entradas (fuera de layer) */}
+            {data.ENTRANCE_PATHS.map((p) => (
+              <SvgRoom
+                key={p.id}
+                pathData={p}
+                estado="espacios"
+                isEspacio={true}
+                selected={selectedId === p.id}
+                onSelect={handleSelect}
+              />
+            ))}
+          </svg>
         </TransformComponent>
       </TransformWrapper>
 
-      {/* Panel inferior: info de sala + leyenda */}
+      {/* Panel inferior: info + leyenda */}
       <div className="w-full px-4 py-2 flex flex-col gap-2">
         {selectedRoom && (
           <div className="rounded-xl p-3 bg-neutral-white border border-neutral-light shadow-sm">
             <div className="flex items-center justify-between">
               <p className="font-saira font-semibold text-base text-neutral-dark">
-                {roomName(selectedRoom)}
+                {selectedRoom.path.label || selectedRoom.path.id}
               </p>
               <button
                 onClick={() => setSelectedId(null)}
@@ -304,20 +244,20 @@ export default function PlanoTornavias({ pisoSlug }) {
                 {ESTADOS[selectedRoom.estado || "libre"].label}
               </span>
             </div>
-            {selectedRoom.materia && (
+            {selectedRoom.info?.materia && (
               <div className="mt-2 flex flex-col gap-0.5">
                 <p className="font-saira font-semibold text-sm text-neutral-dark">
-                  {selectedRoom.materia}
+                  {selectedRoom.info.materia}
                 </p>
                 <p className="font-saira text-xs text-neutral-main">
-                  {selectedRoom.comision} · {selectedRoom.horario}
+                  {selectedRoom.info.comision} · {selectedRoom.info.horario}
                 </p>
               </div>
             )}
           </div>
         )}
 
-        {/* Leyenda de estados */}
+        {/* Leyenda */}
         <div className="flex items-center justify-center gap-3 py-1">
           {Object.values(ESTADOS).map((est) => (
             <div key={est.label} className="flex items-center gap-1.5">

@@ -15,7 +15,7 @@ export async function getEstadosEdificio(edificioId, userId) {
       comision:comisiones!inner(
         id, codigo,
         materia:materias!inner(id, nombre),
-        aula:aulas!inner(id, piso, edificio_id)
+        aula:aulas!inner(id, nombre, piso, edificio_id)
       )
     `)
     .eq("dia", diaHoy)
@@ -30,11 +30,11 @@ export async function getEstadosEdificio(edificioId, userId) {
     if (comision.aula.edificio_id !== edificioId) return;
 
     const pisoSlug = comision.aula.piso;
-    const aulaId = String(comision.aula.id);
+    const aulaNombre = comision.aula.nombre;
 
     if (!pisos[pisoSlug]) pisos[pisoSlug] = {};
 
-    pisos[pisoSlug][aulaId] = {
+    pisos[pisoSlug][aulaNombre] = {
       estado: "ocupada",
       materia: comision.materia.nombre,
       comision: comision.codigo,
