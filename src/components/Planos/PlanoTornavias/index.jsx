@@ -223,7 +223,7 @@ export default function PlanoTornavias({ pisoSlug }) {
         {selectedRoom && (
           <div className="rounded-xl p-3 bg-neutral-white border border-neutral-light shadow-sm">
             <div className="flex items-center justify-between">
-              <p className="font-saira font-semibold text-base text-neutral-dark">
+              <p className="font-saira font-semibold text-base text-neutral-extra-dark">
                 {selectedRoom.path.label || selectedRoom.path.id}
               </p>
               <button
@@ -246,7 +246,7 @@ export default function PlanoTornavias({ pisoSlug }) {
             </div>
             {selectedRoom.info?.materia && (
               <div className="mt-2 flex flex-col gap-0.5">
-                <p className="font-saira font-semibold text-sm text-neutral-dark">
+                <p className="font-saira font-semibold text-sm text-neutral-extra-dark">
                   {selectedRoom.info.materia}
                 </p>
                 <p className="font-saira text-xs text-neutral-main">

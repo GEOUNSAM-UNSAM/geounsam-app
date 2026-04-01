@@ -2,7 +2,7 @@ import { Trophy, Check, Ellipsis, Lock } from 'lucide-react'
 
 const iconoEstado = {
   completado: <Check size={16} className="text-white" />,
-  actual: <Ellipsis size={16} className="text-neutral-dark" />,
+  actual: <Ellipsis size={16} className="text-neutral-extra-dark" />,
   bloqueado: <Lock size={14} className="text-white" />,
 }
 
@@ -25,8 +25,8 @@ export default function Avance({ nivel }) {
     <div className="bg-neutral-white rounded-[30px] px-6 py-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Trophy size={24} className="text-neutral-dark" />
-          <span className="font-saira font-semibold text-lg text-neutral-dark">{nivel.nombre}</span>
+          <Trophy size={24} className="text-neutral-extra-dark" />
+          <span className="font-saira font-semibold text-lg text-neutral-extra-dark">{nivel.nombre}</span>
         </div>
         <span className="font-saira font-medium text-xs text-neutral-main">{nivel.xpActual} / {nivel.xpTotal} XP</span>
       </div>

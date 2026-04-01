@@ -42,7 +42,7 @@ export default function Login() {
         <div className="flex flex-col gap-4 mt-auto pt-6">
           <button
             type="submit"
-            className="bg-action text-neutral-dark font-saira font-semibold text-lg text-center py-3 rounded-xl w-full"
+            className="bg-action text-neutral-extra-dark font-saira font-semibold text-lg text-center py-3 rounded-xl w-full"
           >
             Iniciar sesión
           </button>

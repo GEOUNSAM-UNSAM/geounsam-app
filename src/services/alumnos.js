@@ -1,5 +1,23 @@
 import { supabase } from '../lib/supabase'
 
+export async function getOnboardingVisto(userId) {
+  const { data, error } = await supabase
+    .from('alumnos')
+    .select('onboarding_seen')
+    .eq('id', userId)
+    .single()
+  if (error) throw error
+  return data?.onboarding_seen ?? false
+}
+
+export async function marcarOnboardingVisto(userId) {
+  const { error } = await supabase
+    .from('alumnos')
+    .update({ onboarding_seen: true })
+    .eq('id', userId)
+  if (error) throw error
+}
+
 export async function getCarreras() {
   const { data, error } = await supabase
     .from('carreras')

@@ -40,7 +40,7 @@ export default function Cursada() {
   return (
     <div className="flex flex-col gap-5 px-6 py-4 pb-6 bg-[#efefef] min-h-[calc(100dvh-68px-64px)]">
       <div className="flex flex-col gap-1 pt-1">
-        <h1 className="font-saira font-bold text-[28px] text-neutral-dark leading-10">Mi cursada</h1>
+        <h1 className="font-saira font-bold text-[28px] text-neutral-extra-dark leading-10">Mi cursada</h1>
         <p className="font-saira text-base text-neutral-main">Primer cuatrimestre 2026</p>
       </div>
 

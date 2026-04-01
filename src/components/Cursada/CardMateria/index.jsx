@@ -9,12 +9,12 @@ export default function CardMateria({ clase }) {
       </div>
       <div className="flex flex-1 flex-col justify-center">
         <div className="flex items-center justify-between">
-          <p className="font-saira font-semibold text-[18px] text-neutral-dark leading-8 pr-1">
+          <p className="font-saira font-semibold text-[18px] text-neutral-extra-dark leading-8 pr-1">
             {clase.nombre}
           </p>
           <ChevronRight size={18} className="text-neutral-light shrink-0" />
         </div>
-        <p className="font-saira text-sm text-neutral-dark">{clase.aula}</p>
+        <p className="font-saira text-sm text-neutral-extra-dark">{clase.aula}</p>
       </div>
     </div>
   )

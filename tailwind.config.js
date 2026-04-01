@@ -87,18 +87,23 @@ export default {
   },
   plugins: [
     function({ addComponents, theme }) {
-      const saira    = theme('fontFamily.saira').join(', ')
-      const faustina = theme('fontFamily.faustina').join(', ')
+        const getFontFamily = (key) => {
+            const value = theme(key)
+            return Array.isArray(value) ? value.join(', ') : value
+        }
 
-      addComponents({
-        '.text-heading-xl':    { fontSize: '1.75rem', lineHeight: '2.5rem',   fontFamily: saira },
-        '.text-heading-l':     { fontSize: '1.375rem', lineHeight: '2rem',    fontFamily: saira },
-        '.text-title-m':       { fontSize: '1.125rem', lineHeight: '2rem',    fontFamily: saira },
-        '.text-body-m':        { fontSize: '1rem',     lineHeight: '1.5rem',  fontFamily: saira },
-        '.text-body-m-serif':  { fontSize: '1rem',     lineHeight: '1.5rem',  fontFamily: faustina },
-        '.text-body-s':        { fontSize: '0.875rem', lineHeight: '1rem',    fontFamily: saira },
-        '.text-label-caption': { fontSize: '0.75rem',  lineHeight: '0.75rem', fontFamily: saira },
-      })
+        const saira = getFontFamily('fontFamily.saira')
+        const faustina = getFontFamily('fontFamily.faustina')
+
+        addComponents({
+            '.text-heading-xl':    { fontSize: '1.75rem', lineHeight: '2.5rem',   fontFamily: saira },
+            '.text-heading-l':     { fontSize: '1.375rem', lineHeight: '2rem',    fontFamily: saira },
+            '.text-title-m':       { fontSize: '1.125rem', lineHeight: '2rem',    fontFamily: saira },
+            '.text-body-m':        { fontSize: '1rem',     lineHeight: '1.5rem',  fontFamily: saira },
+            '.text-body-m-serif':  { fontSize: '1rem',     lineHeight: '1.5rem',  fontFamily: faustina },
+            '.text-body-s':        { fontSize: '0.875rem', lineHeight: '1rem',    fontFamily: saira },
+            '.text-label-caption': { fontSize: '0.75rem',  lineHeight: '0.75rem', fontFamily: saira },
+        })
     },
   ],
 }

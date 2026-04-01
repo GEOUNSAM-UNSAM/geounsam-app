@@ -17,7 +17,7 @@ export default function SemanaCalendar({ diasSemana, diaIdx, diasConClases, onSe
               {dia.label}
             </span>
             <span className={`font-saira font-semibold text-[18px] leading-8 ${
-              activo ? 'text-[#efefef]' : 'text-neutral-dark'
+              activo ? 'text-[#efefef]' : 'text-neutral-extra-dark'
             }`}>
               {dia.num}
             </span>
