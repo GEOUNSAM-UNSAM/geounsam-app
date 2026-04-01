@@ -10,16 +10,51 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
+  const [session, setSession] = useState(null)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
+    let mounted = true
+
+    async function hydrateSession() {
+      const { data, error } = await supabase.auth.getSession()
+      if (!mounted) return
+
+      if (error) {
+        console.log('[Auth] Rehidratación falló', error.message)
+        setSession(null)
+        setUser(null)
+        setLoading(false)
+        return
+      }
+
+      console.log('[Auth] Rehidratación inicial', {
+        hasSession: Boolean(data.session),
+        userId: data.session?.user?.id ?? null,
+      })
+      setSession(data.session ?? null)
+      setUser(data.session?.user ?? null)
+      setLoading(false)
+    }
+
+    hydrateSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      console.log('[Auth] onAuthStateChange', {
+        event,
+        hasSession: Boolean(nextSession),
+        userId: nextSession?.user?.id ?? null,
+      })
+      setSession(nextSession ?? null)
+      setUser(nextSession?.user ?? null)
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const logout = async () => {
@@ -27,7 +62,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ session, user, loading, isAuthenticated: Boolean(session), logout }}>
       {children}
     </AuthContext.Provider>
   )

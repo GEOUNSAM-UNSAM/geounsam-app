@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Outlet } from 'react-router-dom'
 import Buscar from './pages/Buscar/index.jsx'
 import Mapa from './pages/Mapa/index.jsx'
 import Cursada from './pages/Cursada/index.jsx'
@@ -10,22 +10,25 @@ import Login from './pages/Login/index.jsx'
 import AuthCallback from './pages/AuthCallback/index.jsx'
 import SeleccionCarrera from './pages/SeleccionCarrera/index.jsx'
 import Logout from './pages/Logout/index.jsx'
+import SinConexion from './pages/SinConexion/index.jsx'
 import Navbar from './components/Navbar/index.jsx'
 import Header from './components/Header/index.jsx'
+import PantallaCarga from './components/PantallaCarga/index.jsx'
+import {
+  CareerSelectionRoute,
+  GuestOnlyRoute,
+  OnboardingRoute,
+  RequireAuthRoute,
+  RequireCareerRoute,
+  RootRedirect,
+} from './guards/RouteGuard.jsx'
 
 function AppLayout() {
   return (
     <div className="flex flex-col h-screen">
       <Header />
       <main className="flex-1 overflow-y-auto">
-        <Routes>
-          <Route path="/" element={<Navigate to="/inicio" replace />} />
-          <Route path="/inicio" element={<Inicio />} />
-          <Route path="/buscar" element={<Buscar />} />
-          <Route path="/mapa" element={<Mapa />} />
-          <Route path="/cursada" element={<Cursada />} />
-          <Route path="/perfil" element={<Perfil />} />
-        </Routes>
+        <Outlet />
       </main>
       <Navbar />
     </div>
@@ -36,14 +39,39 @@ function App() {
   return (
     <div className="w-full min-h-screen bg-base relative">
       <Routes>
-        <Route path="/" element={<Navigate to="/onboarding" />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<RootRedirect />} />
+        <Route path="/loading" element={<PantallaCarga mensaje="Cargando..." />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/seleccionar-carrera" element={<SeleccionCarrera />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/*" element={<AppLayout />} />
+        <Route path="/sin-conexion" element={<SinConexion />} />
+
+        <Route element={<OnboardingRoute />}>
+          <Route path="/onboarding" element={<Onboarding />} />
+        </Route>
+
+        <Route element={<GuestOnlyRoute />}>
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
+
+        <Route element={<RequireAuthRoute />}>
+          <Route path="/logout" element={<Logout />} />
+        </Route>
+
+        <Route element={<CareerSelectionRoute />}>
+          <Route path="/seleccionar-carrera" element={<SeleccionCarrera />} />
+        </Route>
+
+        <Route element={<RequireCareerRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/inicio" element={<Inicio />} />
+            <Route path="/buscar" element={<Buscar />} />
+            <Route path="/mapa" element={<Mapa />} />
+            <Route path="/cursada" element={<Cursada />} />
+            <Route path="/perfil" element={<Perfil />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<SinConexion />} />
       </Routes>
     </div>
   )

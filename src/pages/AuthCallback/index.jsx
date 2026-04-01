@@ -1,33 +1,45 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { getAlumnoCarreras } from '../../services/alumnos'
+import { useAccess } from '../../context/AccessContext.jsx'
+import { marcarOnboardingVisto } from '../../services/alumnos'
+import PantallaCarga from '../../components/PantallaCarga/index.jsx'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
   const { user, loading } = useAuth()
+  const { refresh } = useAccess()
+  const redireccionIniciada = useRef(false)
 
   useEffect(() => {
+    if (redireccionIniciada.current) return
     if (loading) return
     if (!user) {
+      redireccionIniciada.current = true
       navigate('/login', { replace: true })
       return
     }
 
-    getAlumnoCarreras(user.id).then((carreras) => {
-      if (carreras.length > 0) {
-        navigate('/inicio', { replace: true })
-      } else {
-        navigate('/seleccionar-carrera', { replace: true })
+    redireccionIniciada.current = true
+
+    async function redirigir() {
+      try {
+        if (localStorage.getItem('onboarding_completado') === '1') {
+          await marcarOnboardingVisto(user.id)
+          localStorage.removeItem('onboarding_completado')
+        }
+
+        await refresh()
+        navigate('/', { replace: true })
+      } catch {
+        navigate('/sin-conexion', { replace: true })
       }
-    }).catch(() => {
-      navigate('/seleccionar-carrera', { replace: true })
-    })
-  }, [user, loading, navigate])
+    }
+
+    redirigir()
+  }, [user, loading, navigate, refresh])
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-base">
-      <p className="font-saira text-identity text-lg">Cargando...</p>
-    </div>
+    <PantallaCarga mensaje="Ingresando a tu cuenta..." />
   )
 }

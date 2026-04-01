@@ -48,7 +48,7 @@ export default function DetalleSeleccion({ marcadorSeleccionado, onVerPlano, mos
             <Map size={22} color="#6B7280" />
           </div>
           <div>
-            <p className="font-saira font-semibold text-base text-neutral-dark">
+            <p className="font-saira font-semibold text-base text-neutral-extra-dark">
               Elegí un edificio
             </p>
             <p className="font-saira text-sm text-neutral-main">

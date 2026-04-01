@@ -6,14 +6,14 @@ export default function CardResultado({ resultado, isFav, onToggleFav }) {
       isFav ? "border-2 border-action" : "border-l-4 border-identity"
     }`}>
       <div className="flex-1 flex flex-col gap-1 px-2">
-        <span className="inline-flex self-start border border-action rounded-full px-2 py-0.5 font-saira font-medium text-xs text-neutral-dark">
+        <span className="inline-flex self-start border border-action rounded-full px-2 py-0.5 font-saira font-medium text-xs text-neutral-extra-dark">
           {resultado.codigo}
         </span>
-        <span className="font-saira font-semibold text-[22px] leading-8 text-neutral-dark">
+        <span className="font-saira font-semibold text-[22px] leading-8 text-neutral-extra-dark">
           {resultado.nombre}
         </span>
         {resultado.horarios.map((h, i) => (
-          <span key={i} className="font-saira text-sm text-neutral-dark">
+          <span key={i} className="font-saira text-sm text-neutral-extra-dark">
             {h.dia} {h.inicio} - {h.fin}
           </span>
         ))}

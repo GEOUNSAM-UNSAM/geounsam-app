@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { useAccess } from '../../context/AccessContext.jsx'
 import { getCarreras, setAlumnoCarrera } from '../../services/alumnos'
 import logo from '../../assets/logo-geounsam.svg'
 
 export default function SeleccionCarrera() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { refresh } = useAccess()
   const [carreras, setCarreras] = useState([])
   const [carreraId, setCarreraId] = useState('')
   const [error, setError] = useState(null)
@@ -26,7 +28,8 @@ export default function SeleccionCarrera() {
     setGuardando(true)
     try {
       await setAlumnoCarrera(user.id, Number(carreraId))
-      navigate('/inicio', { replace: true })
+      await refresh()
+      navigate('/', { replace: true })
     } catch (err) {
       setError(err.message)
       setGuardando(false)
@@ -46,17 +49,17 @@ export default function SeleccionCarrera() {
           ¡Bienvenido, {user?.user_metadata?.full_name?.split(' ')[0]}!
         </h1>
 
-        <p className="font-saira text-sm text-neutral-dark text-center">
+        <p className="font-saira text-sm text-neutral-extra-dark text-center">
           Sólo nos falta un dato para personalizar tu experiencia
         </p>
 
         <div className="flex flex-col gap-2">
-          <label className="font-saira text-sm text-neutral-dark">¿Qué carrera estudiás?</label>
+          <label className="font-saira text-sm text-neutral-extra-dark">¿Qué carrera estudiás?</label>
           <div className="relative">
             <select
               value={carreraId}
               onChange={(e) => setCarreraId(e.target.value)}
-              className={`w-full h-10 bg-neutral-white border border-identity rounded-xl pl-5 pr-10 font-saira appearance-none ${carreraId ? 'text-neutral-dark' : 'text-neutral-main'}`}
+              className={`w-full h-10 bg-neutral-white border border-identity rounded-xl pl-5 pr-10 font-saira appearance-none ${carreraId ? 'text-neutral-extra-dark' : 'text-neutral-main'}`}
             >
               <option value="" disabled>Seleccioná tu carrera</option>
               {carreras.map((c) => (
@@ -76,7 +79,7 @@ export default function SeleccionCarrera() {
           <button
             type="submit"
             disabled={!carreraId || guardando}
-            className="bg-action text-neutral-dark font-saira font-semibold text-lg text-center py-3 rounded-xl w-full disabled:opacity-50"
+            className="bg-action text-neutral-extra-dark font-saira font-semibold text-lg text-center py-3 rounded-xl w-full disabled:opacity-50"
           >
             {guardando ? 'Guardando...' : 'Confirmar'}
           </button>

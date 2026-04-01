@@ -26,8 +26,8 @@ export default function BannerPerfil({ nombre, avatarUrl, carrera, nivel }) {
 
       {nivel && (
         <div className="bg-action flex items-center gap-1 px-3 py-1.5 rounded-full">
-          <Star size={16} className="text-neutral-dark" />
-          <span className="font-saira text-sm text-neutral-dark">
+          <Star size={16} className="text-neutral-extra-dark" />
+          <span className="font-saira text-sm text-neutral-extra-dark">
             Nivel {nivel.niveles.findIndex(n => n.estado === 'actual') + 1} - {nivel.nombre}
           </span>
         </div>
