@@ -1,36 +1,38 @@
+import { useNavigate } from "react-router-dom";
 import BurbujaDialogo from "../../components/Onboarding/BurbujaDialogo/index.jsx";
 import Header from "../../components/Header/index.jsx";
 import samuTriste from "../../assets/samu_triste.png";
 
-const MENSAJE_SIN_CONEXION =
-    "No puedo traerte info del campus ahora. Revisá tu conexión y volvé a intentar";
+const MENSAJE_NOT_FOUND = "No pude encontrar lo que estabas buscando...";
 
-export default function SinConexion() {
+export default function NotFound() {
+    const navigate = useNavigate();
+
     function reintentar() {
-        window.location.reload();
+        navigate("/", { replace: true });
     }
 
     return (
-    <div className="flex min-h-screen flex-col bg-state-red">
+        <div className="flex min-h-screen flex-col bg-state-red">
             <Header />
 
             <div className="flex flex-1 flex-col items-center justify-between px-8 py-8">
                 <div className="flex w-full flex-col items-center gap-4">
-                    <BurbujaDialogo texto={MENSAJE_SIN_CONEXION} />
+                    <BurbujaDialogo texto={MENSAJE_NOT_FOUND} />
 
                     <img
                         src={samuTriste}
-                        alt="Samu sin conexión"
-                        className="mt-6 h-[300px] w-auto object-contain"
+                        alt="Samu triste"
+                        className="mt-6 h-[300px] w-[191px] object-contain"
                     />
                 </div>
 
                 <div className="flex w-full flex-col items-center gap-4 text-center">
                     <h1 className="font-saira text-[22px] font-semibold leading-8 text-identity">
-                        Sin conexión
+                        No encontrado
                     </h1>
-                    <p className="font-saira text-base leading-6 text-black">
-                        Revisá tu conexión a internet
+                    <p className="font-saira text-base leading-6 text-neutral-extra-dark">
+                        Volvé al inicio e intentá nuevamente
                     </p>
                 </div>
 

@@ -2,10 +2,37 @@ import { Navigate, Outlet } from "react-router-dom";
 import PantallaCarga from "../components/PantallaCarga/index.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useAccess } from "../context/AccessContext.jsx";
-import SinConexion from "../pages/SinConexion/index.jsx";
 
 function renderRoute(children) {
     return children ?? <Outlet />;
+}
+
+function AccessErrorNotice({ message }) {
+    return (
+        <div className="fixed left-4 right-4 top-4 z-[60] rounded-xl border border-error bg-state-red px-4 py-3 shadow-md">
+            <p className="font-saira text-sm leading-5 text-neutral-extra-dark">
+                Error de acceso: {message}
+            </p>
+        </div>
+    );
+}
+
+function renderRouteWithAccessError(children, message) {
+    return (
+        <>
+            {renderRoute(children)}
+            <AccessErrorNotice message={message} />
+        </>
+    );
+}
+
+function hasGuestCompletedOnboarding() {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("onboarding_completado") === "1";
+}
+
+function resolveGuestDestination() {
+    return hasGuestCompletedOnboarding() ? "/bienvenida" : "/onboarding";
 }
 
 function resolveAuthenticatedDestination({ onboardingSeen, hasCarrera }) {
@@ -29,9 +56,16 @@ export function RootRedirect() {
     } = useAccess();
 
     if (authLoading) return <AccessLoading />;
-    if (!isAuthenticated) return <Navigate to="/onboarding" replace />;
+    if (!isAuthenticated) return <Navigate to={resolveGuestDestination()} replace />;
     if (accessLoading) return <AccessLoading />;
-    if (error) return <SinConexion />;
+    if (error) {
+        return (
+            <>
+                <AccessLoading />
+                <AccessErrorNotice message={error} />
+            </>
+        );
+    }
 
     return (
         <Navigate
@@ -54,7 +88,7 @@ export function GuestOnlyRoute({ children }) {
     if (authLoading) return <AccessLoading />;
     if (!isAuthenticated) return renderRoute(children);
     if (accessLoading) return <AccessLoading />;
-    if (error) return <SinConexion />;
+    if (error) return renderRouteWithAccessError(children, error);
 
     return (
         <Navigate
@@ -75,9 +109,15 @@ export function OnboardingRoute({ children }) {
     } = useAccess();
 
     if (authLoading) return <AccessLoading />;
-    if (!isAuthenticated) return renderRoute(children);
+    if (!isAuthenticated) {
+        if (hasGuestCompletedOnboarding()) {
+            return <Navigate to="/bienvenida" replace />;
+        }
+
+        return renderRoute(children);
+    }
     if (accessLoading) return <AccessLoading />;
-    if (error) return <SinConexion />;
+    if (error) return renderRouteWithAccessError(children, error);
     if (onboardingSeen) {
         return (
             <Navigate
@@ -90,12 +130,40 @@ export function OnboardingRoute({ children }) {
     return renderRoute(children);
 }
 
+export function WelcomeRoute({ children }) {
+    const { loading: authLoading, isAuthenticated } = useAuth();
+    const {
+        loading: accessLoading,
+        error,
+        onboardingSeen,
+        hasCarrera,
+    } = useAccess();
+
+    if (authLoading) return <AccessLoading />;
+    if (!isAuthenticated) {
+        if (!hasGuestCompletedOnboarding()) {
+            return <Navigate to="/onboarding" replace />;
+        }
+
+        return renderRoute(children);
+    }
+    if (accessLoading) return <AccessLoading />;
+    if (error) return renderRouteWithAccessError(children, error);
+
+    return (
+        <Navigate
+            to={resolveAuthenticatedDestination({ onboardingSeen, hasCarrera })}
+            replace
+        />
+    );
+}
+
 // Exige sesión, pero no fuerza todavía onboarding ni carrera.
 export function RequireAuthRoute({ children }) {
     const { loading: authLoading, isAuthenticated } = useAuth();
 
     if (authLoading) return <AccessLoading />;
-    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (!isAuthenticated) return <Navigate to={resolveGuestDestination()} replace />;
 
     return renderRoute(children);
 }
@@ -111,9 +179,9 @@ export function RequireCareerRoute({ children }) {
     } = useAccess();
 
     if (authLoading) return <AccessLoading />;
-    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (!isAuthenticated) return <Navigate to={resolveGuestDestination()} replace />;
     if (accessLoading) return <AccessLoading />;
-    if (error) return <SinConexion />;
+    if (error) return renderRouteWithAccessError(children, error);
     if (!onboardingSeen) return <Navigate to="/onboarding" replace />;
     if (!hasCarrera) return <Navigate to="/seleccionar-carrera" replace />;
 
@@ -131,9 +199,9 @@ export function CareerSelectionRoute({ children }) {
     } = useAccess();
 
     if (authLoading) return <AccessLoading />;
-    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (!isAuthenticated) return <Navigate to={resolveGuestDestination()} replace />;
     if (accessLoading) return <AccessLoading />;
-    if (error) return <SinConexion />;
+    if (error) return renderRouteWithAccessError(children, error);
     if (!onboardingSeen) return <Navigate to="/onboarding" replace />;
     if (hasCarrera) return <Navigate to="/inicio" replace />;
 

@@ -8,7 +8,7 @@ export default function AuthInput({ label, name, value, onChange, placeholder, t
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-saira text-sm text-neutral-extra-dark">{label}</label>
+      <label className="font-saira text-sm leading-6 text-neutral-extra-dark">{label}</label>
       <div className="relative">
         <input
           type={inputType}
@@ -16,7 +16,7 @@ export default function AuthInput({ label, name, value, onChange, placeholder, t
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`w-full h-10 bg-neutral-white border border-identity rounded-xl pl-5 font-saira text-neutral-extra-dark placeholder:text-neutral-light ${isPassword ? 'pr-10' : 'pr-4'}`}
+          className={`w-full h-10 bg-neutral-white border border-identity rounded-xl pl-5 font-saira text-base leading-6 text-neutral-extra-dark placeholder:text-neutral-main ${isPassword ? 'pr-10' : 'pr-4'}`}
         />
         {isPassword && (
           <button
@@ -25,9 +25,9 @@ export default function AuthInput({ label, name, value, onChange, placeholder, t
             className="absolute right-4 top-1/2 -translate-y-1/2"
           >
             {showPassword ? (
-              <EyeOff size={16} color="#6B7280" />
+              <EyeOff size={16} color="#A7A9AC" />
             ) : (
-              <Eye size={16} color="#6B7280" />
+              <Eye size={16} color="#A7A9AC" />
             )}
           </button>
         )}

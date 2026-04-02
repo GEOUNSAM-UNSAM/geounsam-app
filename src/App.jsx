@@ -5,12 +5,13 @@ import Cursada from './pages/Cursada/index.jsx'
 import Perfil from './pages/Perfil/index.jsx'
 import Inicio from './pages/Inicio/index.jsx'
 import Onboarding from './pages/Onboarding/index.jsx'
+import Bienvenida from './pages/Bienvenida/index.jsx'
 import Registro from './pages/Registro/index.jsx'
 import Login from './pages/Login/index.jsx'
 import AuthCallback from './pages/AuthCallback/index.jsx'
 import SeleccionCarrera from './pages/SeleccionCarrera/index.jsx'
 import Logout from './pages/Logout/index.jsx'
-import SinConexion from './pages/SinConexion/index.jsx'
+import NotFound from './pages/NotFound/index.jsx'
 import Navbar from './components/Navbar/index.jsx'
 import Header from './components/Header/index.jsx'
 import PantallaCarga from './components/PantallaCarga/index.jsx'
@@ -21,6 +22,7 @@ import {
   RequireAuthRoute,
   RequireCareerRoute,
   RootRedirect,
+  WelcomeRoute,
 } from './guards/RouteGuard.jsx'
 
 function AppLayout() {
@@ -42,10 +44,14 @@ function App() {
         <Route path="/" element={<RootRedirect />} />
         <Route path="/loading" element={<PantallaCarga mensaje="Cargando..." />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/sin-conexion" element={<SinConexion />} />
+        <Route path="/404" element={<NotFound />} />
 
         <Route element={<OnboardingRoute />}>
           <Route path="/onboarding" element={<Onboarding />} />
+        </Route>
+
+        <Route element={<WelcomeRoute />}>
+          <Route path="/bienvenida" element={<Bienvenida />} />
         </Route>
 
         <Route element={<GuestOnlyRoute />}>
@@ -71,7 +77,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="*" element={<SinConexion />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   )

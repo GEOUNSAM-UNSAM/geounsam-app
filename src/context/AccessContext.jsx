@@ -9,8 +9,15 @@ function getGuestState() {
         onboardingSeen: null,
         hasCarrera: false,
         loading: false,
-        error: false,
+        error: null,
     };
+}
+
+function getErrorMessage(error) {
+    if (typeof error === "string") return error;
+    if (error instanceof Error && error.message) return error.message;
+    if (error?.message) return error.message;
+    return "No se pudo validar el acceso del usuario.";
 }
 
 export function useAccess() {
@@ -26,7 +33,7 @@ export function AccessProvider({ children }) {
         onboardingSeen: null,
         hasCarrera: false,
         loading: true,
-        error: false,
+        error: null,
     });
 
     useEffect(() => {
@@ -42,7 +49,7 @@ export function AccessProvider({ children }) {
             }
 
             if (active) {
-                setState((prev) => ({ ...prev, loading: true, error: false }));
+                setState((prev) => ({ ...prev, loading: true, error: null }));
             }
 
             try {
@@ -57,16 +64,16 @@ export function AccessProvider({ children }) {
                     onboardingSeen,
                     hasCarrera: carreras.length > 0,
                     loading: false,
-                    error: false,
+                    error: null,
                 });
-            } catch {
+            } catch (error) {
                 if (!active) return;
 
                 setState({
                     onboardingSeen: null,
                     hasCarrera: false,
                     loading: false,
-                    error: true,
+                    error: getErrorMessage(error),
                 });
             }
         }
@@ -84,7 +91,7 @@ export function AccessProvider({ children }) {
             return;
         }
 
-        setState((prev) => ({ ...prev, loading: true, error: false }));
+        setState((prev) => ({ ...prev, loading: true, error: null }));
 
         try {
             const [onboardingSeen, carreras] = await Promise.all([
@@ -96,14 +103,14 @@ export function AccessProvider({ children }) {
                 onboardingSeen,
                 hasCarrera: carreras.length > 0,
                 loading: false,
-                error: false,
+                error: null,
             });
-        } catch {
+        } catch (error) {
             setState({
                 onboardingSeen: null,
                 hasCarrera: false,
                 loading: false,
-                error: true,
+                error: getErrorMessage(error),
             });
             throw new Error("No se pudo refrescar el acceso del usuario");
         }
