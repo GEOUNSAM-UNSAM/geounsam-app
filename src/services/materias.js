@@ -5,6 +5,11 @@ import { getMateriasCarreraConHorarios, getAlumnoCarreras } from "./alumnos";
 const normalizar = (str) =>
   str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
+const formatAulaLabel = (nombreAula) =>
+  nombreAula
+    ? /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula
+    : "";
+
 let _materiasCache = null;
 
 async function _cargarMaterias() {
@@ -34,11 +39,9 @@ export async function buscarMaterias(query) {
   materias.forEach((materia) => {
     if (normalizar(materia.nombre).includes(q)) {
       materia.comisiones?.forEach((comision) => {
-        const nombreAula = comision.aula?.nombre;
-        const aulaLabel = nombreAula
-          ? /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula
-          : "";
+        const aulaLabel = formatAulaLabel(comision.aula?.nombre);
         resultados.push({
+          comisionId: comision.id,
           materiaId: materia.id,
           nombre: materia.nombre,
           codigo: comision.codigo,
@@ -91,19 +94,22 @@ export async function getMateriasSugeridasDeCarrera(userId) {
     });
 
     if (mejorComision) {
-      const nombreAula = mejorComision.aula?.nombre;
-      const aulaLabel = nombreAula
-        ? /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula
-        : null;
-      const edificioNombre = mejorComision.aula?.edificio?.nombre ?? "";
-      const detalle = aulaLabel
-        ? `${aulaLabel}${edificioNombre ? ` · ${edificioNombre}` : ""}`
-        : edificioNombre || "Sin aula";
+      const cantidadComisiones = m.comisiones?.length ?? 0;
+      const edificioNombre =
+        mejorComision.aula?.edificio?.nombre ??
+        m.comisiones?.find((comision) => comision.aula?.edificio?.nombre)?.aula
+          ?.edificio?.nombre ??
+        "Sin sede";
+      const detalle = `${cantidadComisiones} ${
+        cantidadComisiones === 1 ? "comisión" : "comisiones"
+      } - ${edificioNombre}`;
 
       proximas.push({
         id: m.id,
         nombre: m.nombre,
         detalle,
+        cantidadComisiones,
+        edificio: edificioNombre,
         prioridad: mejorPrioridad,
       });
     }
