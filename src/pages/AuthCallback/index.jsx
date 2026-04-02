@@ -16,7 +16,7 @@ export default function AuthCallback() {
     if (loading) return
     if (!user) {
       redireccionIniciada.current = true
-      navigate('/login', { replace: true })
+      navigate('/bienvenida', { replace: true })
       return
     }
 
@@ -32,7 +32,7 @@ export default function AuthCallback() {
         await refresh()
         navigate('/', { replace: true })
       } catch {
-        navigate('/sin-conexion', { replace: true })
+        navigate('/404', { replace: true })
       }
     }
 

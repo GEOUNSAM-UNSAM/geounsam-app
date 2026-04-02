@@ -6,13 +6,13 @@ import { marcarOnboardingVisto } from "../../services/alumnos";
 import BurbujaDialogo from "../../components/Onboarding/BurbujaDialogo/index.jsx";
 import IndicadorPasos from "../../components/Onboarding/IndicadorPasos/index.jsx";
 import logotipo from "../../assets/logotipo_white.svg";
-import samuSaludando from "../../assets/samu_saludando.png";
+import samuOnboarding from "../../assets/samu_onboarding.png";
 import samuMapa from "../../assets/samu_mapa.png";
 import samuPulgar from "../../assets/samu_pulgar.png";
 
 const PASOS = [
     {
-        imagen: samuSaludando,
+        imagen: samuOnboarding,
         burbuja:
             "¡Hola! Soy Samu, el jabalí del campus.\nVoy a ayudarte a\nencontrar tu aula sin vueltas.",
         titulo: "Bienvenido a GEOUNSAM",
@@ -54,11 +54,11 @@ export default function Onboarding() {
                 await refresh();
                 navigate("/", { replace: true });
             } catch {
-                navigate("/sin-conexion", { replace: true });
+                navigate("/404", { replace: true });
             }
         } else {
             localStorage.setItem("onboarding_completado", "1");
-            navigate("/login", { replace: true });
+            navigate("/bienvenida", { replace: true });
         }
     }
 
