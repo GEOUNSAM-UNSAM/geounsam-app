@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { getMateriasSugeridasDeCarrera, buscarMaterias } from "../../services/materias";
+import { useSearchParams } from "react-router-dom";
+import {
+  getMateriasSugeridasDeCarrera,
+  buscarMaterias,
+} from "../../services/materias";
 import { useAuth } from "../../context/AuthContext";
 
 import Toast from "../../components/Buscar/Toast";
@@ -9,19 +13,30 @@ import VistaResultados from "./VistaResultados";
 
 export default function Buscar() {
   const { user } = useAuth();
-  const [query, setQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [favoritos, setFavoritos] = useState(new Set());
   const [toast, setToast] = useState({ visible: false, mensaje: "" });
   const [materiasSugeridas, setMateriasSugeridas] = useState([]);
   const [carreraNombre, setCarreraNombre] = useState("");
 
+  const query = searchParams.get("q") ?? "";
   const [resultados, setResultados] = useState([]);
   const buscando = query.trim().length > 0;
 
+  const updateQuery = (value) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (value) {
+      nextParams.set("q", value);
+    } else {
+      nextParams.delete("q");
+    }
+    setSearchParams(nextParams, { replace: true });
+  };
+
   useEffect(() => {
-    if (!buscando) { setResultados([]); return; }
+    if (!buscando) return;
     buscarMaterias(query).then(setResultados).catch(console.error);
-  }, [query]);
+  }, [buscando, query]);
 
   useEffect(() => {
     if (!user) return;
@@ -74,8 +89,8 @@ export default function Buscar() {
 
       <Buscador
         query={query}
-        onChange={setQuery}
-        onClear={() => setQuery("")}
+        onChange={updateQuery}
+        onClear={() => updateQuery("")}
       />
     </div>
   );
