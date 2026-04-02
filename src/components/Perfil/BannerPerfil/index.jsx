@@ -1,8 +1,11 @@
 import { Star } from 'lucide-react'
+import { obtenerInicialesNombre } from '../../../utils/avatar.js'
 
 export default function BannerPerfil({ nombre, avatarUrl, carrera, nivel }) {
+  const iniciales = obtenerInicialesNombre(nombre)
+
   return (
-    <div className="bg-identity flex flex-col gap-3 items-center pb-5 px-4 -mt-0.5">
+    <div className="bg-identity flex flex-col gap-3 items-center px-4 pt-5 pb-5">
       {avatarUrl ? (
         <img
           src={avatarUrl}
@@ -11,7 +14,11 @@ export default function BannerPerfil({ nombre, avatarUrl, carrera, nivel }) {
           referrerPolicy="no-referrer"
         />
       ) : (
-        <div className="w-20 h-20 rounded-full bg-neutral-main" />
+        <div className="w-20 h-20 rounded-full bg-neutral-main flex items-center justify-center">
+          <span className="font-saira font-bold text-2xl text-neutral-extra-dark">
+            {iniciales}
+          </span>
+        </div>
       )}
 
       <h1 className="font-saira font-bold text-[28px] text-base leading-tight">
