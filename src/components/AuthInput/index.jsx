@@ -1,7 +1,16 @@
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 
-export default function AuthInput({ label, name, value, onChange, placeholder, type = 'text' }) {
+export default function AuthInput({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+  error = '',
+  ...inputProps
+}) {
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
   const inputType = isPassword && showPassword ? 'text' : type
@@ -16,7 +25,9 @@ export default function AuthInput({ label, name, value, onChange, placeholder, t
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`w-full h-10 bg-neutral-white border border-identity rounded-xl pl-5 font-saira text-base leading-6 text-neutral-extra-dark placeholder:text-neutral-main ${isPassword ? 'pr-10' : 'pr-4'}`}
+          aria-invalid={Boolean(error)}
+          className={`w-full h-10 bg-neutral-white rounded-xl pl-5 font-saira text-base leading-6 text-neutral-extra-dark placeholder:text-neutral-main ${error ? 'border border-error' : 'border border-identity'} ${isPassword ? 'pr-10' : 'pr-4'}`}
+          {...inputProps}
         />
         {isPassword && (
           <button
@@ -32,6 +43,9 @@ export default function AuthInput({ label, name, value, onChange, placeholder, t
           </button>
         )}
       </div>
+      {error && (
+        <p className="font-saira text-sm leading-5 text-error">{error}</p>
+      )}
     </div>
   )
 }

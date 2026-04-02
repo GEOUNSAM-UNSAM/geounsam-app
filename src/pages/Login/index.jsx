@@ -5,6 +5,7 @@ import samuLaptop from '../../assets/samu_laptop.png'
 import AuthInput from '../../components/AuthInput/index.jsx'
 import BotonGoogle from '../../components/BotonGoogle/index.jsx'
 import { supabase } from '../../lib/supabase'
+import { esEmailValido, validarLogin } from '../../utils/validacionesAuth.js'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -12,24 +13,36 @@ export default function Login() {
     email: '',
     password: '',
   })
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    form: '',
+  })
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+
+    setForm((prev) => ({ ...prev, [name]: value }))
+    setErrors((prev) => ({
+      ...prev,
+      [name]: '',
+      form: '',
+    }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     const email = form.email.trim()
+    const nextErrors = validarLogin({ ...form, email })
 
-    if (!email || !form.password) {
-      setError('Completá email y contraseña.')
+    if (nextErrors.email || nextErrors.password) {
+      setErrors((prev) => ({ ...prev, ...nextErrors, form: '' }))
       return
     }
 
     setLoading(true)
-    setError('')
+    setErrors((prev) => ({ ...prev, form: '' }))
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -37,13 +50,19 @@ export default function Login() {
     })
 
     if (signInError) {
-      setError('Email o contraseña incorrectos.')
+      setErrors((prev) => ({
+        ...prev,
+        form: 'Email o contraseña incorrectos.',
+      }))
       setLoading(false)
       return
     }
 
     navigate('/inicio', { replace: true })
   }
+
+  const isEmailValid = esEmailValido(form.email)
+  const isSubmitDisabled = loading || !form.email.trim() || !form.password || !isEmailValid
 
   return (
     <div className="flex flex-col min-h-screen bg-base px-8 pt-[60px] pb-8">
@@ -70,6 +89,9 @@ export default function Login() {
               value={form.email}
               onChange={handleChange}
               placeholder="Ingrese su email"
+              type="email"
+              autoComplete="email"
+              error={errors.email}
             />
             <AuthInput
               label="Contraseña"
@@ -78,12 +100,14 @@ export default function Login() {
               onChange={handleChange}
               placeholder="Ingrese su contraseña"
               type="password"
+              autoComplete="current-password"
+              error={errors.password}
             />
           </div>
         </div>
 
-        {error && (
-          <p className="font-saira text-sm text-error mt-3">{error}</p>
+        {errors.form && (
+          <p className="font-saira text-sm text-error mt-3">{errors.form}</p>
         )}
 
         <div className="flex flex-col gap-6 mt-auto pt-10">
@@ -102,8 +126,8 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="bg-action text-neutral-extra-dark font-saira font-semibold text-lg text-center h-11 rounded-xl w-full"
+            disabled={isSubmitDisabled}
+            className="bg-action text-neutral-extra-dark font-saira font-semibold text-lg text-center h-11 rounded-xl w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>
