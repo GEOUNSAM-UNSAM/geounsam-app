@@ -4,6 +4,7 @@ import Mapa from './pages/Mapa/index.jsx'
 import Cursada from './pages/Cursada/index.jsx'
 import Perfil from './pages/Perfil/index.jsx'
 import Inicio from './pages/Inicio/index.jsx'
+import Notificaciones from './pages/Notificaciones/index.jsx'
 import Onboarding from './pages/Onboarding/index.jsx'
 import Bienvenida from './pages/Bienvenida/index.jsx'
 import Registro from './pages/Registro/index.jsx'
@@ -68,6 +69,10 @@ function App() {
         </Route>
 
         <Route element={<RequireCareerRoute />}>
+          {/* no usan el layout compartido */}
+          <Route path="/notificaciones" element={<Notificaciones />} />
+
+          {/* sí usan el layout principal con Header + Navbar */}
           <Route element={<AppLayout />}>
             <Route path="/inicio" element={<Inicio />} />
             <Route path="/buscar" element={<Buscar />} />

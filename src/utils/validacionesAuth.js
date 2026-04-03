@@ -27,7 +27,6 @@ export function validarLogin(values) {
 
 export function validarRegistro(values) {
 	const errors = {
-		carrera: '',
 		email: '',
 		nombre: '',
 		password: '',
@@ -35,10 +34,6 @@ export function validarRegistro(values) {
 
 	const email = values.email.trim()
 	const nombre = values.nombre.trim()
-
-	if (!values.carrera) {
-		errors.carrera = 'Seleccioná tu carrera.'
-	}
 
 	if (!email) {
 		errors.email = 'Ingresá tu email.'

@@ -1,7 +1,11 @@
 import { Brain } from "lucide-react";
 import CardSugerida from "../../../components/Buscar/CardSugerida";
 
-export default function VistaSugeridas({ materiasSugeridas, carreraNombre }) {
+export default function VistaSugeridas({
+  materiasSugeridas,
+  carreraNombre,
+  onSelectMateria,
+}) {
   return (
     <>
       <div className="flex gap-2 items-start mb-6">
@@ -17,7 +21,11 @@ export default function VistaSugeridas({ materiasSugeridas, carreraNombre }) {
       </div>
       <div className="flex flex-col gap-3">
         {materiasSugeridas.map((materia) => (
-          <CardSugerida key={materia.id} materia={materia} />
+          <CardSugerida
+            key={materia.id}
+            materia={materia}
+            onSelect={onSelectMateria}
+          />
         ))}
       </div>
     </>

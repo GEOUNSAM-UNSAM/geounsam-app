@@ -1,25 +1,28 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ChevronDown } from 'lucide-react'
+import { useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import geounsam from '../../assets/geounsam.svg'
 import arrowLeft from '../../assets/arrow_left.svg'
 import samuAsomandoseLlave from '../../assets/samu_asomandose_llave.png'
 import AuthInput from '../../components/AuthInput/index.jsx'
 import { supabase } from '../../lib/supabase'
-import { getCarreras } from '../../services/alumnos'
 import { esEmailValido, validarRegistro } from '../../utils/validacionesAuth.js'
+
+function parseCarreraId(value) {
+    if (!value) return null
+
+    const carreraId = Number.parseInt(value, 10)
+    return Number.isInteger(carreraId) && carreraId > 0 ? carreraId : null
+}
 
 export default function Registro() {
     const navigate = useNavigate()
-    const [carreras, setCarreras] = useState([])
+    const [searchParams] = useSearchParams()
     const [form, setForm] = useState({
-        carrera: '',
         email: '',
         nombre: '',
         password: '',
     })
     const [errors, setErrors] = useState({
-        carrera: '',
         email: '',
         nombre: '',
         password: '',
@@ -27,10 +30,6 @@ export default function Registro() {
     })
     const [successMessage, setSuccessMessage] = useState('')
     const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        getCarreras().then(setCarreras).catch(console.error)
-    }, [])
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -51,9 +50,10 @@ export default function Registro() {
             email: form.email.trim(),
             nombre: form.nombre.trim(),
         }
+        const carreraId = parseCarreraId(searchParams.get('carrera_id'))
         const nextErrors = validarRegistro(nextValues)
 
-        if (nextErrors.carrera || nextErrors.email || nextErrors.nombre || nextErrors.password) {
+        if (nextErrors.email || nextErrors.nombre || nextErrors.password) {
             setErrors((prev) => ({ ...prev, ...nextErrors, form: '' }))
             return
         }
@@ -62,14 +62,19 @@ export default function Registro() {
         setErrors((prev) => ({ ...prev, form: '' }))
         setSuccessMessage('')
 
+        const userData = {
+            full_name: nextValues.nombre,
+        }
+
+        if (carreraId !== null) {
+            userData.carrera_id = carreraId
+        }
+
         const { data, error } = await supabase.auth.signUp({
             email: nextValues.email,
             password: nextValues.password,
             options: {
-                data: {
-                    full_name: nextValues.nombre,
-                    carrera_id: Number(nextValues.carrera),
-                },
+                data: userData,
                 emailRedirectTo: `${window.location.origin}/auth/callback`,
             },
         })
@@ -99,7 +104,6 @@ export default function Registro() {
 
     const isSubmitDisabled =
         loading ||
-        !form.carrera ||
         !form.email.trim() ||
         !esEmailValido(form.email) ||
         !form.nombre.trim() ||
@@ -131,31 +135,6 @@ export default function Registro() {
 
             <form onSubmit={handleSubmit} className="flex flex-col flex-1 pt-14">
                 <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2">
-                        <label className="font-saira text-sm leading-6 text-neutral-extra-dark">Carrera</label>
-                        <div className="relative">
-                            <select
-                                name="carrera"
-                                value={form.carrera}
-                                onChange={handleChange}
-                                className={`w-full h-10 bg-neutral-white rounded-xl pl-5 pr-10 font-saira text-base leading-6 appearance-none ${errors.carrera ? 'border border-error' : 'border border-identity'} ${form.carrera ? 'text-neutral-extra-dark' : 'text-neutral-main'}`}
-                            >
-                                <option value="" disabled>Ingrese su carrera</option>
-                                {carreras.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.nombre}</option>
-                                ))}
-                            </select>
-                            <ChevronDown
-                                size={16}
-                                color="#A7A9AC"
-                                className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-                            />
-                        </div>
-                        {errors.carrera && (
-                            <p className="font-saira text-sm leading-5 text-error">{errors.carrera}</p>
-                        )}
-                    </div>
-
                     <AuthInput
                         label="Email"
                         name="email"

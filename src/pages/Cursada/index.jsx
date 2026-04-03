@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { getMateriasCarreraConHorarios } from '../../services/alumnos'
+import { getMateriasPinneadasConHorarios } from '../../services/comisiones'
 import { getDiasSemanana } from '../../utils/tiempo'
 import { getClasesParaDia } from '../../utils/cursada'
 import SemanaCalendar from '../../components/Cursada/SemanaCalendar'
@@ -19,7 +19,7 @@ export default function Cursada() {
 
   useEffect(() => {
     if (!user) return
-    getMateriasCarreraConHorarios(user.id)
+    getMateriasPinneadasConHorarios(user.id)
       .then(setMaterias)
       .catch(console.error)
       .finally(() => setLoading(false))

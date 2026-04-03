@@ -1,51 +1,147 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Bolt, LogOut } from 'lucide-react'
+import { BellDot, Bolt, Flame } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import { getEstadisticas } from '../../services/perfil'
+import { obtenerInicialesNombre } from '../../utils/avatar.js'
 import logotipoWhite from '../../assets/logotipo_white.svg'
+import ProfileOverlay from './ProfileOverlay/index.jsx'
+import usePerfilResumen from '../../hooks/usePerfilResumen'
+
+function AvatarButton({ avatarUrl, nombre, onClick, className = 'h-8 w-8' }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`flex items-center justify-center rounded-full ${className}`}
+            aria-label="Abrir menú de perfil"
+        >
+            {avatarUrl ? (
+                <img
+                    src={avatarUrl}
+                    alt="Perfil"
+                    className="h-full w-full rounded-full object-cover"
+                    referrerPolicy="no-referrer"
+                />
+            ) : (
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-neutral-main">
+                    <span className="font-saira text-xs font-bold text-neutral-extra-dark">
+                        {obtenerInicialesNombre(nombre)}
+                    </span>
+                </div>
+            )}
+        </button>
+    );
+}
 
 export default function Header() {
-  const { user } = useAuth()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-  const avatarUrl = user?.user_metadata?.avatar_url
-  const esPerfil = pathname === '/perfil'
-  const [menuAbierto, setMenuAbierto] = useState(false)
+    const { user } = useAuth();
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const avatarUrl = user?.user_metadata?.avatar_url;
+    const nombre =
+        user?.user_metadata?.full_name ??
+        user?.user_metadata?.name ??
+        user?.email ??
+        "Usuario";
+    const esPerfil = pathname === "/perfil";
+    const [menuAbierto, setMenuAbierto] = useState(false);
+    const [racha, setRacha] = useState(0);
+    const { carrera, nivel, estadisticas } = usePerfilResumen(user?.id, menuAbierto);
 
-  return (
-    <header className="bg-identity px-5 h-16 flex items-center justify-between relative">
-      {!esPerfil && avatarUrl ? (
-        <img src={avatarUrl} alt="Perfil" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
-      ) : (
-        <div className="w-8 h-8" />
-      )}
-      <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
-      {esPerfil ? (
-        <button onClick={() => setMenuAbierto(!menuAbierto)}>
-          <Bolt size={24} className="text-neutral-main" />
-        </button>
-      ) : (
-        <div className="w-8 h-8" />
-      )}
+    const abrirMenu = () => setMenuAbierto(true);
+    const cerrarMenu = () => setMenuAbierto(false);
+    const irAPerfil = () => {
+        setMenuAbierto(false);
+        navigate('/perfil');
+    };
+    const irALogout = () => {
+        setMenuAbierto(false);
+        navigate('/logout');
+    };
+    const irANotificaciones = () => navigate('/notificaciones');
 
-      {/* Menú desplegable */}
-      {menuAbierto && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setMenuAbierto(false)} />
-          <div className="absolute right-5 top-14 z-50 bg-neutral-white rounded-xl shadow-lg py-2 min-w-[180px]">
+    useEffect(() => {
+        if (!user || esPerfil) return;
+
+        let mounted = true;
+
+        getEstadisticas(user.id)
+            .then((estadisticas) => {
+                if (mounted) setRacha(estadisticas?.racha ?? 0);
+            })
+            .catch((error) => {
+                console.error(error);
+                if (mounted) setRacha(0);
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, [esPerfil, user]);
+
+    const header = !esPerfil ? (
+            <header className="bg-identity px-4 h-16 flex items-center justify-between gap-3">
+                <img
+                    src={logotipoWhite}
+                    alt="GEOUNSAM"
+                    className="h-5 shrink-0"
+                />
+
+                <div className="flex items-center gap-3 ml-auto">
+                    {racha > 0 ? (
+                        <div className="hidden min-[360px]:flex items-center gap-1 rounded-full bg-data-pink-400 px-3 py-2">
+                            <Flame size={14} className="text-error" />
+                            <span className="font-saira text-sm leading-4 text-error">
+                                {racha} días
+                            </span>
+                        </div>
+                    ) : null}
+
+                    <button
+                        type="button"
+                        onClick={irANotificaciones}
+                        className="text-neutral-white"
+                        aria-label="Notificaciones"
+                    >
+                        <BellDot size={22} />
+                    </button>
+
+                    <AvatarButton
+                        avatarUrl={avatarUrl}
+                        nombre={nombre}
+                        onClick={abrirMenu}
+                    />
+                </div>
+            </header>
+    ) : (
+        <header className="bg-identity px-5 h-16 flex items-center justify-between relative">
+            <div className="w-8 h-8" />
+            <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
             <button
-              onClick={() => {
-                setMenuAbierto(false)
-                navigate('/logout')
-              }}
-              className="flex items-center gap-3 w-full px-4 py-3 font-saira text-sm text-red-500"
+                type="button"
+                onClick={abrirMenu}
+                aria-label="Abrir menú de perfil"
             >
-              <LogOut size={18} />
-              Cerrar sesión
+                <Bolt size={24} className="text-neutral-main" />
             </button>
-          </div>
+        </header>
+    );
+
+    return (
+        <>
+            {header}
+            <ProfileOverlay
+                open={menuAbierto}
+                avatarUrl={avatarUrl}
+                nombre={nombre}
+                carrera={carrera}
+                nivel={nivel}
+                estadisticas={estadisticas}
+                onClose={cerrarMenu}
+                onGoPerfil={irAPerfil}
+                onLogout={irALogout}
+            />
         </>
-      )}
-    </header>
-  )
+    );
 }

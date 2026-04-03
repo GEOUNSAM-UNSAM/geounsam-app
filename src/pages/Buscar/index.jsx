@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { getMateriasSugeridasDeCarrera, buscarMaterias } from "../../services/materias";
+import { useSearchParams } from "react-router-dom";
+import {
+  getMateriasSugeridasDeCarrera,
+  buscarMaterias,
+} from "../../services/materias";
+import {
+  getAlumnoComisionIds,
+  guardarAlumnoComision,
+  quitarAlumnoComision,
+} from "../../services/comisiones";
 import { useAuth } from "../../context/AuthContext";
 
 import Toast from "../../components/Buscar/Toast";
@@ -9,19 +18,31 @@ import VistaResultados from "./VistaResultados";
 
 export default function Buscar() {
   const { user } = useAuth();
-  const [query, setQuery] = useState("");
-  const [favoritos, setFavoritos] = useState(new Set());
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [comisionesGuardadas, setComisionesGuardadas] = useState(new Set());
+  const [comisionesPendientes, setComisionesPendientes] = useState(new Set());
   const [toast, setToast] = useState({ visible: false, mensaje: "" });
   const [materiasSugeridas, setMateriasSugeridas] = useState([]);
   const [carreraNombre, setCarreraNombre] = useState("");
 
+  const query = searchParams.get("q") ?? "";
   const [resultados, setResultados] = useState([]);
   const buscando = query.trim().length > 0;
 
+  const updateQuery = (value) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (value) {
+      nextParams.set("q", value);
+    } else {
+      nextParams.delete("q");
+    }
+    setSearchParams(nextParams, { replace: true });
+  };
+
   useEffect(() => {
-    if (!buscando) { setResultados([]); return; }
+    if (!buscando) return;
     buscarMaterias(query).then(setResultados).catch(console.error);
-  }, [query]);
+  }, [buscando, query]);
 
   useEffect(() => {
     if (!user) return;
@@ -34,25 +55,85 @@ export default function Buscar() {
   }, [user]);
 
   useEffect(() => {
+    if (!user) return;
+    getAlumnoComisionIds(user.id)
+      .then((comisionIds) => {
+        setComisionesGuardadas(new Set(comisionIds));
+      })
+      .catch(console.error);
+  }, [user]);
+
+  useEffect(() => {
     if (toast.visible) {
       const timer = setTimeout(() => setToast((t) => ({ ...t, visible: false })), 2500);
       return () => clearTimeout(timer);
     }
   }, [toast.visible]);
 
-  const toggleFavorito = (resultado) => {
-    const key = `${resultado.materiaId}-${resultado.codigo}`;
-    setFavoritos((prev) => {
+  const buscarMateria = (materia) => {
+    updateQuery(materia.nombre);
+  };
+
+  const toggleComision = async (resultado) => {
+    if (!user) return;
+
+    const { comisionId, nombre } = resultado;
+    if (comisionesPendientes.has(comisionId)) return;
+
+    const estabaGuardada = comisionesGuardadas.has(comisionId);
+
+    setComisionesPendientes((prev) => {
       const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-        setToast({ visible: true, mensaje: `Se quitó ${resultado.nombre} de favoritos` });
+      next.add(comisionId);
+      return next;
+    });
+
+    setComisionesGuardadas((prev) => {
+      const next = new Set(prev);
+      if (estabaGuardada) {
+        next.delete(comisionId);
       } else {
-        next.add(key);
-        setToast({ visible: true, mensaje: `Se agregó ${resultado.nombre} a favoritos` });
+        next.add(comisionId);
       }
       return next;
     });
+
+    try {
+      if (estabaGuardada) {
+        await quitarAlumnoComision(user.id, comisionId);
+        setToast({
+          visible: true,
+          mensaje: `Se quitó ${nombre} de tu cursada`,
+        });
+      } else {
+        await guardarAlumnoComision(user.id, comisionId);
+        setToast({
+          visible: true,
+          mensaje: `Se agregó ${nombre} a tu cursada`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      setComisionesGuardadas((prev) => {
+        const next = new Set(prev);
+        if (estabaGuardada) {
+          next.add(comisionId);
+        } else {
+          next.delete(comisionId);
+        }
+        return next;
+      });
+      setToast({
+        visible: true,
+        mensaje: "No pudimos actualizar tu cursada",
+      });
+    } finally {
+      setComisionesPendientes((prev) => {
+        const next = new Set(prev);
+        next.delete(comisionId);
+        return next;
+      });
+    }
   };
 
   return (
@@ -63,19 +144,24 @@ export default function Buscar() {
         <VistaResultados
           resultados={resultados}
           query={query}
-          favoritos={favoritos}
-          onToggleFav={toggleFavorito}
+          comisionesGuardadas={comisionesGuardadas}
+          comisionesPendientes={comisionesPendientes}
+          onTogglePin={toggleComision}
         />
       ) : (
         <div className="flex-1 overflow-y-auto px-8 pt-7">
-          <VistaSugeridas materiasSugeridas={materiasSugeridas} carreraNombre={carreraNombre} />
+          <VistaSugeridas
+            materiasSugeridas={materiasSugeridas}
+            carreraNombre={carreraNombre}
+            onSelectMateria={buscarMateria}
+          />
         </div>
       )}
 
       <Buscador
         query={query}
-        onChange={setQuery}
-        onClear={() => setQuery("")}
+        onChange={updateQuery}
+        onClear={() => updateQuery("")}
       />
     </div>
   );
