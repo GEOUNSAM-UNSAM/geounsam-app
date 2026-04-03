@@ -45,7 +45,6 @@ export default function Header() {
         user?.email ??
         "Usuario";
     const esPerfil = pathname === "/perfil";
-    const esInicio = pathname === "/inicio";
     const [menuAbierto, setMenuAbierto] = useState(false);
     const [racha, setRacha] = useState(0);
     const { carrera, nivel, estadisticas } = usePerfilResumen(user?.id, menuAbierto);
@@ -60,9 +59,10 @@ export default function Header() {
         setMenuAbierto(false);
         navigate('/logout');
     };
+    const irANotificaciones = () => navigate('/notificaciones');
 
     useEffect(() => {
-        if (!user || !esInicio) return;
+        if (!user || esPerfil) return;
 
         let mounted = true;
 
@@ -78,9 +78,9 @@ export default function Header() {
         return () => {
             mounted = false;
         };
-    }, [esInicio, user]);
+    }, [esPerfil, user]);
 
-    const header = esInicio ? (
+    const header = !esPerfil ? (
             <header className="bg-identity px-4 h-16 flex items-center justify-between gap-3">
                 <img
                     src={logotipoWhite}
@@ -100,6 +100,7 @@ export default function Header() {
 
                     <button
                         type="button"
+                        onClick={irANotificaciones}
                         className="text-neutral-white"
                         aria-label="Notificaciones"
                     >
@@ -115,27 +116,15 @@ export default function Header() {
             </header>
     ) : (
         <header className="bg-identity px-5 h-16 flex items-center justify-between relative">
-            {!esPerfil ? (
-                <AvatarButton
-                    avatarUrl={avatarUrl}
-                    nombre={nombre}
-                    onClick={abrirMenu}
-                />
-            ) : (
-                <div className="w-8 h-8" />
-            )}
+            <div className="w-8 h-8" />
             <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
-            {esPerfil ? (
-                <button
-                    type="button"
-                    onClick={abrirMenu}
-                    aria-label="Abrir menú de perfil"
-                >
-                    <Bolt size={24} className="text-neutral-main" />
-                </button>
-            ) : (
-                <div className="w-8 h-8" />
-            )}
+            <button
+                type="button"
+                onClick={abrirMenu}
+                aria-label="Abrir menú de perfil"
+            >
+                <Bolt size={24} className="text-neutral-main" />
+            </button>
         </header>
     );
 
