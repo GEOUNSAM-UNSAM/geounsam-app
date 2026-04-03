@@ -1,10 +1,38 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { BellDot, Bolt, Flame, LogOut } from 'lucide-react'
+import { BellDot, Bolt, Flame } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { getEstadisticas } from '../../services/perfil'
 import { obtenerInicialesNombre } from '../../utils/avatar.js'
 import logotipoWhite from '../../assets/logotipo_white.svg'
+import ProfileOverlay from './ProfileOverlay/index.jsx'
+import usePerfilResumen from '../../hooks/usePerfilResumen'
+
+function AvatarButton({ avatarUrl, nombre, onClick, className = 'h-8 w-8' }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`flex items-center justify-center rounded-full ${className}`}
+            aria-label="Abrir menú de perfil"
+        >
+            {avatarUrl ? (
+                <img
+                    src={avatarUrl}
+                    alt="Perfil"
+                    className="h-full w-full rounded-full object-cover"
+                    referrerPolicy="no-referrer"
+                />
+            ) : (
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-neutral-main">
+                    <span className="font-saira text-xs font-bold text-neutral-extra-dark">
+                        {obtenerInicialesNombre(nombre)}
+                    </span>
+                </div>
+            )}
+        </button>
+    );
+}
 
 export default function Header() {
     const { user } = useAuth();
@@ -20,6 +48,18 @@ export default function Header() {
     const esInicio = pathname === "/inicio";
     const [menuAbierto, setMenuAbierto] = useState(false);
     const [racha, setRacha] = useState(0);
+    const { carrera, nivel, estadisticas } = usePerfilResumen(user?.id, menuAbierto);
+
+    const abrirMenu = () => setMenuAbierto(true);
+    const cerrarMenu = () => setMenuAbierto(false);
+    const irAPerfil = () => {
+        setMenuAbierto(false);
+        navigate('/perfil');
+    };
+    const irALogout = () => {
+        setMenuAbierto(false);
+        navigate('/logout');
+    };
 
     useEffect(() => {
         if (!user || !esInicio) return;
@@ -40,8 +80,7 @@ export default function Header() {
         };
     }, [esInicio, user]);
 
-    if (esInicio) {
-        return (
+    const header = esInicio ? (
             <header className="bg-identity px-4 h-16 flex items-center justify-between gap-3">
                 <img
                     src={logotipoWhite}
@@ -67,67 +106,53 @@ export default function Header() {
                         <BellDot size={22} />
                     </button>
 
-                    {avatarUrl ? (
-                        <img
-                            src={avatarUrl}
-                            alt="Perfil"
-                            className="w-8 h-8 rounded-full object-cover"
-                            referrerPolicy="no-referrer"
-                        />
-                    ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-main">
-                            <span className="font-saira text-xs font-bold text-neutral-extra-dark">
-                                {obtenerInicialesNombre(nombre)}
-                            </span>
-                        </div>
-                    )}
+                    <AvatarButton
+                        avatarUrl={avatarUrl}
+                        nombre={nombre}
+                        onClick={abrirMenu}
+                    />
                 </div>
             </header>
-        );
-    }
-
-    return (
+    ) : (
         <header className="bg-identity px-5 h-16 flex items-center justify-between relative">
-            {!esPerfil && avatarUrl ? (
-                <img
-                    src={avatarUrl}
-                    alt="Perfil"
-                    className="w-8 h-8 rounded-full object-cover"
-                    referrerPolicy="no-referrer"
+            {!esPerfil ? (
+                <AvatarButton
+                    avatarUrl={avatarUrl}
+                    nombre={nombre}
+                    onClick={abrirMenu}
                 />
             ) : (
                 <div className="w-8 h-8" />
             )}
             <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
             {esPerfil ? (
-                <button onClick={() => setMenuAbierto(!menuAbierto)}>
+                <button
+                    type="button"
+                    onClick={abrirMenu}
+                    aria-label="Abrir menú de perfil"
+                >
                     <Bolt size={24} className="text-neutral-main" />
                 </button>
             ) : (
                 <div className="w-8 h-8" />
             )}
-
-            {/* Menú desplegable */}
-            {menuAbierto && (
-                <>
-                    <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setMenuAbierto(false)}
-                    />
-                    <div className="absolute right-5 top-14 z-50 bg-neutral-white rounded-xl shadow-lg py-2 min-w-[180px]">
-                        <button
-                            onClick={() => {
-                                setMenuAbierto(false);
-                                navigate("/logout");
-                            }}
-                            className="flex items-center gap-3 w-full px-4 py-3 font-saira text-sm text-red-500"
-                        >
-                            <LogOut size={18} />
-                            Cerrar sesión
-                        </button>
-                    </div>
-                </>
-            )}
         </header>
+    );
+
+    return (
+        <>
+            {header}
+            <ProfileOverlay
+                open={menuAbierto}
+                avatarUrl={avatarUrl}
+                nombre={nombre}
+                carrera={carrera}
+                nivel={nivel}
+                estadisticas={estadisticas}
+                onClose={cerrarMenu}
+                onGoPerfil={irAPerfil}
+                onLogout={irALogout}
+            />
+        </>
     );
 }
