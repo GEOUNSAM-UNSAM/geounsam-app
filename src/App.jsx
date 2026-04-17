@@ -4,6 +4,7 @@ import Mapa from './pages/Mapa/index.jsx'
 import Cursada from './pages/Cursada/index.jsx'
 import Perfil from './pages/Perfil/index.jsx'
 import Inicio from './pages/Inicio/index.jsx'
+import DetalleAula from './pages/DetalleAula/index.jsx'
 import Notificaciones from './pages/Notificaciones/index.jsx'
 import Onboarding from './pages/Onboarding/index.jsx'
 import Bienvenida from './pages/Bienvenida/index.jsx'
@@ -79,6 +80,8 @@ function App() {
             <Route path="/mapa" element={<Mapa />} />
             <Route path="/cursada" element={<Cursada />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/:edificioSlug/aulas/:aulaId" element={<DetalleAula />} />
+            <Route path="/aulas/:aulaId" element={<DetalleAula />} />
           </Route>
         </Route>
 

@@ -2,7 +2,19 @@ import { Map } from "lucide-react";
 import { ICONOS_SVG } from "../../../data/iconosSvg";
 import { COLORES_CATEGORIA } from "../../../data/edificios";
 
-export default function DetalleSeleccion({ marcadorSeleccionado, onVerPlano, mostrarBoton = true }) {
+export default function DetalleSeleccion({
+  marcadorSeleccionado,
+  onVerPlano,
+  mostrarBoton = true,
+  puedeVerPlano,
+}) {
+  const mostrarVerPlano = Boolean(
+    mostrarBoton &&
+      marcadorSeleccionado &&
+      onVerPlano &&
+      (puedeVerPlano ? puedeVerPlano(marcadorSeleccionado) : marcadorSeleccionado.planoId),
+  );
+
   return (
     <div className="bg-neutral-white border-b border-neutral-main px-5 h-[100px] flex items-center">
       {marcadorSeleccionado ? (
@@ -31,7 +43,7 @@ export default function DetalleSeleccion({ marcadorSeleccionado, onVerPlano, mos
             </p>
           </div>
 
-          {mostrarBoton && marcadorSeleccionado.tipo === "Edificios" && (
+          {mostrarVerPlano ? (
             <button
               onClick={() => onVerPlano(marcadorSeleccionado)}
               className="flex-shrink-0 bg-identity px-4 py-2 rounded-xl"
@@ -40,7 +52,7 @@ export default function DetalleSeleccion({ marcadorSeleccionado, onVerPlano, mos
                 Ver plano
               </span>
             </button>
-          )}
+          ) : null}
         </div>
       ) : (
         <div className="flex items-center gap-3 py-1">

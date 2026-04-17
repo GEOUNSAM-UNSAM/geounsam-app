@@ -11,6 +11,7 @@ import BotonGPS from "../../components/Mapa/BotonGPS";
 import FiltrosCategorias from "../../components/Mapa/FiltrosCategorias";
 import DetalleSeleccion from "../../components/Mapa/DetalleSeleccion";
 import VistaPlano from "./VistaPlano";
+import PLANOS from "../../components/Planos";
 
 function ZoomAlSeleccionar({ marcador }) {
   const map = useMap();
@@ -39,6 +40,10 @@ function CambiarVista({ coords, zoom }) {
 
 const categorias = getCategorias();
 const sedes = getSedes();
+
+function tienePlanoImplementado(marcador) {
+  return Boolean(marcador?.planoId && PLANOS[marcador.planoId]);
+}
 
 export default function Mapa() {
   const [categoriaActiva, setCategoriaActiva] = useState("Edificios");
@@ -120,6 +125,7 @@ export default function Mapa() {
       <DetalleSeleccion
         marcadorSeleccionado={marcadorSeleccionado}
         onVerPlano={(m) => setEdificioPlano(m)}
+        puedeVerPlano={tienePlanoImplementado}
       />
     </div>
   );
