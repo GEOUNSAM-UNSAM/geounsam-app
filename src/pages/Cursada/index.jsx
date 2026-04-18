@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { getMateriasPinneadasConHorarios } from '../../services/comisiones'
 import { getDiasSemanana } from '../../utils/tiempo'
@@ -7,9 +8,11 @@ import SemanaCalendar from '../../components/Cursada/SemanaCalendar'
 import CardMateria from '../../components/Cursada/CardMateria'
 import CardSinClases from '../../components/Cursada/CardSinClases'
 import LabelDia from '../../components/Cursada/LabelDia'
+import { getDetalleAulaPath } from '../../utils/edificios'
 
 export default function Cursada() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [materias, setMaterias] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -37,6 +40,24 @@ export default function Cursada() {
 
   const diasConClases = diasSemana.map((d) => getClasesParaDia(materias, d.diaDB).length > 0)
 
+  const abrirDetalleAula = (clase) => {
+    if (!clase.aulaDetalle) return
+
+    const path = getDetalleAulaPath({
+      edificio: clase.edificio,
+      aula: clase.aulaDetalle,
+    })
+    if (!path) return
+
+    navigate(path, {
+      state: {
+        aula: clase.aulaDetalle,
+        edificio: clase.edificio,
+        piso: clase.piso,
+      },
+    })
+  }
+
   return (
     <div className="flex flex-col gap-5 px-6 py-4 pb-6 bg-[#efefef] min-h-[calc(100dvh-68px-64px)]">
       <div className="flex flex-col gap-1 pt-1">
@@ -56,7 +77,13 @@ export default function Cursada() {
           <LabelDia nombre={diaActual.nombre} num={diaActual.num} />
 
           {clasesHoy.length > 0 ? (
-            clasesHoy.map((clase) => <CardMateria key={clase.id} clase={clase} />)
+            clasesHoy.map((clase) => (
+              <CardMateria
+                key={clase.id}
+                clase={clase}
+                onOpen={clase.aulaDetalle ? () => abrirDetalleAula(clase) : undefined}
+              />
+            ))
           ) : (
             <>
               <CardSinClases />
@@ -68,7 +95,11 @@ export default function Cursada() {
                     prefijo="PRÓXIMAS CLASES"
                   />
                   {proximasClases.clases.map((clase) => (
-                    <CardMateria key={clase.id} clase={clase} />
+                    <CardMateria
+                      key={clase.id}
+                      clase={clase}
+                      onOpen={clase.aulaDetalle ? () => abrirDetalleAula(clase) : undefined}
+                    />
                   ))}
                 </>
               )}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ArrowRight, X } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { getEstadosEdificio } from "../../../services/aulas";
 import { useAuth } from "../../../context/AuthContext";
@@ -21,7 +22,13 @@ const ESTADOS = {
   "espacios": { color: "#00205b", label: "Espacios" },
 };
 
-const ENTRANCE_COLOR = "#00205b";
+const CHIP_CLASSES = {
+  "mi-clase": "bg-state-blue text-action",
+  libre: "bg-state-green text-data-green-800",
+  ocupada: "bg-state-red text-error",
+  espacios: "bg-neutral-light text-identity",
+};
+
 const STAIR_COLOR = "#b0b0b0";
 
 // Labels que representan espacios de servicio (color sólido "espacios")
@@ -51,6 +58,18 @@ function normalize(name) {
     .replace(/\s+/g, " ")
     .toLowerCase()
     .trim();
+}
+
+function formatRoomLabel(label) {
+  if (!label) return "";
+
+  const normalized = String(label).trim();
+  const aulaMatch = normalized.match(/^A(?:ula)?\s*(\d+)$/i);
+
+  if (/^\d+$/.test(normalized)) return `Aula ${normalized}`;
+  if (aulaMatch) return `Aula ${aulaMatch[1]}`;
+
+  return normalized;
 }
 
 // ── Room interactivo ──
@@ -113,7 +132,7 @@ function SvgRoom({ pathData, estado, isEspacio, selected, onSelect }) {
 }
 
 // ── Componente principal ──
-export default function PlanoTornavias({ pisoSlug }) {
+export default function PlanoTornavias({ pisoSlug, onOpenDetalleAula }) {
   const { user } = useAuth();
   const [selectedId, setSelectedId] = useState(null);
   const [todosEstados, setTodosEstados] = useState({});
@@ -221,39 +240,65 @@ export default function PlanoTornavias({ pisoSlug }) {
       {/* Panel inferior: info + leyenda */}
       <div className="w-full px-4 py-2 flex flex-col gap-2">
         {selectedRoom && (
-          <div className="rounded-xl p-3 bg-neutral-white border border-neutral-light shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="font-saira font-semibold text-base text-neutral-extra-dark">
-                {selectedRoom.path.label || selectedRoom.path.id}
-              </p>
-              <button
-                onClick={() => setSelectedId(null)}
-                className="text-neutral-main text-lg leading-none px-1"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="flex items-center gap-2 mt-2">
-              <span
-                className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                style={{
-                  backgroundColor: ESTADOS[selectedRoom.estado || "libre"].color + "22",
-                  color: ESTADOS[selectedRoom.estado || "libre"].color,
-                }}
-              >
-                {ESTADOS[selectedRoom.estado || "libre"].label}
-              </span>
-            </div>
-            {selectedRoom.info?.materia && (
-              <div className="mt-2 flex flex-col gap-0.5">
-                <p className="font-saira font-semibold text-sm text-neutral-extra-dark">
-                  {selectedRoom.info.materia}
+          <div className="flex items-center justify-center rounded-[20px] border border-neutral-main bg-neutral-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)]">
+            <div className="min-w-0 flex-1">
+              <div className="flex min-w-0 flex-col items-start justify-center gap-1 rounded-[30px]">
+                <p className="font-saira text-base leading-6 text-neutral-extra-dark">
+                  {formatRoomLabel(selectedRoom.path.label || selectedRoom.path.id)}
                 </p>
-                <p className="font-saira text-xs text-neutral-main">
-                  {selectedRoom.info.comision} · {selectedRoom.info.horario}
-                </p>
+                <span
+                  className={`flex h-6 items-center justify-center rounded-full px-2 font-saira text-xs font-medium leading-3 ${
+                    CHIP_CLASSES[selectedRoom.estado] || CHIP_CLASSES.libre
+                  }`}
+                >
+                  {ESTADOS[selectedRoom.estado || "libre"]?.label || ESTADOS.libre.label}
+                </span>
+                {selectedRoom.info?.materia ? (
+                  <>
+                    <p className="max-w-full truncate font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                      {selectedRoom.info.materia}
+                    </p>
+                    <div className="flex max-w-full items-center gap-2 overflow-hidden font-saira text-sm leading-4 text-neutral-extra-dark">
+                      <p className="shrink-0">{selectedRoom.info.comision}</p>
+                      <p className="shrink-0">-</p>
+                      <p className="truncate">{selectedRoom.info.horario}</p>
+                    </div>
+                  </>
+                ) : null}
               </div>
-            )}
+            </div>
+
+            <div className="flex self-stretch items-center">
+              <div className="flex h-full w-[120px] shrink-0 flex-col items-end justify-between">
+                <button
+                  type="button"
+                  onClick={() => setSelectedId(null)}
+                  className="flex h-8 w-6 items-start justify-center text-neutral-main"
+                  aria-label="Cerrar detalle de aula"
+                >
+                  <X size={24} />
+                </button>
+
+                {!selectedRoom.isEspacio && onOpenDetalleAula ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenDetalleAula({
+                        id: selectedRoom.path.id,
+                        nombre: selectedRoom.path.label || selectedRoom.path.id,
+                        estado: selectedRoom.estado,
+                        info: selectedRoom.info,
+                        pisoSlug,
+                      });
+                    }}
+                    className="flex w-full items-center justify-center gap-1 rounded-[10px] border border-action px-3 py-1.5 font-saira text-xs font-medium leading-3 text-neutral-extra-dark whitespace-nowrap"
+                  >
+                    Ver detalle
+                    <ArrowRight size={16} className="shrink-0 text-neutral-extra-dark" />
+                  </button>
+                ) : null}
+              </div>
+            </div>
           </div>
         )}
 

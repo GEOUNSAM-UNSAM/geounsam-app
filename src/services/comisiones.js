@@ -51,9 +51,12 @@ export async function getAlumnoComisiones(userId) {
         aula:aulas(
           id,
           nombre,
-          edificio:edificios(nombre)
+          piso,
+          edificio_id,
+          edificio:edificios(id, nombre)
         ),
         horarios(
+          id,
           dia,
           inicio,
           fin

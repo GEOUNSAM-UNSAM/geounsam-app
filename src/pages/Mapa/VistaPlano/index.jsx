@@ -1,14 +1,35 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Map } from "lucide-react";
 import DetalleSeleccion from "../../../components/Mapa/DetalleSeleccion";
 import PLANOS from "../../../components/Planos";
+import { getDetalleAulaPath } from "../../../utils/edificios";
 
 export default function VistaPlano({ edificio, onBack }) {
+  const navigate = useNavigate();
   const pisos = edificio.pisos || [{ nombre: "Planta baja", slug: "pb" }];
   const [pisoActivo, setPisoActivo] = useState(0);
 
   const Plano = edificio.planoId ? PLANOS[edificio.planoId] : null;
-  const pisoSlug = pisos[pisoActivo].slug;
+  const piso = pisos[pisoActivo];
+  const pisoSlug = piso.slug;
+
+  const openDetalleAula = (aula) => {
+    const path = getDetalleAulaPath({ edificio, aula });
+    if (!path) return;
+
+    navigate(path, {
+      state: {
+        aula,
+        edificio: {
+          id: edificio.id,
+          nombre: edificio.nombre,
+          planoId: edificio.planoId,
+        },
+        piso,
+      },
+    });
+  };
 
   return (
     <div className="flex flex-col h-[calc(100dvh-68px-64px)] relative bg-base">
@@ -49,7 +70,13 @@ export default function VistaPlano({ edificio, onBack }) {
       {/* Contenido del plano */}
       <div className={`flex-1 min-h-0 ${!Plano ? "flex items-center justify-center overflow-auto" : ""}`}>
         {Plano ? (
-          <Plano key={pisoSlug} pisoSlug={pisoSlug} />
+          <Plano
+            key={pisoSlug}
+            pisoSlug={pisoSlug}
+            edificio={edificio}
+            piso={piso}
+            onOpenDetalleAula={openDetalleAula}
+          />
         ) : (
           <div className="flex flex-col items-center gap-4 p-6">
             <Map size={64} color="#808285" strokeWidth={1.5} />
