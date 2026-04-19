@@ -37,6 +37,17 @@ export default function Inicio() {
         navigate(termino ? `/buscar?q=${encodeURIComponent(termino)}` : "/buscar");
     };
 
+    const abrirClase = (clase) => {
+        if (!clase.detalleAulaPath) {
+            navigate("/cursada");
+            return;
+        }
+
+        navigate(clase.detalleAulaPath, {
+            state: clase.detalleAulaState,
+        });
+    };
+
     useEffect(() => {
         if (!user) return;
 
@@ -123,7 +134,7 @@ export default function Inicio() {
                                 </SectionTitle>
                                 <CardProximaClase
                                     clase={inicioState.proximaClase}
-                                    onOpen={() => navigate("/cursada")}
+                                    onOpen={() => abrirClase(inicioState.proximaClase)}
                                 />
                             </section>
                         ) : null}
@@ -138,7 +149,7 @@ export default function Inicio() {
                                         <CardMateria
                                             key={clase.id}
                                             clase={clase}
-                                            onOpen={() => navigate("/cursada")}
+                                            onOpen={() => abrirClase(clase)}
                                         />
                                     ))}
                                 </div>

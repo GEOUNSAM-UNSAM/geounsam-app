@@ -262,6 +262,14 @@ export const MARCADORES = [
     coords: [-34.58244, -58.51946],
   },
   {
+    id: 219,
+    tipo: "Edificios",
+    sede: "economia_negocios",
+    nombre: "Escuela de Economía y Negocios - Caseros",
+    coords: [-34.5769697620566, -58.541290288969215],
+    planoId: "eeyn"
+  },
+  {
     id: 51,
     tipo: "Edificios",
     sede: "miguelete",
@@ -282,20 +290,20 @@ export const MARCADORES = [
     nombre: "CUSAM",
     coords: [-34.520915803090425, -58.597014046027326],
   },
-  {
+  /* {
     id: 101,
     tipo: "Edificios",
     sede: "secundaria",
     nombre: "Sede Buen Ayre",
     coords: [-34.536853038004544, -58.59577616191802],
-  },
-  {
+  }, */
+  /* {
     id: 102,
     tipo: "Edificios",
     sede: "secundaria",
     nombre: "Sede Casa UNSAM",
     coords: [-34.542824515434916, -58.586053830684875],
-  },
+  }, */
 
   // ── Vida Universitaria ──
   {

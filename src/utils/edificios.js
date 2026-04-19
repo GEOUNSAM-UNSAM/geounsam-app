@@ -13,6 +13,7 @@ export function getEdificioSlug(edificio) {
 
     if (!slug) return null;
     if (slug.startsWith("tornavia")) return "tornavias";
+    if (slug.includes("economia") && slug.includes("negocios")) return "eeyn";
 
     return slug;
 }
