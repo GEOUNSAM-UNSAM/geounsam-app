@@ -5,10 +5,19 @@ import DetalleSeleccion from "../../../components/Mapa/DetalleSeleccion";
 import PLANOS from "../../../components/Planos";
 import { getDetalleAulaPath } from "../../../utils/edificios";
 
-export default function VistaPlano({ edificio, onBack }) {
+export default function VistaPlano({
+  edificio,
+  onBack,
+  initialAulaId = null,
+  initialPisoSlug = null,
+}) {
   const navigate = useNavigate();
   const pisos = edificio.pisos || [{ nombre: "Planta baja", slug: "pb" }];
-  const [pisoActivo, setPisoActivo] = useState(0);
+  const initialPisoIndex = Math.max(
+    0,
+    pisos.findIndex((item) => item.slug === initialPisoSlug),
+  );
+  const [pisoActivo, setPisoActivo] = useState(initialPisoIndex);
 
   const Plano = edificio.planoId ? PLANOS[edificio.planoId] : null;
   const piso = pisos[pisoActivo];
@@ -75,6 +84,7 @@ export default function VistaPlano({ edificio, onBack }) {
             pisoSlug={pisoSlug}
             edificio={edificio}
             piso={piso}
+            initialAulaId={initialAulaId}
             onOpenDetalleAula={openDetalleAula}
           />
         ) : (
