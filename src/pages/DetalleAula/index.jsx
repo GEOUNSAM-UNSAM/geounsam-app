@@ -3,6 +3,7 @@ import { Siren } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ActualizacionesCard from "../../components/DetalleAula/ActualizacionesCard";
 import ActionButtons from "../../components/DetalleAula/ActionButtons";
+import AgendaDiaCard from "../../components/DetalleAula/AgendaDiaCard";
 import ClaseCard from "../../components/DetalleAula/ClaseCard";
 import DetalleHeader from "../../components/DetalleAula/DetalleHeader";
 import ValidacionComunitaria from "../../components/DetalleAula/ValidacionComunitaria";
@@ -164,6 +165,7 @@ export default function DetalleAula() {
 			<main className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-8 pb-4 pt-5">
 				<div className="flex flex-col gap-4">
 					{detalle.clase ? <ClaseCard clase={detalle.clase} /> : null}
+					<AgendaDiaCard agenda={detalle.agendaDia} titulo={detalle.agendaTitulo} />
 					{validacion ? <ValidacionComunitaria validacion={validacion} /> : null}
 					<ActualizacionesCard actualizaciones={actualizaciones} />
 				</div>
