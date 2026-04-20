@@ -47,18 +47,17 @@ function tienePlanoImplementado(marcador) {
 
 export default function Mapa() {
   const [categoriaActiva, setCategoriaActiva] = useState("Edificios");
-  const [sedeActiva] = useState("miguelete");
   const [marcadorSeleccionado, setMarcadorSeleccionado] = useState(null);
   const [edificioPlano, setEdificioPlano] = useState(null);
   const mapRef = useRef(null);
 
   const { ubicacionUsuario, gpsActivo, centrarEnUsuario } = useGeolocalizacion(mapRef);
 
-  const sede = sedes[sedeActiva];
+  const sede = sedes.miguelete;
 
   const marcadoresFiltrados = useMemo(() => {
-    return getMarcadores({ sede: sedeActiva, categoria: categoriaActiva });
-  }, [categoriaActiva, sedeActiva]);
+    return getMarcadores({ categoria: categoriaActiva });
+  }, [categoriaActiva]);
 
   if (edificioPlano) {
     return (

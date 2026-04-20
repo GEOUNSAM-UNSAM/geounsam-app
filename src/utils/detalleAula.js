@@ -49,6 +49,24 @@ function getClaseFromAula(aula) {
     };
 }
 
+function getAgendaDiaFromAula(aula) {
+    const claseActual = aula?.info;
+
+    return (claseActual?.agendaDia ?? [])
+        .filter((item) => {
+            if (!claseActual?.horarioId) return true;
+            return item.horarioId !== claseActual.horarioId;
+        })
+        .map((item) => ({
+            ...item,
+            inicio: normalizarHora(item.inicio),
+            fin: normalizarHora(item.fin),
+            horario:
+                item.horario ??
+                `${normalizarHora(item.inicio)} - ${normalizarHora(item.fin)}`,
+        }));
+}
+
 function normalizarHora(hora) {
     return hora ? String(hora).slice(0, 5) : "";
 }
@@ -136,6 +154,7 @@ export function buildDetalleAula({ state, aulaId }) {
     const clase = getClaseFromAula(aula);
     const estadoAula = aula?.estado;
     const enCursada = estadoAula === "mi-clase";
+    const agendaDia = enCursada ? [] : getAgendaDiaFromAula(aula);
 
     return {
         aula: formatAulaLabel(aula?.nombre ?? aulaId),
@@ -143,6 +162,8 @@ export function buildDetalleAula({ state, aulaId }) {
         piso: formatPiso(state?.piso),
         estado: ESTADOS_AULA_DETALLE[estadoAula] ?? null,
         clase,
+        agendaDia,
+        agendaTitulo: aula?.info?.agendaTitulo ?? "Clases de hoy",
         validacion: null,
         actualizaciones: [],
         enCursada,

@@ -12,15 +12,14 @@ export function getSedes() {
   return SEDES;
 }
 
-export function getMarcadores({ sede, categoria }) {
+export function getMarcadores({ categoria }) {
   const categoriasActivas = CATEGORIAS.filter((c) => c.id !== "todos").map((c) => c.id);
 
   return MARCADORES.filter((m) => {
-    const matchSede = m.sede === sede;
     const matchCategoria =
       categoria === "todos"
         ? categoriasActivas.includes(m.tipo)
         : m.tipo === categoria;
-    return matchSede && matchCategoria;
+    return matchCategoria;
   });
 }

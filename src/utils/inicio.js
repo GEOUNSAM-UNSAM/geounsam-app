@@ -4,6 +4,8 @@ import {
     getDiasSemanana,
     minutosDelDia,
 } from "./tiempo";
+import { getDetalleAulaPath } from "./edificios";
+import { getPisoLabel } from "./pisos";
 
 function getNombreSaludo(user) {
     const nombreCrudo =
@@ -13,6 +15,11 @@ function getNombreSaludo(user) {
         "estudiante";
 
     return nombreCrudo.trim().split(/\s+/)[0];
+}
+
+function formatAulaLabel(nombreAula) {
+    if (!nombreAula) return null;
+    return /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula;
 }
 
 function normalizarUbicacion(comision) {
@@ -34,9 +41,7 @@ function normalizarUbicacion(comision) {
         };
     }
 
-    const aulaLabel = /^\d+$/.test(nombreAula)
-        ? `Aula ${nombreAula}`
-        : nombreAula;
+    const aulaLabel = formatAulaLabel(nombreAula);
 
     return {
         ubicacion: edificio ? `${aulaLabel} - ${edificio}` : aulaLabel,
@@ -46,6 +51,50 @@ function normalizarUbicacion(comision) {
 
 function crearClaseItem(materia, comision, horario, extras = {}) {
     const { ubicacion, esVirtual } = normalizarUbicacion(comision);
+    const aulaLabel = formatAulaLabel(comision.aula?.nombre?.trim());
+    const aulaDetalle = comision.aula
+        ? {
+              id: comision.aula.nombre ?? comision.aula.id,
+              nombre: aulaLabel,
+              estado: "mi-clase",
+              info: {
+                  materia: materia.nombre,
+                  comision: comision.codigo,
+                  horario: `${horario.inicio.slice(0, 5)} - ${horario.fin.slice(0, 5)}`,
+                  horarioId: horario.id,
+                  comisionId: comision.id,
+                  aulaId: comision.aula.id,
+                  dia: horario.dia,
+                  inicio: horario.inicio,
+                  fin: horario.fin,
+              },
+              pisoSlug: comision.aula.piso,
+          }
+        : null;
+    const edificio = comision.aula?.edificio
+        ? {
+              id: comision.aula.edificio_id ?? comision.aula.edificio.id,
+              nombre: comision.aula.edificio.nombre,
+              slug: comision.aula.edificio.slug,
+              planoId: comision.aula.edificio.plano_id,
+          }
+        : null;
+    const piso = comision.aula?.piso
+        ? {
+              slug: comision.aula.piso,
+              nombre: getPisoLabel(comision.aula.piso),
+          }
+        : null;
+    const detalleAulaPath = aulaDetalle
+        ? getDetalleAulaPath({ edificio, aula: aulaDetalle })
+        : null;
+    const detalleAulaState = aulaDetalle
+        ? {
+              aula: aulaDetalle,
+              edificio,
+              piso,
+          }
+        : null;
 
     return {
         id: `${materia.id}-${comision.id}-${horario.dia}-${horario.inicio}`,
@@ -53,6 +102,8 @@ function crearClaseItem(materia, comision, horario, extras = {}) {
         inicio: horario.inicio.slice(0, 5),
         fin: horario.fin.slice(0, 5),
         ubicacion,
+        detalleAulaPath,
+        detalleAulaState,
         esVirtual,
         estado: esVirtual ? "virtual" : undefined,
         ...extras,
