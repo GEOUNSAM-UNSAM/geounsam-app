@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -12,6 +13,7 @@ import FiltrosCategorias from "../../components/Mapa/FiltrosCategorias";
 import DetalleSeleccion from "../../components/Mapa/DetalleSeleccion";
 import VistaPlano from "./VistaPlano";
 import PLANOS from "../../components/Planos";
+import { getEdificioSlug } from "../../utils/edificios";
 
 function ZoomAlSeleccionar({ marcador }) {
   const map = useMap();
@@ -40,15 +42,59 @@ function CambiarVista({ coords, zoom }) {
 
 const categorias = getCategorias();
 const sedes = getSedes();
+const marcadores = getMarcadores({ categoria: "todos" });
 
 function tienePlanoImplementado(marcador) {
   return Boolean(marcador?.planoId && PLANOS[marcador.planoId]);
 }
 
+function getInitialMapFocus(routeState) {
+  const focus = routeState?.mapFocus;
+  if (!focus) {
+    return {
+      marcador: null,
+      edificioPlano: null,
+      planoFocus: null,
+    };
+  }
+
+  const targetSlug = routeState.edificioSlug ?? getEdificioSlug(routeState.edificio);
+  const marcador = marcadores.find((item) => {
+    if (item.tipo !== "Edificios") return false;
+    if (targetSlug && getEdificioSlug(item) === targetSlug) return true;
+    return item.nombre === routeState.edificio?.nombre;
+  });
+
+  if (!marcador) {
+    return {
+      marcador: null,
+      edificioPlano: null,
+      planoFocus: null,
+    };
+  }
+
+  const planoFocus =
+    focus === "aula"
+      ? {
+          aulaId: routeState.aulaId,
+          pisoSlug: routeState.pisoSlug,
+        }
+      : null;
+
+  return {
+    marcador,
+    edificioPlano: focus === "aula" ? marcador : null,
+    planoFocus,
+  };
+}
+
 export default function Mapa() {
+  const location = useLocation();
+  const [initialFocus] = useState(() => getInitialMapFocus(location.state));
   const [categoriaActiva, setCategoriaActiva] = useState("Edificios");
-  const [marcadorSeleccionado, setMarcadorSeleccionado] = useState(null);
-  const [edificioPlano, setEdificioPlano] = useState(null);
+  const [marcadorSeleccionado, setMarcadorSeleccionado] = useState(initialFocus.marcador);
+  const [edificioPlano, setEdificioPlano] = useState(initialFocus.edificioPlano);
+  const [planoFocus, setPlanoFocus] = useState(initialFocus.planoFocus);
   const mapRef = useRef(null);
 
   const { ubicacionUsuario, gpsActivo, centrarEnUsuario } = useGeolocalizacion(mapRef);
@@ -64,6 +110,8 @@ export default function Mapa() {
       <VistaPlano
         edificio={edificioPlano}
         onBack={() => setEdificioPlano(null)}
+        initialAulaId={planoFocus?.aulaId}
+        initialPisoSlug={planoFocus?.pisoSlug}
       />
     );
   }
@@ -123,7 +171,10 @@ export default function Mapa() {
 
       <DetalleSeleccion
         marcadorSeleccionado={marcadorSeleccionado}
-        onVerPlano={(m) => setEdificioPlano(m)}
+        onVerPlano={(m) => {
+          setPlanoFocus(null);
+          setEdificioPlano(m);
+        }}
         puedeVerPlano={tienePlanoImplementado}
       />
     </div>

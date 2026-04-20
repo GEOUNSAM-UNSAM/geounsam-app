@@ -6,6 +6,7 @@ import ActionButtons from "../../components/DetalleAula/ActionButtons";
 import AgendaDiaCard from "../../components/DetalleAula/AgendaDiaCard";
 import ClaseCard from "../../components/DetalleAula/ClaseCard";
 import DetalleHeader from "../../components/DetalleAula/DetalleHeader";
+import UbicacionActions from "../../components/DetalleAula/UbicacionActions";
 import ValidacionComunitaria from "../../components/DetalleAula/ValidacionComunitaria";
 import Tip from "../../components/Tip";
 import { useAuth } from "../../context/AuthContext";
@@ -119,6 +120,41 @@ export default function DetalleAula() {
 
 	const puedeConfirmar = Boolean(user && detalle.confirmacion.puedeConfirmar);
 
+	const getDetalleEdificioSlug = () =>
+		edificioSlug ?? getEdificioSlug(detalleState?.edificio);
+
+	const verUbicacionEdificio = () => {
+		const targetEdificioSlug = getDetalleEdificioSlug();
+
+		navigate("/mapa", {
+			state: {
+				mapFocus: "edificio",
+				edificioSlug: targetEdificioSlug,
+				edificio: detalleState?.edificio ?? {
+					nombre: detalle.edificio,
+					slug: targetEdificioSlug,
+				},
+			},
+		});
+	};
+
+	const verUbicacionAula = () => {
+		const targetEdificioSlug = getDetalleEdificioSlug();
+
+		navigate("/mapa", {
+			state: {
+				mapFocus: "aula",
+				edificioSlug: targetEdificioSlug,
+				edificio: detalleState?.edificio ?? {
+					nombre: detalle.edificio,
+					slug: targetEdificioSlug,
+				},
+				aulaId: detalleState?.aula?.nombre ?? aulaId,
+				pisoSlug: detalleState?.aula?.pisoSlug ?? detalleState?.piso?.slug,
+			},
+		});
+	};
+
 	const handleConfirmar = async () => {
 		if (!puedeConfirmar || confirmando || confirmado) return;
 
@@ -164,6 +200,11 @@ export default function DetalleAula() {
 
 			<main className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-8 pb-4 pt-5">
 				<div className="flex flex-col gap-4">
+					<UbicacionActions
+						onVerEdificio={verUbicacionEdificio}
+						onVerAula={verUbicacionAula}
+						puedeVerAula={Boolean(aulaId || detalleState?.aula?.nombre)}
+					/>
 					{detalle.clase ? <ClaseCard clase={detalle.clase} /> : null}
 					<AgendaDiaCard agenda={detalle.agendaDia} titulo={detalle.agendaTitulo} />
 					{validacion ? <ValidacionComunitaria validacion={validacion} /> : null}

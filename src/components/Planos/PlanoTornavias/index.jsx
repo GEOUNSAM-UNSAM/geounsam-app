@@ -72,6 +72,35 @@ function formatRoomLabel(label) {
   return normalized;
 }
 
+function getRoomDomId(id) {
+  return `plano-room-${String(id).replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+}
+
+function FocusSelectedRoom({ selectedId, zoomToElement }) {
+  useEffect(() => {
+    if (!selectedId) return;
+
+    const element = document.getElementById(getRoomDomId(selectedId));
+    if (!element) return;
+
+    zoomToElement(element, 1.8, 250, "easeOut");
+  }, [selectedId, zoomToElement]);
+
+  return null;
+}
+
+function getInitialSelectedRoomId(data, initialAulaId) {
+  if (!data || !initialAulaId) return null;
+
+  const targetKey = normalize(initialAulaId);
+  const targetRoom = [...data.ROOM_PATHS, ...data.ENTRANCE_PATHS].find((item) => {
+    const label = item.label || item.id;
+    return normalize(label) === targetKey || normalize(formatRoomLabel(label)) === targetKey;
+  });
+
+  return targetRoom?.id ?? null;
+}
+
 // ── Room interactivo ──
 function SvgRoom({ pathData, estado, isEspacio, selected, onSelect }) {
   const [hovered, setHovered] = useState(false);
@@ -93,6 +122,7 @@ function SvgRoom({ pathData, estado, isEspacio, selected, onSelect }) {
 
   return (
     <g
+      id={getRoomDomId(pathData.id)}
       style={{ cursor: "pointer" }}
       onClick={() => onSelect(pathData.id)}
       onMouseEnter={() => setHovered(true)}
@@ -132,12 +162,17 @@ function SvgRoom({ pathData, estado, isEspacio, selected, onSelect }) {
 }
 
 // ── Componente principal ──
-export default function PlanoTornavias({ pisoSlug, onOpenDetalleAula }) {
+export default function PlanoTornavias({
+  pisoSlug,
+  initialAulaId = null,
+  onOpenDetalleAula,
+}) {
   const { user } = useAuth();
-  const [selectedId, setSelectedId] = useState(null);
-  const [todosEstados, setTodosEstados] = useState({});
-
   const data = PISOS_DATA[pisoSlug];
+  const [selectedId, setSelectedId] = useState(() =>
+    getInitialSelectedRoomId(data, initialAulaId),
+  );
+  const [todosEstados, setTodosEstados] = useState({});
 
   useEffect(() => {
     getEstadosEdificio("tornavias", user?.id)
@@ -188,53 +223,58 @@ export default function PlanoTornavias({ pisoSlug, onOpenDetalleAula }) {
         pinch={{ step: 5 }}
         doubleClick={{ mode: "reset" }}
       >
-        <TransformComponent
-          wrapperStyle={{ width: "100%", flex: 1, minHeight: 0 }}
-          contentStyle={{ width: "100%", height: "100%" }}
-        >
-          <svg viewBox={data.SVG_VIEWBOX} className="w-full" fill="none">
-            {/* Salas interactivas (dentro de layer transform) */}
-            <g transform={data.LAYER_TRANSFORM || undefined}>
-              {rooms.map((r) => (
-                <SvgRoom
-                  key={r.path.id}
-                  pathData={r.path}
-                  estado={r.estado}
-                  isEspacio={r.isEspacio}
-                  selected={selectedId === r.path.id}
-                  onSelect={handleSelect}
-                />
-              ))}
-            </g>
+        {({ zoomToElement }) => (
+          <>
+            <FocusSelectedRoom selectedId={selectedId} zoomToElement={zoomToElement} />
+            <TransformComponent
+              wrapperStyle={{ width: "100%", flex: 1, minHeight: 0 }}
+              contentStyle={{ width: "100%", height: "100%" }}
+            >
+              <svg viewBox={data.SVG_VIEWBOX} className="w-full" fill="none">
+                {/* Salas interactivas (dentro de layer transform) */}
+                <g transform={data.LAYER_TRANSFORM || undefined}>
+                  {rooms.map((r) => (
+                    <SvgRoom
+                      key={r.path.id}
+                      pathData={r.path}
+                      estado={r.estado}
+                      isEspacio={r.isEspacio}
+                      selected={selectedId === r.path.id}
+                      onSelect={handleSelect}
+                    />
+                  ))}
+                </g>
 
-            {/* Escaleras (decorativas, fuera de layer, con sus propios transforms) */}
-            {data.STAIR_GROUPS.map((group) => (
-              <g key={group.id} transform={group.transform || undefined}>
-                {group.paths.map((p) => (
-                  <path
+                {/* Escaleras (decorativas, fuera de layer, con sus propios transforms) */}
+                {data.STAIR_GROUPS.map((group) => (
+                  <g key={group.id} transform={group.transform || undefined}>
+                    {group.paths.map((p) => (
+                      <path
+                        key={p.id}
+                        d={p.d}
+                        stroke={STAIR_COLOR}
+                        strokeWidth="0.26"
+                        fill="none"
+                      />
+                    ))}
+                  </g>
+                ))}
+
+                {/* Entradas (fuera de layer) */}
+                {data.ENTRANCE_PATHS.map((p) => (
+                  <SvgRoom
                     key={p.id}
-                    d={p.d}
-                    stroke={STAIR_COLOR}
-                    strokeWidth="0.26"
-                    fill="none"
+                    pathData={p}
+                    estado="espacios"
+                    isEspacio={true}
+                    selected={selectedId === p.id}
+                    onSelect={handleSelect}
                   />
                 ))}
-              </g>
-            ))}
-
-            {/* Entradas (fuera de layer) */}
-            {data.ENTRANCE_PATHS.map((p) => (
-              <SvgRoom
-                key={p.id}
-                pathData={p}
-                estado="espacios"
-                isEspacio={true}
-                selected={selectedId === p.id}
-                onSelect={handleSelect}
-              />
-            ))}
-          </svg>
-        </TransformComponent>
+              </svg>
+            </TransformComponent>
+          </>
+        )}
       </TransformWrapper>
 
       {/* Panel inferior: info + leyenda */}
