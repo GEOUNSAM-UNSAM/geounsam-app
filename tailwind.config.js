@@ -86,23 +86,15 @@ export default {
     },
   },
   plugins: [
-    function({ addComponents, theme }) {
-        const getFontFamily = (key) => {
-            const value = theme(key)
-            return Array.isArray(value) ? value.join(', ') : value
-        }
-
-        const saira = getFontFamily('fontFamily.saira')
-        const faustina = getFontFamily('fontFamily.faustina')
-
+    function({ addComponents }) {
         addComponents({
-            '.text-heading-xl':    { fontSize: '1.75rem', lineHeight: '2.5rem',   fontFamily: saira },
-            '.text-heading-l':     { fontSize: '1.375rem', lineHeight: '2rem',    fontFamily: saira },
-            '.text-title-m':       { fontSize: '1.125rem', lineHeight: '2rem',    fontFamily: saira },
-            '.text-body-m':        { fontSize: '1rem',     lineHeight: '1.5rem',  fontFamily: saira },
-            '.text-body-m-serif':  { fontSize: '1rem',     lineHeight: '1.5rem',  fontFamily: faustina },
-            '.text-body-s':        { fontSize: '0.875rem', lineHeight: '1rem',    fontFamily: saira },
-            '.text-label-caption': { fontSize: '0.75rem',  lineHeight: '0.75rem', fontFamily: saira },
+            '.text-heading-xl':    { fontFamily: '"Saira", sans-serif', fontWeight: '700', fontSize: '1.75rem',  lineHeight: '2.5rem' },
+            '.text-heading-l':     { fontFamily: '"Saira", sans-serif', fontWeight: '600', fontSize: '1.375rem', lineHeight: '2rem' },
+            '.text-title-m':       { fontFamily: '"Saira", sans-serif', fontWeight: '600', fontSize: '1.125rem', lineHeight: '2rem' },
+            '.text-body-m':        { fontFamily: '"Saira", sans-serif', fontWeight: '400', fontSize: '1rem',     lineHeight: '1.5rem' },
+            '.text-body-m-serif':  { fontFamily: '"Faustina", serif',   fontWeight: '500', fontSize: '1rem',     lineHeight: '1.5rem' },
+            '.text-body-s':        { fontFamily: '"Saira", sans-serif', fontWeight: '400', fontSize: '0.875rem', lineHeight: '1rem' },
+            '.text-label-caption': { fontFamily: '"Saira", sans-serif', fontWeight: '500', fontSize: '0.75rem',  lineHeight: '0.75rem' },
         })
     },
   ],
