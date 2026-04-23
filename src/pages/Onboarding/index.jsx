@@ -9,6 +9,8 @@ import logotipo from "../../assets/logotipo_white.svg";
 import samuOnboarding from "../../assets/samu_onboarding.png";
 import samuMapa from "../../assets/samu_mapa.png";
 import samuPulgar from "../../assets/samu_pulgar.png";
+import BotonPrincipal from "../../components/BotonPrincipal/index.jsx";
+import BotonOutline from "../../components/BotonOutline/index.jsx";
 
 const PASOS = [
     {
@@ -67,48 +69,42 @@ export default function Onboarding() {
     }
 
     return (
-        <div className="flex flex-col h-screen w-full bg-base">
-            <div className="bg-identity h-16 flex items-center px-5 shrink-0">
-                <img src={logotipo} alt="GeoUNSAM" className="h-5" />
+        <div className="flex flex-col flex-1 items-center h-screen justify-between p-12 w-full">
+            <IndicadorPasos total={PASOS.length} actual={paso} />
+
+            <div className="flex flex-col items-center gap-10 w-full">
+                <BurbujaDialogo texto={pasoActual.burbuja} />
+                <img
+                    src={pasoActual.imagen}
+                    alt="Samu"
+                    className="h-[280px] object-contain"
+                />
             </div>
 
-            <div className="flex flex-col flex-1 items-center justify-between px-8 py-6 w-full">
-                <IndicadorPasos total={PASOS.length} actual={paso} />
+            <div className="text-center w-full gap-2 flex flex-col">
+                <h2 className="text-heading-l text-identity">
+                    {pasoActual.titulo}
+                </h2>
+                <p className="text-body-m text-neutral-extra-dark">
+                    {pasoActual.descripcion}
+                </p>
+            </div>
 
-                <div className="flex flex-col items-center gap-5 w-full">
-                    <BurbujaDialogo texto={pasoActual.burbuja} />
-                    <img
-                        src={pasoActual.imagen}
-                        alt="Samu"
-                        className="h-[280px] object-contain"
-                    />
-                </div>
-
-                <div className="text-center w-full">
-                    <h2 className="font-saira font-semibold text-[22px] leading-8 text-identity">
-                        {pasoActual.titulo}
-                    </h2>
-                    <p className="font-saira text-base text-neutral-extra-dark mt-2 leading-6">
-                        {pasoActual.descripcion}
-                    </p>
-                </div>
-
-                <div className="flex flex-col gap-4 w-full">
-                    <button
-                        onClick={siguiente}
-                        className="bg-action text-neutral-extra-dark font-saira font-semibold text-lg h-11 rounded-xl w-full"
-                    >
-                        {paso < PASOS.length - 1
+            <div className="flex flex-col gap-4 w-full lg:w-1/2">
+                <BotonPrincipal
+                    onClick={siguiente}
+                    texto={
+                        paso < PASOS.length - 1
                             ? "Siguiente"
-                            : "¡Entrar al campus!"}
-                    </button>
-                    <button
-                        onClick={atras}
-                        className={`border border-identity text-identity font-saira text-sm h-11 rounded-xl w-full ${paso === 0 ? "invisible" : ""}`}
-                    >
-                        Atrás
-                    </button>
-                </div>
+                            : "¡Entrar al campus!"
+                    }
+                    className="w-full"
+                />
+                <BotonOutline
+                    onClick={atras}
+                    texto="Atrás"
+                    className={`w-full ${paso === 0 ? "invisible" : ""}`}
+                />
             </div>
         </div>
     );
