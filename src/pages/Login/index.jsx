@@ -123,18 +123,15 @@ export default function Login() {
           </div>
 
           {errors.form && (
-            <p className="font-saira text-sm text-error mt-3">{errors.form}</p>
+            <p className="text-body-s text-error mt-3">{errors.form}</p>
           )}
 
           <div className="flex flex-col gap-6 pt-16">
-            <BotonGoogle texto="Registrarme con Google" className="w-full" />
-            
+            <BotonGoogle texto="Iniciar con Google" className="w-full" />
 
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-neutral-main" />
-              <span className="font-saira font-semibold text-lg leading-8 text-neutral-dark">
-                o
-              </span>
+              <span className="text-title-m text-neutral-dark">o</span>
               <div className="flex-1 h-px bg-neutral-main" />
             </div>
 
