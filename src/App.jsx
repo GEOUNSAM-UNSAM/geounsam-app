@@ -1,22 +1,23 @@
-import { Routes, Route, Outlet } from 'react-router-dom'
-import Buscar from './pages/Buscar/index.jsx'
-import Mapa from './pages/Mapa/index.jsx'
-import Cursada from './pages/Cursada/index.jsx'
-import Perfil from './pages/Perfil/index.jsx'
-import Inicio from './pages/Inicio/index.jsx'
-import DetalleAula from './pages/DetalleAula/index.jsx'
-import Notificaciones from './pages/Notificaciones/index.jsx'
-import Onboarding from './pages/Onboarding/index.jsx'
-import Bienvenida from './pages/Bienvenida/index.jsx'
-import Registro from './pages/Registro/index.jsx'
-import Login from './pages/Login/index.jsx'
-import AuthCallback from './pages/AuthCallback/index.jsx'
-import SeleccionCarrera from './pages/SeleccionCarrera/index.jsx'
-import Logout from './pages/Logout/index.jsx'
-import NotFound from './pages/NotFound/index.jsx'
-import Navbar from './components/Navbar/index.jsx'
-import Header from './components/Header/index.jsx'
-import PantallaCarga from './components/PantallaCarga/index.jsx'
+import { Routes, Route, Outlet } from 'react-router-dom';
+import Buscar from './pages/Buscar/index.jsx';
+import Mapa from './pages/Mapa/index.jsx';
+import Cursada from './pages/Cursada/index.jsx';
+import Perfil from './pages/Perfil/index.jsx';
+import Inicio from './pages/Inicio/index.jsx';
+import DetalleAula from './pages/DetalleAula/index.jsx';
+import Notificaciones from './pages/Notificaciones/index.jsx';
+import Onboarding from './pages/Onboarding/index.jsx';
+import Bienvenida from './pages/Bienvenida/index.jsx';
+import Registro from './pages/Registro/index.jsx';
+import Login from './pages/Login/index.jsx';
+import AuthCallback from './pages/AuthCallback/index.jsx';
+import SeleccionCarrera from './pages/SeleccionCarrera/index.jsx';
+import Logout from './pages/Logout/index.jsx';
+import NotFound from './pages/NotFound/index.jsx';
+import Navbar from './components/Navbar/index.jsx';
+import Header from './components/Header/index.jsx';
+import SidebarNav from './components/Sidebar/index.jsx';
+import PantallaCarga from './components/PantallaCarga/index.jsx';
 import {
   CareerSelectionRoute,
   GuestOnlyRoute,
@@ -25,18 +26,25 @@ import {
   RequireCareerRoute,
   RootRedirect,
   WelcomeRoute,
-} from './guards/RouteGuard.jsx'
+} from './guards/RouteGuard.jsx';
 
 function AppLayout() {
   return (
-    <div className="flex flex-col h-screen">
-      <Header />
-      <main className="flex-1 overflow-y-auto">
-        <Outlet />
-      </main>
-      <Navbar />
+    <div className="flex h-screen">
+      <SidebarNav />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="lg:hidden">
+          <Header />
+        </div>
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+        <div className="lg:hidden">
+          <Navbar />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
 function App() {
@@ -44,7 +52,10 @@ function App() {
     <div className="w-full min-h-screen bg-base relative">
       <Routes>
         <Route path="/" element={<RootRedirect />} />
-        <Route path="/loading" element={<PantallaCarga mensaje="Cargando..." />} />
+        <Route
+          path="/loading"
+          element={<PantallaCarga mensaje="Cargando..." />}
+        />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/404" element={<NotFound />} />
 
@@ -80,7 +91,10 @@ function App() {
             <Route path="/mapa" element={<Mapa />} />
             <Route path="/cursada" element={<Cursada />} />
             <Route path="/perfil" element={<Perfil />} />
-            <Route path="/:edificioSlug/aulas/:aulaId" element={<DetalleAula />} />
+            <Route
+              path="/:edificioSlug/aulas/:aulaId"
+              element={<DetalleAula />}
+            />
             <Route path="/aulas/:aulaId" element={<DetalleAula />} />
           </Route>
         </Route>
@@ -88,7 +102,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,13 +1,16 @@
-import { Calendar } from 'lucide-react'
+import { CalendarX } from 'lucide-react';
 
-export default function CardSinClases() {
+export default function CardSinClases({
+  titulo = 'Sin clases',
+  descripcion = 'No tenés materias guardadas para este día',
+}) {
   return (
-    <div className="bg-base flex flex-col items-center justify-center gap-2 p-10 rounded-[20px] w-full">
-      <Calendar size={56} className="text-neutral-light" strokeWidth={1.5} />
-      <p className="font-saira font-semibold text-[22px] text-neutral-extra-dark mt-1">Sin clases</p>
-      <p className="font-saira text-sm text-neutral-main text-center">
-        No tenés materias guardadas para este día
-      </p>
+    <div className="flex w-full flex-col items-center justify-center gap-1 rounded-[30px] bg-neutral-light py-7">
+      <div className="flex h-[70px] w-[70px] items-center justify-center rounded-full bg-neutral-dark">
+        <CalendarX size={30} className="text-base" strokeWidth={2} />
+      </div>
+      <p className="text-heading-l text-neutral-extra-dark">{titulo}</p>
+      <p className="text-body-s text-center text-neutral-dark">{descripcion}</p>
     </div>
-  )
+  );
 }
