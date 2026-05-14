@@ -117,7 +117,7 @@ export default function Mapa() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-68px-64px)] relative bg-neutral-white">
+    <div className="flex flex-col h-[calc(100dvh-64px-64px)] relative bg-neutral-white">
       <FiltrosCategorias
         categorias={categorias}
         categoriaActiva={categoriaActiva}

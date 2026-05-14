@@ -3,9 +3,16 @@ export default function ValidacionComunitaria({ validacion }) {
     const progress = validacion.total
         ? Math.min(100, Math.round((confirmaciones / validacion.total) * 100))
         : 0;
+    const esCambio = validacion.tipo === "cambio";
     const detalle = confirmaciones === 0
-        ? "Todavía no hay confirmaciones para esta ubicación"
-        : `${confirmaciones} ${confirmaciones === 1 ? "compañero confirmó" : "compañeros confirmaron"} esta ubicación`;
+        ? esCambio
+            ? "Todavía no hay validaciones para este cambio"
+            : "Todavía no hay confirmaciones para esta clase"
+        : esCambio
+            ? `${confirmaciones} ${confirmaciones === 1 ? "compañero validó" : "compañeros validaron"} este cambio`
+            : `${confirmaciones} ${confirmaciones === 1 ? "compañero confirmó" : "compañeros confirmaron"} esta clase`;
+    const color = esCambio ? "bg-data-orange-500" : "bg-status-green";
+    const counterColor = esCambio ? "text-data-orange-500" : "text-neutral-dark";
 
     return (
         <section className="w-full rounded-[30px] bg-neutral-white px-6 pb-5 pt-3">
@@ -13,7 +20,7 @@ export default function ValidacionComunitaria({ validacion }) {
                 <h2 className="font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
                     Validación comunitaria
                 </h2>
-                <p className="font-saira text-xs font-medium leading-3 text-neutral-dark">
+                <p className={`font-saira text-xs font-medium leading-3 ${counterColor}`}>
                     {confirmaciones} / {validacion.total}
                 </p>
             </div>
@@ -21,7 +28,7 @@ export default function ValidacionComunitaria({ validacion }) {
             <div className="mt-1 space-y-1">
                 <div className="h-1 w-full rounded-full bg-neutral-light">
                     <div
-                        className="h-1 rounded-full bg-status-green"
+                        className={`h-1 rounded-full ${color}`}
                         style={{ width: `${progress}%` }}
                     />
                 </div>

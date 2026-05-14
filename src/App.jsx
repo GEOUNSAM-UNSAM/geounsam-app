@@ -5,6 +5,8 @@ import Cursada from './pages/Cursada/index.jsx';
 import Perfil from './pages/Perfil/index.jsx';
 import Inicio from './pages/Inicio/index.jsx';
 import DetalleAula from './pages/DetalleAula/index.jsx';
+import DetalleClase from './pages/DetalleClase/index.jsx';
+import ReportarCambio from './pages/ReportarCambio/index.jsx';
 import Notificaciones from './pages/Notificaciones/index.jsx';
 import Onboarding from './pages/Onboarding/index.jsx';
 import Bienvenida from './pages/Bienvenida/index.jsx';
@@ -83,6 +85,7 @@ function App() {
         <Route element={<RequireCareerRoute />}>
           {/* no usan el layout compartido */}
           <Route path="/notificaciones" element={<Notificaciones />} />
+          <Route path="/reportar-cambio" element={<ReportarCambio />} />
 
           {/* sí usan el layout principal con Header + Navbar */}
           <Route element={<AppLayout />}>
@@ -90,6 +93,7 @@ function App() {
             <Route path="/buscar" element={<Buscar />} />
             <Route path="/mapa" element={<Mapa />} />
             <Route path="/cursada" element={<Cursada />} />
+            <Route path="/cursada/clases/:horarioId" element={<DetalleClase />} />
             <Route path="/perfil" element={<Perfil />} />
             <Route
               path="/:edificioSlug/aulas/:aulaId"

@@ -41,7 +41,7 @@ export default function VistaPlano({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-68px-64px)] relative bg-base">
+    <div className="flex flex-col h-[calc(100dvh-64px-64px)] relative bg-base">
       {/* Header identity */}
       <div className="bg-identity px-5 py-3">
         <div className="flex items-center gap-2">

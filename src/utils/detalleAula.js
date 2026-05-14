@@ -40,12 +40,15 @@ function getClaseFromAula(aula) {
     if (!aula?.info?.materia) return null;
 
     const [inicio = "", fin = ""] = aula.info.horario?.split(" - ") ?? [];
+    const modalidad = aula.info.modalidad ?? "presencial";
 
     return {
         nombre: aula.info.materia,
         inicio,
         fin,
         comision: aula.info.comision,
+        modalidad,
+        esVirtual: modalidad === "virtual" || Boolean(aula.info.esVirtual),
     };
 }
 
@@ -71,82 +74,40 @@ function normalizarHora(hora) {
     return hora ? String(hora).slice(0, 5) : "";
 }
 
+function buildConfirmacion(horarioId, aulaId, comisionId, modalidad, puedeConfirmar) {
+    return { horarioId, aulaId, comisionId, modalidad, puedeConfirmar };
+}
+
 function getConfirmacionFromAula(aula, enCursada) {
     const info = aula?.info;
     const horarioId = info?.horarioId ?? null;
     const aulaId = info?.aulaId ?? null;
     const comisionId = info?.comisionId ?? null;
+    const modalidad = info?.modalidad ?? "presencial";
 
-    if (!enCursada) {
-        return {
-            horarioId,
-            aulaId,
-            comisionId,
-            puedeConfirmar: false,
-        };
-    }
+    const sinConfirmar = () => buildConfirmacion(horarioId, aulaId, comisionId, modalidad, false);
 
-    if (!horarioId || !aulaId) {
-        return {
-            horarioId,
-            aulaId,
-            comisionId,
-            puedeConfirmar: false,
-        };
-    }
+    if (!enCursada) return sinConfirmar();
+    if (!horarioId || (modalidad !== "virtual" && !aulaId)) return sinConfirmar();
 
     const ahora = new Date();
     const diaHoy = DIAS[ahora.getDay()];
 
-    if (info?.dia && info.dia !== diaHoy) {
-        return {
-            horarioId,
-            aulaId,
-            comisionId,
-            puedeConfirmar: false,
-        };
-    }
+    if (info?.dia && info.dia !== diaHoy) return sinConfirmar();
 
     const inicio = normalizarHora(info?.inicio);
     const fin = normalizarHora(info?.fin);
 
-    if (!inicio || !fin) {
-        return {
-            horarioId,
-            aulaId,
-            comisionId,
-            puedeConfirmar: false,
-        };
-    }
+    if (!inicio || !fin) return sinConfirmar();
 
     const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
     const minutosInicio = minutosDelDia(inicio);
     const minutosFin = minutosDelDia(fin);
 
-    if (minutosAhora < minutosInicio - 60) {
-        return {
-            horarioId,
-            aulaId,
-            comisionId,
-            puedeConfirmar: false,
-        };
-    }
+    if (minutosAhora < minutosInicio - 60) return sinConfirmar();
+    if (minutosAhora > minutosFin) return sinConfirmar();
 
-    if (minutosAhora > minutosFin) {
-        return {
-            horarioId,
-            aulaId,
-            comisionId,
-            puedeConfirmar: false,
-        };
-    }
-
-    return {
-        horarioId,
-        aulaId,
-        comisionId,
-        puedeConfirmar: true,
-    };
+    return buildConfirmacion(horarioId, aulaId, comisionId, modalidad, true);
 }
 
 export function buildDetalleAula({ state, aulaId }) {
@@ -155,6 +116,8 @@ export function buildDetalleAula({ state, aulaId }) {
     const estadoAula = aula?.estado;
     const enCursada = estadoAula === "mi-clase";
     const agendaDia = enCursada ? [] : getAgendaDiaFromAula(aula);
+    const esVirtual =
+        aula?.info?.modalidad === "virtual" || Boolean(aula?.info?.esVirtual);
 
     return {
         aula: formatAulaLabel(aula?.nombre ?? aulaId),
@@ -167,6 +130,7 @@ export function buildDetalleAula({ state, aulaId }) {
         validacion: null,
         actualizaciones: [],
         enCursada,
+        esVirtual,
         tieneClase: Boolean(clase),
         confirmacion: getConfirmacionFromAula(aula, enCursada),
     };

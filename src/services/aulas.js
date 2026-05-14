@@ -36,17 +36,17 @@ export async function getEstadosEdificio(edificioSlug, userId) {
     supabase
       .from("horarios")
       .select(`
-        id, dia, inicio, fin,
+        id, dia, inicio, fin, modalidad,
+        aula:aulas!horarios_aula_id_fkey(
+          id,
+          nombre,
+          piso,
+          edificio_id,
+          edificio:edificios(id, nombre)
+        ),
         comision:comisiones!inner(
           id, codigo,
-          materia:materias!inner(id, nombre),
-          aula:aulas!inner(
-            id,
-            nombre,
-            piso,
-            edificio_id,
-            edificio:edificios(id, nombre)
-          )
+          materia:materias!inner(id, nombre)
         )
       `)
       .in("dia", diasConsulta),
@@ -58,16 +58,15 @@ export async function getEstadosEdificio(edificioSlug, userId) {
   const misComisionesSet = new Set(misComisionIds);
   const pisos = {};
 
-  data.forEach(({ id, dia, inicio, fin, comision }) => {
+  data.forEach(({ id, dia, inicio, fin, modalidad, aula, comision }) => {
+    if (!aula || modalidad === "virtual") return;
+
     const aulaEdificioSlug = getEdificioSlug({
-      id: comision.aula.edificio_id,
-      nombre: comision.aula.edificio?.nombre,
+      id: aula.edificio_id,
+      nombre: aula.edificio?.nombre,
     });
 
-    if (
-      comision.aula.edificio_id !== edificioSlug &&
-      aulaEdificioSlug !== edificioSlug
-    ) {
+    if (aulaEdificioSlug !== edificioSlug) {
       return;
     }
 
@@ -77,14 +76,14 @@ export async function getEstadosEdificio(edificioSlug, userId) {
     const estaPorConfirmar =
       esHoy && esMiComision && inicio <= horaLimiteConfirmacion && fin > horaAhora;
 
-    const pisoSlug = comision.aula.piso;
-    const aulaNombre = comision.aula.nombre;
+    const pisoSlug = aula.piso;
+    const aulaNombre = aula.nombre;
 
     if (!pisos[pisoSlug]) pisos[pisoSlug] = {};
     if (!pisos[pisoSlug][aulaNombre]) {
       pisos[pisoSlug][aulaNombre] = {
         estado: "libre",
-        aulaId: comision.aula.id,
+        aulaId: aula.id,
         dia,
         agendaDia: [],
         agendaTitulo: "Clases de hoy",
@@ -99,7 +98,8 @@ export async function getEstadosEdificio(edificioSlug, userId) {
       horario: `${inicio.slice(0, 5)} - ${fin.slice(0, 5)}`,
       horarioId: id,
       comisionId: comision.id,
-      aulaId: comision.aula.id,
+      aulaId: aula.id,
+      modalidad: modalidad ?? "presencial",
       esMiComision,
       dia,
       inicio,
@@ -148,4 +148,20 @@ export async function getEstadosEdificio(edificioSlug, userId) {
   });
 
   return pisos;
+}
+
+export async function getAulasEdificio(edificioSlug) {
+  if (!edificioSlug) return [];
+
+  const { data, error } = await supabase
+    .from("aulas")
+    .select("id, nombre, piso, tipo, edificio_id")
+    .eq("edificio_id", edificioSlug)
+    .eq("tipo", "aula")
+    .order("piso", { ascending: true })
+    .order("nombre", { ascending: true });
+
+  if (error) throw error;
+
+  return data ?? [];
 }

@@ -16,14 +16,13 @@ function getTiempoRelativo(value) {
     return `Hace ${diffDays} d`;
 }
 
-export async function confirmarAula({ horarioId, aulaId }) {
-    if (!horarioId || !aulaId) {
-        throw new Error("Faltan datos de horario o aula para confirmar");
+export async function confirmarClase({ horarioId }) {
+    if (!horarioId) {
+        throw new Error("Falta el horario para confirmar");
     }
 
-    const { data, error } = await supabase.rpc("confirmar_aula", {
+    const { data, error } = await supabase.rpc("confirmar_clase", {
         p_horario_id: horarioId,
-        p_aula_id: aulaId,
     });
 
     if (error) throw error;
@@ -31,8 +30,8 @@ export async function confirmarAula({ horarioId, aulaId }) {
     return data?.[0] ?? null;
 }
 
-export async function getResumenConfirmacionesAula({ horarioId, aulaId }) {
-    if (!horarioId || !aulaId) {
+export async function getResumenConfirmacionesClase({ horarioId }) {
+    if (!horarioId) {
         return {
             confirmaciones: 0,
             total: OBJETIVO_CONFIRMACIONES,
@@ -41,9 +40,8 @@ export async function getResumenConfirmacionesAula({ horarioId, aulaId }) {
         };
     }
 
-    const { data, error } = await supabase.rpc("get_resumen_confirmaciones_aula", {
+    const { data, error } = await supabase.rpc("get_resumen_confirmaciones_clase", {
         p_horario_id: horarioId,
-        p_aula_id: aulaId,
     });
 
     if (error) throw error;
@@ -59,9 +57,13 @@ export async function getResumenConfirmacionesAula({ horarioId, aulaId }) {
         yaConfirmo: Boolean(resumen.ya_confirmo),
         actualizaciones: actualizaciones.map((item) => ({
             id: `confirmacion-${item.id}`,
-            texto: `${item.nombre ?? "Una persona"} confirmó esta ubicación`,
+            texto: `${item.nombre ?? "Una persona"} confirmó esta clase`,
             tiempo: getTiempoRelativo(item.created_at),
             color: "bg-status-green",
         })),
     };
 }
+
+export const confirmarAula = ({ horarioId }) => confirmarClase({ horarioId });
+export const getResumenConfirmacionesAula = ({ horarioId }) =>
+    getResumenConfirmacionesClase({ horarioId });
