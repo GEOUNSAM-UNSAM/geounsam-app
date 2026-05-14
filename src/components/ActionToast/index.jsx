@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import samuMapa from "../../assets/samu_mapa.png";
 import samuPulgar from "../../assets/samu_pulgar.png";
 import samuTriste from "../../assets/samu_triste.png";
+import samuLupa from "../../assets/samu_lupa.png";
 
 const VARIANTS = {
   success: {
@@ -27,6 +28,13 @@ const VARIANTS = {
     bg: "bg-state-yellow",
     border: "border-data-orange-700",
     text: "text-data-orange-700",
+  },
+  notification: {
+    image: samuLupa,
+    bg: "bg-neutral-white",
+    border: "border-identity",
+    text: "text-identity",
+    description: "text-neutral-extra-dark",
   },
 };
 
@@ -81,7 +89,11 @@ export default function ActionToast({ toast, onClose }) {
             {currentToast.title}
           </p>
           {currentToast.description ? (
-            <p className="mt-2 truncate font-saira text-xs font-medium leading-3 text-neutral-dark">
+            <p
+              className={`mt-2 truncate font-saira text-xs font-medium leading-3 ${
+                variant.description ?? "text-neutral-dark"
+              }`}
+            >
               {currentToast.description}
             </p>
           ) : null}
