@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import samuMapa from "../../assets/samu_mapa.png";
 import samuPulgar from "../../assets/samu_pulgar.png";
 import samuTriste from "../../assets/samu_triste.png";
-import samuLupa from "../../assets/samu_lupa.png";
+import samuApurado from "../../assets/samu_apurado.png";
 
 const VARIANTS = {
   success: {
@@ -30,7 +30,7 @@ const VARIANTS = {
     text: "text-data-orange-700",
   },
   notification: {
-    image: samuLupa,
+    image: samuApurado,
     bg: "bg-neutral-white",
     border: "border-identity",
     text: "text-identity",
