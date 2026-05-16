@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BellDot, Bolt } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationsContext';
 import { obtenerInicialesNombre } from '../../utils/avatar.js';
 import logotipoWhite from '../../assets/logotipo_white.svg';
 import ProfileOverlay from './ProfileOverlay/index.jsx';
@@ -35,6 +36,7 @@ function AvatarButton({ avatarUrl, nombre, onClick, className = 'h-8 w-8' }) {
 
 export default function Header() {
   const { user } = useAuth();
+  const { hayNotificaciones } = useNotifications();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const avatarUrl = user?.user_metadata?.avatar_url;
@@ -67,10 +69,13 @@ export default function Header() {
         <button
           type="button"
           onClick={irANotificaciones}
-          className="text-neutral-white"
+          className="relative text-neutral-white"
           aria-label="Notificaciones"
         >
           <BellDot size={22} />
+          {hayNotificaciones ? (
+            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-action ring-2 ring-identity" />
+          ) : null}
         </button>
 
         <AvatarButton

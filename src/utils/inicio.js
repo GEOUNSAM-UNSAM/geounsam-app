@@ -22,10 +22,15 @@ function formatAulaLabel(nombreAula) {
     return /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula;
 }
 
-function normalizarUbicacion(comision) {
-    const nombreAula = comision.aula?.nombre?.trim() ?? "";
-    const edificio = comision.aula?.edificio?.nombre?.trim() ?? "";
-    const esVirtual = /virtual/i.test(nombreAula) || /virtual/i.test(edificio);
+function getAulaHorario(comision, horario) {
+    return horario?.aula ?? comision.aula ?? null;
+}
+
+function normalizarUbicacion(comision, horario) {
+    const aula = getAulaHorario(comision, horario);
+    const nombreAula = aula?.nombre?.trim() ?? "";
+    const edificio = aula?.edificio?.nombre?.trim() ?? "";
+    const esVirtual = horario?.modalidad === "virtual";
 
     if (esVirtual) {
         return {
@@ -50,11 +55,12 @@ function normalizarUbicacion(comision) {
 }
 
 function crearClaseItem(materia, comision, horario, extras = {}) {
-    const { ubicacion, esVirtual } = normalizarUbicacion(comision);
-    const aulaLabel = formatAulaLabel(comision.aula?.nombre?.trim());
-    const aulaDetalle = comision.aula
+    const aula = getAulaHorario(comision, horario);
+    const { ubicacion, esVirtual } = normalizarUbicacion(comision, horario);
+    const aulaLabel = formatAulaLabel(aula?.nombre?.trim());
+    const aulaDetalle = aula
         ? {
-              id: comision.aula.nombre ?? comision.aula.id,
+              id: aula.nombre ?? aula.id,
               nombre: aulaLabel,
               estado: "mi-clase",
               info: {
@@ -63,26 +69,28 @@ function crearClaseItem(materia, comision, horario, extras = {}) {
                   horario: `${horario.inicio.slice(0, 5)} - ${horario.fin.slice(0, 5)}`,
                   horarioId: horario.id,
                   comisionId: comision.id,
-                  aulaId: comision.aula.id,
+                  aulaId: aula.id,
                   dia: horario.dia,
                   inicio: horario.inicio,
                   fin: horario.fin,
+                  modalidad: horario.modalidad ?? "presencial",
+                  esVirtual,
               },
-              pisoSlug: comision.aula.piso,
+              pisoSlug: aula.piso,
           }
         : null;
-    const edificio = comision.aula?.edificio
+    const edificio = aula?.edificio
         ? {
-              id: comision.aula.edificio_id ?? comision.aula.edificio.id,
-              nombre: comision.aula.edificio.nombre,
-              slug: comision.aula.edificio.slug,
-              planoId: comision.aula.edificio.plano_id,
+              id: aula.edificio_id ?? aula.edificio.id,
+              nombre: aula.edificio.nombre,
+              slug: aula.edificio.slug,
+              planoId: aula.edificio.plano_id,
           }
         : null;
-    const piso = comision.aula?.piso
+    const piso = aula?.piso
         ? {
-              slug: comision.aula.piso,
-              nombre: getPisoLabel(comision.aula.piso),
+              slug: aula.piso,
+              nombre: getPisoLabel(aula.piso),
           }
         : null;
     const detalleAulaPath = aulaDetalle
@@ -102,6 +110,25 @@ function crearClaseItem(materia, comision, horario, extras = {}) {
         inicio: horario.inicio.slice(0, 5),
         fin: horario.fin.slice(0, 5),
         ubicacion,
+        detalleClasePath: `/cursada/clases/${horario.id}`,
+        detalleClaseState: {
+            clase: {
+                id: `${materia.id}-${comision.id}-${horario.id}`,
+                nombre: materia.nombre,
+                comision: comision.codigo,
+                inicio: horario.inicio.slice(0, 5),
+                fin: horario.fin.slice(0, 5),
+                horarioId: horario.id,
+                comisionId: comision.id,
+                aulaId: aula?.id ?? null,
+                modalidad: horario.modalidad ?? "presencial",
+                esVirtual,
+                aula: ubicacion,
+                aulaDetalle,
+                edificio,
+                piso,
+            },
+        },
         detalleAulaPath,
         detalleAulaState,
         esVirtual,
@@ -165,10 +192,15 @@ function getClasesProximas(materias, limite = 4) {
 
 function getTituloProximaClase(clase) {
     if (!clase) return "Próxima clase";
-    if (clase.offsetDias === 0 && clase.prioridad < 60) {
-        return `Próxima clase - ${clase.prioridad} min`;
+    if (clase.offsetDias === 0) {
+        const ahora = new Date();
+        const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+        const minutosRestantes = minutosDelDia(clase.inicio) - minutosAhora;
+        if (minutosRestantes < 60) {
+            return `Próxima clase - ${minutosRestantes} min`;
+        }
+        return "Próxima clase - hoy";
     }
-    if (clase.offsetDias === 0) return "Próxima clase - hoy";
     if (clase.offsetDias === 1) return "Próxima clase - mañana";
 
     const diaIdx = DIAS.indexOf(clase.dia);

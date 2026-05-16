@@ -39,6 +39,13 @@ export default function Inicio() {
   };
 
   const abrirClase = (clase) => {
+    if (clase.detalleClasePath) {
+      navigate(clase.detalleClasePath, {
+        state: clase.detalleClaseState,
+      });
+      return;
+    }
+
     if (!clase.detalleAulaPath) {
       navigate('/cursada');
       return;

@@ -59,7 +59,15 @@ export async function getAlumnoComisiones(userId) {
           id,
           dia,
           inicio,
-          fin
+          fin,
+          modalidad,
+          aula:aulas!horarios_aula_id_fkey(
+            id,
+            nombre,
+            piso,
+            edificio_id,
+            edificio:edificios(id, nombre)
+          )
         )
       )
     `)
@@ -96,4 +104,49 @@ export async function getMateriasPinneadasConHorarios(userId) {
 	});
 
 	return Array.from(materiasMap.values());
+}
+
+export async function getHorarioClase(horarioId, userId) {
+	if (!horarioId || !userId) return null;
+
+	const misComisionIds = await getAlumnoComisionIds(userId);
+	if (misComisionIds.length === 0) return null;
+
+	const { data, error } = await supabase
+		.from("horarios")
+		.select(`
+      id,
+      dia,
+      inicio,
+      fin,
+      modalidad,
+      aula:aulas!horarios_aula_id_fkey(
+        id,
+        nombre,
+        piso,
+        edificio_id,
+        edificio:edificios(id, nombre)
+      ),
+      comision:comisiones!inner(
+        id,
+        codigo,
+        aula:aulas(
+          id,
+          nombre,
+          piso,
+          edificio_id,
+          edificio:edificios(id, nombre)
+        ),
+        materia:materias!inner(
+          id,
+          nombre
+        )
+      )
+    `)
+		.eq("id", horarioId)
+		.in("comision_id", misComisionIds)
+		.maybeSingle();
+
+	if (error) throw error;
+	return data ?? null;
 }

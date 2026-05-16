@@ -137,7 +137,7 @@ export default function Buscar() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-68px-64px)] bg-base">
+    <div className="flex flex-col h-[calc(100dvh-64px-64px)] bg-base">
       <Toast mensaje={toast.mensaje} visible={toast.visible} />
 
       {buscando ? (

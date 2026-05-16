@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AlertCircle } from 'lucide-react'
+import Tip from '../../components/Tip'
 import { useAuth } from '../../context/AuthContext'
 import { getMateriasPinneadasConHorarios } from '../../services/comisiones'
 import { getDiasSemanana } from '../../utils/tiempo'
@@ -15,6 +17,7 @@ export default function Cursada() {
   const navigate = useNavigate()
   const [materias, setMaterias] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const diasSemana = getDiasSemanana()
   const idxHoy = diasSemana.findIndex((d) => d.esHoy)
@@ -24,7 +27,10 @@ export default function Cursada() {
     if (!user) return
     getMateriasPinneadasConHorarios(user.id)
       .then(setMaterias)
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err)
+        setError(true)
+      })
       .finally(() => setLoading(false))
   }, [user])
 
@@ -41,6 +47,13 @@ export default function Cursada() {
   const diasConClases = diasSemana.map((d) => getClasesParaDia(materias, d.diaDB).length > 0)
 
   const abrirDetalleAula = (clase) => {
+    if (clase.detalleClasePath) {
+      navigate(clase.detalleClasePath, {
+        state: clase.detalleClaseState,
+      })
+      return
+    }
+
     if (!clase.aulaDetalle) return
 
     const path = getDetalleAulaPath({
@@ -59,7 +72,7 @@ export default function Cursada() {
   }
 
   return (
-    <div className="flex flex-col gap-5 px-6 py-4 pb-6 bg-[#efefef] min-h-[calc(100dvh-68px-64px)]">
+    <div className="flex flex-col gap-5 px-6 py-4 pb-6 bg-base min-h-[calc(100dvh-64px-64px)]">
       <div className="flex flex-col gap-1 pt-1">
         <h1 className="font-saira font-bold text-[28px] text-neutral-extra-dark leading-10">Mi cursada</h1>
         <p className="font-saira text-base text-neutral-main">Primer cuatrimestre 2026</p>
@@ -74,33 +87,43 @@ export default function Cursada() {
 
       {!loading && (
         <div className="flex flex-col gap-4">
-          <LabelDia nombre={diaActual.nombre} num={diaActual.num} />
-
-          {clasesHoy.length > 0 ? (
-            clasesHoy.map((clase) => (
-              <CardMateria
-                key={clase.id}
-                clase={clase}
-                onOpen={clase.aulaDetalle ? () => abrirDetalleAula(clase) : undefined}
-              />
-            ))
+          {error ? (
+            <Tip
+              icon={AlertCircle}
+              title="No pudimos cargar tu cursada"
+              description="Revisá tu conexión e intentá de nuevo."
+            />
           ) : (
             <>
-              <CardSinClases />
-              {proximasClases && (
-                <>
-                  <LabelDia
-                    nombre={proximasClases.dia.nombre}
-                    num={proximasClases.dia.num}
-                    prefijo="PRÓXIMAS CLASES"
+              <LabelDia nombre={diaActual.nombre} num={diaActual.num} />
+
+              {clasesHoy.length > 0 ? (
+                clasesHoy.map((clase) => (
+                  <CardMateria
+                    key={clase.id}
+                    clase={clase}
+                    onOpen={() => abrirDetalleAula(clase)}
                   />
-                  {proximasClases.clases.map((clase) => (
-                    <CardMateria
-                      key={clase.id}
-                      clase={clase}
-                      onOpen={clase.aulaDetalle ? () => abrirDetalleAula(clase) : undefined}
-                    />
-                  ))}
+                ))
+              ) : (
+                <>
+                  <CardSinClases />
+                  {proximasClases && (
+                    <>
+                      <LabelDia
+                        nombre={proximasClases.dia.nombre}
+                        num={proximasClases.dia.num}
+                        prefijo="PRÓXIMAS CLASES"
+                      />
+                      {proximasClases.clases.map((clase) => (
+                        <CardMateria
+                          key={clase.id}
+                          clase={clase}
+                          onOpen={() => abrirDetalleAula(clase)}
+                        />
+                      ))}
+                    </>
+                  )}
                 </>
               )}
             </>
