@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { MoveRight } from "lucide-react";
-import samuPulgar from "../../../assets/samu_pulgar.png";
+import confetti from "canvas-confetti";
+import samuFestejo from "../../../assets/samu_festejo.png";
 
 function formatReporteValue(value) {
   const text = String(value ?? "");
@@ -17,11 +19,19 @@ export default function ReporteEnviadoModal({
 }) {
   const esVirtual = tipo === "virtual";
 
+  useEffect(() => {
+    confetti({
+      particleCount: 120,
+      spread: 70,
+      origin: { y: 0.5 },
+    });
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-neutral-extra-dark/40 px-5 pb-10 pt-[92px]">
       <div className="flex w-full max-w-md flex-col items-center gap-4 rounded-[20px] bg-neutral-white px-5 pb-5 pt-8 shadow-[0px_1px_3px_rgba(0,0,0,0.3),0px_4px_8px_3px_rgba(0,0,0,0.15)]">
         <img
-          src={samuPulgar}
+          src={samuFestejo}
           alt=""
           className="h-[260px] w-[260px] object-contain"
         />
