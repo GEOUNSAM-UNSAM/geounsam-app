@@ -137,32 +137,50 @@ export default function Buscar() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px-64px)] bg-base">
+    <div className="flex flex-col h-full bg-base relative">
       <Toast mensaje={toast.mensaje} visible={toast.visible} />
 
-      {buscando ? (
-        <VistaResultados
-          resultados={resultados}
+      {/* --- DESKTOP SEARCH BAR (Arriba) --- */}
+      <div className="hidden lg:block">
+        <Buscador
+          variant="header"
           query={query}
-          comisionesGuardadas={comisionesGuardadas}
-          comisionesPendientes={comisionesPendientes}
-          onTogglePin={toggleComision}
+          onChange={updateQuery}
+          onClear={() => updateQuery("")}
+          placeholder="Buscar materias o aulas..."
         />
-      ) : (
-        <div className="flex-1 overflow-y-auto px-8 pt-7">
-          <VistaSugeridas
-            materiasSugeridas={materiasSugeridas}
-            carreraNombre={carreraNombre}
-            onSelectMateria={buscarMateria}
-          />
-        </div>
-      )}
+      </div>
 
-      <Buscador
-        query={query}
-        onChange={updateQuery}
-        onClear={() => updateQuery("")}
-      />
+      {/* --- CONTENIDO PRINCIPAL --- */}
+      <div className="flex-1 overflow-y-auto flex flex-col">
+        {buscando ? (
+          <VistaResultados
+            resultados={resultados}
+            query={query}
+            comisionesGuardadas={comisionesGuardadas}
+            comisionesPendientes={comisionesPendientes}
+            onTogglePin={toggleComision}
+          />
+        ) : (
+          <div className="px-8 pt-7 pb-8 lg:px-12 lg:pt-2 flex-1">
+            <VistaSugeridas
+              materiasSugeridas={materiasSugeridas}
+              carreraNombre={carreraNombre}
+              onSelectMateria={buscarMateria}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* --- MOBILE SEARCH BAR (Abajo) --- */}
+      <div className="lg:hidden">
+        <Buscador
+          variant="footer"
+          query={query}
+          onChange={updateQuery}
+          onClear={() => updateQuery("")}
+        />
+      </div>
     </div>
   );
 }

@@ -3,9 +3,9 @@ import Buscador from "../../Buscar/Buscador/index.jsx";
 
 export default function HeroBusqueda({ query, onChange, onSubmit, onClear }) {
     return (
-        <section className="rounded-[30px] bg-identity px-6 py-4 text-neutral-white">
-            <div className="flex flex-col items-center gap-3 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-base text-identity">
+        <section className="flex flex-col justify-center items-center h-full w-full rounded-[30px] bg-identity p-6 text-neutral-white">
+            <div className="flex flex-col items-center gap-4 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-base text-identity shrink-0">
                     <Search size={22} strokeWidth={2.2} />
                 </div>
                 <div className="space-y-2">
