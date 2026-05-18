@@ -5,6 +5,10 @@ const VARIANT_STYLES = {
         outer: "bg-identity px-4 py-7",
         field: "bg-base flex items-center h-10 pl-6 pr-4 rounded-full w-full",
     },
+    header: {
+        outer: "bg-base p-6",
+        field: "bg-white flex items-center h-12 pl-6 pr-4 rounded-full w-full max-w-2xl focus-within:ring-action/30 border border-neutral-light shadow-sm",
+    },
     inline: {
         outer: "w-full",
         field: "bg-base flex items-center h-10 pl-6 pr-4 rounded-full w-full",
@@ -35,7 +39,7 @@ export default function Buscador({
         <form className={estilos.outer} onSubmit={handleSubmit}>
             <div className={`${estilos.field} ${fieldClassName}`}>
                 <Search
-                    size={12}
+                    size={18}
                     className="text-neutral-extra-dark flex-shrink-0"
                 />
                 <input
@@ -45,15 +49,15 @@ export default function Buscador({
                     onFocus={onFocus}
                     readOnly={readOnly}
                     placeholder={placeholder}
-                    className={`bg-transparent flex-1 font-saira text-neutral-extra-dark placeholder:text-neutral-main outline-none ml-3 ${inputClassName}`}
+                    className={`bg-transparent flex-1 text-body-m text-neutral-extra-dark placeholder:text-neutral-main outline-none ml-3 ${inputClassName}`}
                 />
                 {showClearButton && buscando && (
                     <button
                         type="button"
                         onClick={onClear}
-                        className="flex-shrink-0 ml-2"
+                        className="flex-shrink-0 ml-2 rounded-full p-1 transition-colors hover:bg-neutral-light"
                     >
-                        <X size={20} className="text-neutral-extra-dark" />
+                        <X size={18} className="text-neutral-extra-dark" />
                     </button>
                 )}
             </div>

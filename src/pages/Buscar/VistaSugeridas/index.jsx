@@ -8,14 +8,14 @@ export default function VistaSugeridas({
 }) {
   return (
     <>
-      <div className="flex gap-2 items-start mb-6">
+      <div className="flex gap-3 items-start mb-6 px-1">
         <Brain size={24} className="text-identity flex-shrink-0 mt-1" />
-        <div className="flex flex-col gap-2">
-          <h2 className="font-saira font-semibold text-lg leading-8 text-identity">
+        <div className="flex flex-col">
+          <h2 className="text-title-m text-identity">
             Materias sugeridas
           </h2>
           {carreraNombre && (
-            <p className="font-saira text-sm text-identity">{carreraNombre}</p>
+            <p className="text-body-s text-identity">{carreraNombre}</p>
           )}
         </div>
       </div>

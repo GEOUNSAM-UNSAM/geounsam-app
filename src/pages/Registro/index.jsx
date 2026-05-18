@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import geounsam from '../../assets/geounsam.svg';
-import arrowLeft from '../../assets/arrow_left.svg';
+import { ArrowLeft } from 'lucide-react'; 
 import samuLlaveMobile from '../../assets/samu_asomandose_llave.png';
 import samuLlaveDesktop from '../../assets/samu_llave_desktop.png';
 import AuthInput from '../../components/AuthInput/index.jsx';
@@ -149,7 +149,7 @@ export default function Registro() {
             className="shrink-0"
             aria-label="Volver"
           >
-            <img src={arrowLeft} alt="" className="w-[30px] h-[30px]" />
+            <ArrowLeft className='text-action' />
           </button>
           <h1 className="text-heading-l text-identity">Crear tu cuenta</h1>
         </div>
@@ -192,10 +192,10 @@ export default function Registro() {
           </div>
 
           {errors.form && (
-            <p className="font-saira text-sm text-error mt-3">{errors.form}</p>
+            <p className="text-body-s text-error mt-3">{errors.form}</p>
           )}
           {successMessage && (
-            <p className="font-saira text-sm text-data-green-800 mt-3">
+            <p className="text-body-s text-status-green mt-3">
               {successMessage}
             </p>
           )}

@@ -85,8 +85,8 @@ export default function Inicio() {
   }
 
   return (
-    <div className="px-5 py-6 pb-28 lg:px-8 lg:pb-8">
-      <div className="flex flex-col gap-7">
+    <div className="px-8 py-6 pb-28 lg:pb-8">
+      <div className="flex flex-col gap-11">
         <SaludoInicio nombre={inicioState.usuario.nombre} />
 
         {error ? <Tip variant="error">{error}</Tip> : null}
