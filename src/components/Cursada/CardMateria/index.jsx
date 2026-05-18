@@ -3,13 +3,13 @@ import { ChevronRight } from "lucide-react";
 function CardContent({ clase, detalle, showChevron }) {
     return (
         <>
-            <div className="flex w-12 shrink-0 flex-col justify-center text-right font-saira text-sm leading-4 text-neutral-extra-dark">
+            <div className="flex w-12 shrink-0 flex-col justify-center text-right text-body-s text-neutral-extra-dark">
                 <span>{clase.inicio}</span>
                 <span>{clase.fin}</span>
             </div>
             <div className="flex min-w-0 flex-1 flex-col justify-center">
                 <div className="flex items-center justify-between gap-3">
-                    <p className="truncate font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                    <p className="truncate text-title-m text-neutral-extra-dark">
                         {clase.nombre}
                     </p>
                     {showChevron ? (
@@ -19,7 +19,7 @@ function CardContent({ clase, detalle, showChevron }) {
                         />
                     ) : null}
                 </div>
-                <p className="truncate font-saira text-sm leading-4 text-neutral-extra-dark">
+                <p className="truncate text-body-s text-neutral-extra-dark">
                     {detalle}
                 </p>
             </div>

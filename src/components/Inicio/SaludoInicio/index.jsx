@@ -9,7 +9,7 @@ export default function SaludoInicio({ nombre }) {
                     alt=""
                     className="h-[72px] w-[92px] shrink-0 object-contain"
                 />
-                <h1 className="min-w-0 flex-1 font-saira text-[22px] font-semibold leading-8 text-neutral-extra-dark">
+                <h1 className="min-w-0 flex-1 text-heading-l text-neutral-extra-dark">
                     ¡Hola, {nombre}!
                 </h1>
             </div>

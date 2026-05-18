@@ -45,7 +45,7 @@ export default function CardProximaClase({ clase, onOpen }) {
         >
             <div className="space-y-2">
                 <div className="flex items-start justify-between gap-3">
-                    <p className="font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                    <p className="text-title-m text-neutral-extra-dark">
                         {clase.nombre}
                     </p>
                     <ChevronRight
@@ -53,16 +53,16 @@ export default function CardProximaClase({ clase, onOpen }) {
                         className="shrink-0 text-neutral-main"
                     />
                 </div>
-                <p className="font-saira text-xs font-medium leading-3 text-neutral-extra-dark">
+                <p className="text-label-caption text-neutral-extra-dark">
                     {clase.inicio} - {clase.fin}
                 </p>
                 <div className="flex items-center justify-between gap-3">
-                    <p className="font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                    <p className="text-title-m text-neutral-extra-dark">
                         {clase.ubicacion}
                     </p>
                     {estilos ? (
                         <span
-                            className={`rounded-full px-3 py-1 font-saira text-xs font-medium leading-3 ${estilos.badgeClass}`}
+                            className={`rounded-full px-3 py-1 text-label-caption ${estilos.badgeClass}`}
                         >
                             {estilos.chip}
                         </span>
@@ -75,7 +75,7 @@ export default function CardProximaClase({ clase, onOpen }) {
                                 className={`h-1 rounded-full ${estilos.progressClass} ${estilos.progressWidth}`}
                             />
                         </div>
-                        <p className="font-saira text-xs font-medium leading-3 text-neutral-dark">
+                        <p className="text-label-caption text-neutral-dark">
                             {estilos.helper}
                         </p>
                     </div>
