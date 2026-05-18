@@ -5,13 +5,13 @@ export default function CardSugerida({ materia, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect?.(materia)}
-      className="bg-neutral-white border-l-4 border-action flex items-center justify-between px-6 py-4 rounded-[30px] w-full text-left"
+      className="bg-neutral-white border-l-4 border-action flex items-center justify-between pl-4 pr-3 py-4 rounded-[30px] w-full text-left transition-colors hover:bg-neutral-light/40 focus:ring-2 focus:ring-action/30 outline-none"
     >
-      <div className="flex flex-col gap-1">
-        <span className="font-saira font-semibold text-lg leading-8 text-neutral-extra-dark">
+      <div className="flex flex-col gap-1 pl-2">
+        <span className="text-title-m text-neutral-extra-dark">
           {materia.nombre}
         </span>
-        <span className="font-saira font-medium text-xs text-neutral-extra-dark">
+        <span className="text-body-s text-neutral-extra-dark">
           {materia.detalle}
         </span>
       </div>

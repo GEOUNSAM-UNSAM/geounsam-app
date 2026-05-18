@@ -74,6 +74,14 @@ function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
   );
 }
 
+export function TopNavbar() {
+  return (
+    <header className="hidden lg:flex w-full h-[70px] shrink-0 bg-identity items-center px-8 z-50 border-b border-white/10">
+      <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
+    </header>
+  );
+}
+
 export default function SidebarNav() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -97,11 +105,7 @@ export default function SidebarNav() {
 
   return (
     <aside className="hidden lg:flex w-[220px] shrink-0 flex-col bg-identity">
-      <div className="flex h-16 items-center border-b border-white/10 px-6">
-        <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
-      </div>
-
-      <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
+      <nav className="flex flex-1 flex-col gap-1 p-3">
         {NAV_ITEMS.map(({ label, path, icon: Icon }) => (
           <NavLink
             key={path}
@@ -120,7 +124,7 @@ export default function SidebarNav() {
         ))}
       </nav>
 
-      {/* Perfil en el pie — posición relativa para anclar el popover */}
+      {/* Perfil en el pie */}
       <div className="relative border-t border-white/10 px-3 py-4">
         {menuAbierto && (
           <SidebarPopover

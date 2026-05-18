@@ -7,13 +7,13 @@ export default function BannerCambios({ onClick }) {
                 size={20}
                 className="shrink-0 text-data-orange-500"
             />
-            <p className="flex-1 font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+            <p className="flex-1 text-title-m text-neutral-extra-dark">
                 Hubo cambios en tu cursada
             </p>
             <button
                 type="button"
                 onClick={onClick}
-                className="flex items-center gap-1 rounded-[10px] bg-data-orange-500 px-3 py-2 font-saira text-xs font-medium leading-3 text-neutral-extra-dark"
+                className="flex items-center gap-1 rounded-[10px] bg-data-orange-500 px-3 py-2 text-label-caption  text-neutral-extra-dark"
             >
                 Ver cambios
                 <ArrowRight size={14} />

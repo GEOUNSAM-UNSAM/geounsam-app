@@ -18,7 +18,7 @@ import Logout from './pages/Logout/index.jsx';
 import NotFound from './pages/NotFound/index.jsx';
 import Navbar from './components/Navbar/index.jsx';
 import Header from './components/Header/index.jsx';
-import SidebarNav from './components/Sidebar/index.jsx';
+import SidebarNav, { TopNavbar } from './components/Sidebar/index.jsx';
 import PantallaCarga from './components/PantallaCarga/index.jsx';
 import {
   CareerSelectionRoute,
@@ -32,18 +32,29 @@ import {
 
 function AppLayout() {
   return (
-    <div className="flex h-screen">
-      <SidebarNav />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="lg:hidden">
-          <Header />
-        </div>
-        <main className="flex-1 overflow-y-auto">
+    <div className="flex flex-col h-screen overflow-hidden bg-base">
+      
+      {/* --- TOP HEADER (Mobile) --- */}
+      <div className="lg:hidden">
+        <Header />
+      </div>
+
+      {/* --- FRANJA AZUL HORIZONTAL (Desktop) --- */}
+      <TopNavbar />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* --- SIDEBAR LATERAL (Desktop) --- */}
+        <SidebarNav />
+
+        {/* --- CONTENIDO PRINCIPAL (Acá va el Buscador y demás páginas) --- */}
+        <main className="flex-1 overflow-y-auto relative">
           <Outlet />
         </main>
-        <div className="lg:hidden">
-          <Navbar />
-        </div>
+      </div>
+
+      {/* --- BOTTOM NAVBAR (Mobile) --- */}
+      <div className="lg:hidden">
+        <Navbar />
       </div>
     </div>
   );

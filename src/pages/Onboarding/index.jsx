@@ -16,7 +16,7 @@ const PASOS = [
     {
         imagen: samuOnboarding,
         burbuja:
-            "¡Hola! Soy Samu, el jabalí del campus.\nVoy a ayudarte a\nencontrar tu aula sin vueltas.",
+            "¡Hola! Soy Samu, el jabalí del campus. Voy a ayudarte a encontrar tu aula sin vueltas.",
         titulo: "Bienvenido a GEOUNSAM",
         descripcion: "La app colaborativa del campus de San Martín",
     },
