@@ -16,16 +16,16 @@ export default function DetalleSeleccion({
   );
 
   return (
-    <div className="bg-neutral-white border-b border-neutral-main px-5 h-[100px] flex items-center">
+    <div className="bg-base border-y border-neutral-dark px-5 lg:px-8 h-[100px] lg:h-[89px] flex items-center">
       {marcadorSeleccionado ? (
         <div className="flex items-center gap-3 w-full">
           <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: COLORES_CATEGORIA[marcadorSeleccionado.tipo] || "#16325c" }}
+            className="w-14 h-14 rounded-[10px] flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: COLORES_CATEGORIA[marcadorSeleccionado.tipo] || "#808285" }}
           >
             <svg
-              width="22"
-              height="22"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               dangerouslySetInnerHTML={{
@@ -34,36 +34,40 @@ export default function DetalleSeleccion({
             />
           </div>
 
-          <div className="flex-1 min-w-0">
-            <h3 className="font-saira font-semibold text-lg text-identity leading-7 truncate">
+          {/* Textos */}
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <h3 className="text-heading-l text-neutral-extra-dark truncate leading-tight">
               {marcadorSeleccionado.nombre}
             </h3>
-            <p className="font-saira text-sm text-neutral-main">
+            <p className="text-body-s text-neutral-dark truncate mt-1">
               {marcadorSeleccionado.horario || "Campus Miguelete, San Martín"}
             </p>
           </div>
 
+          {/* Botón Ver Plano */}
           {mostrarVerPlano ? (
             <button
               onClick={() => onVerPlano(marcadorSeleccionado)}
-              className="flex-shrink-0 bg-identity px-4 py-2 rounded-xl"
+              className="flex-shrink-0 bg-identity px-4 h-11 flex items-center justify-center rounded-xl transition-transform active:scale-95 hover:bg-identity/90"
             >
-              <span className="font-saira font-semibold text-sm text-neutral-white whitespace-nowrap">
+              <span className="text-title-m text-neutral-white whitespace-nowrap mt-0.5">
                 Ver plano
               </span>
             </button>
           ) : null}
         </div>
       ) : (
-        <div className="flex items-center gap-3 py-1">
-          <div className="w-12 h-12 rounded-2xl bg-base flex items-center justify-center flex-shrink-0">
-            <Map size={22} color="#6B7280" />
+        
+        /* ESTADO VACÍO */
+        <div className="flex items-center gap-3 py-1 w-full max-w-7xl">
+          <div className="w-14 h-14 rounded-[10px] bg-neutral-dark flex items-center justify-center flex-shrink-0 shadow-sm">
+            <Map size={24} color="#EFEFEF" />
           </div>
-          <div>
-            <p className="font-saira font-semibold text-base text-neutral-extra-dark">
+          <div className="flex flex-col justify-center min-w-0">
+            <p className="text-heading-l text-neutral-extra-dark leading-tight truncate">
               Elegí un edificio
             </p>
-            <p className="font-saira text-sm text-neutral-main">
+            <p className="text-body-s text-neutral-dark mt-1 text-wrap">
               Seleccioná un edificio para ver el plano de sus aulas
             </p>
           </div>
