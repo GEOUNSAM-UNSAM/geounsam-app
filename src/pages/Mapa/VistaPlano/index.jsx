@@ -41,66 +41,67 @@ export default function VistaPlano({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px-64px)] relative bg-base">
+    <div className="flex flex-col h-full bg-base overflow-hidden">
+      
       {/* Header identity */}
-      <div className="bg-identity px-5 py-3">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onBack}
-            className="flex items-center justify-center w-[30px] h-[30px]"
-          >
-            <ArrowLeft size={24} color="#00bcd4" />
-          </button>
-          <h2 className="font-saira font-semibold text-[22px] text-base leading-8">
-            {edificio.nombre}
-          </h2>
-        </div>
+      <div className="bg-identity px-5 py-4 lg:px-8 shrink-0 flex items-center gap-3">
+        <button
+          onClick={onBack}
+          className="p-1 hover:bg-white/10 rounded-full transition-colors"
+        >
+          <ArrowLeft size={24} className="text-action" />
+        </button>
+        <h2 className="text-heading-l text-neutral-white truncate">
+          {edificio.nombre}
+        </h2>
       </div>
-
-      {/* Tabs de pisos */}
-      <div className="bg-identity px-4 pb-4 pt-1">
-        <div className="flex gap-3">
+      <div className="bg-identity px-4 h-[76px] flex items-center shrink-0">
+        <div className="flex gap-3 overflow-x-auto no-scrollbar w-full">
           {pisos.map((piso, idx) => (
             <button
               key={piso.slug}
               onClick={() => setPisoActivo(idx)}
-              className={`h-11 px-3 py-1.5 rounded-xl font-saira font-semibold text-lg whitespace-nowrap transition-all ${
+              className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 h-11 rounded-xl transition-all ${
                 pisoActivo === idx
                   ? "bg-action text-identity"
-                  : "border border-base text-base"
+                  : "bg-identity text-base border border-base hover:bg-white/10"
               }`}
             >
-              {piso.nombre}
+              <span className="text-title-m whitespace-nowrap mt-0.5">
+                {piso.nombre}
+              </span>
             </button>
           ))}
         </div>
       </div>
 
       {/* Contenido del plano */}
-      <div className={`flex-1 min-h-0 ${!Plano ? "flex items-center justify-center overflow-auto" : ""}`}>
+      <div className="flex-1 min-h-0 bg-base overflow-hidden relative">
         {Plano ? (
-          <Plano
-            key={pisoSlug}
-            pisoSlug={pisoSlug}
-            edificio={edificio}
-            piso={piso}
-            initialAulaId={initialAulaId}
-            onOpenDetalleAula={openDetalleAula}
-          />
+          <div className="h-full w-full overflow-auto flex items-center justify-center p-4">
+             <Plano
+              key={pisoSlug}
+              pisoSlug={pisoSlug}
+              edificio={edificio}
+              piso={piso}
+              initialAulaId={initialAulaId}
+              onOpenDetalleAula={openDetalleAula}
+            />
+          </div>
         ) : (
-          <div className="flex flex-col items-center gap-4 p-6">
-            <Map size={64} color="#808285" strokeWidth={1.5} />
-            <p className="font-saira font-semibold text-neutral-main text-center">
-              {pisos[pisoActivo].nombre}
-            </p>
-            <p className="font-saira text-sm text-neutral-main text-center">
-              Plano próximamente disponible
+          <div className="h-full flex flex-col items-center justify-center gap-4 p-6">
+            <Map size={64} className="text-neutral-main" strokeWidth={1.5} />
+            <p className="text-body-m text-neutral-main text-center">
+              Plano de {pisos[pisoActivo].nombre} próximamente disponible
             </p>
           </div>
         )}
       </div>
 
-      <DetalleSeleccion marcadorSeleccionado={edificio} mostrarBoton={false} />
+      {/* Detalle inferior */}
+      <div className="shrink-0">
+        <DetalleSeleccion marcadorSeleccionado={edificio} mostrarBoton={false} />
+      </div>
     </div>
   );
 }

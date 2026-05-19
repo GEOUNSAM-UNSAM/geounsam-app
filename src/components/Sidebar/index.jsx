@@ -27,42 +27,32 @@ function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
   return (
     <div
       ref={ref}
-      className="absolute bottom-full left-3 right-3 mb-2 overflow-hidden rounded-2xl border border-white/10 bg-identity shadow-xl"
+      className="absolute bottom-full left-3 right-3 mb-2 overflow-hidden rounded-2xl border border-neutral-light/20 bg-identity shadow-xl"
       role="menu"
     >
       {/* Perfil */}
       <button
         type="button"
         onClick={onGoPerfil}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/10"
+        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-neutral-light/10"
         role="menuitem"
       >
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
-          <User size={16} className="text-white" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-light/10">
+          <User size={16} className="text-neutral-white" />
         </div>
         <div>
-          <p className="text-body-m text-white">Perfil</p>
+          <p className="text-body-m text-neutral-white">Perfil</p>
         </div>
       </button>
 
-      {/* Editar info — disabled */}
-      <div className="flex w-full items-center gap-3 px-4 py-3 opacity-40">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
-          <TableProperties size={16} className="text-white" />
-        </div>
-        <div>
-          <p className="text-body-m text-white">Editar información</p>
-        </div>
-      </div>
-
       {/* Separador */}
-      <div className="mx-4 border-t border-white/10" />
+      <div className="mx-4 border-t border-neutral-light/20" />
 
       {/* Cerrar sesión */}
       <button
         type="button"
         onClick={onLogout}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/10"
+        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-state-red/10"
         role="menuitem"
       >
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-data-red-900/60">
@@ -76,7 +66,7 @@ function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
 
 export function TopNavbar() {
   return (
-    <header className="hidden lg:flex w-full h-[70px] shrink-0 bg-identity items-center px-8 z-50 border-b border-white/10">
+    <header className="hidden lg:flex w-full h-[70px] shrink-0 bg-identity items-center px-8 z-50 border-b border-neutral-light/20">
       <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
     </header>
   );
@@ -105,27 +95,27 @@ export default function SidebarNav() {
 
   return (
     <aside className="hidden lg:flex w-[220px] shrink-0 flex-col bg-identity">
-      <nav className="flex flex-1 flex-col gap-1 p-3">
+      <nav className="flex flex-1 flex-col gap-2 p-4">
         {NAV_ITEMS.map(({ label, path, icon: Icon }) => (
           <NavLink
             key={path}
             to={path}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl px-3 py-3 text-body-s font-medium transition-colors ${
+              `flex items-center gap-3 rounded-xl px-4 py-3 text-body-m transition-colors ${
                 isActive
-                  ? 'bg-white/15 text-white'
-                  : 'text-neutral-main hover:bg-white/10 hover:text-white'
+                  ? 'bg-action/10 text-action'
+                  : 'text-neutral-main hover:bg-neutral-light/10 hover:text-neutral-white'
               }`
             }
           >
-            <Icon size={20} />
+            <Icon size={20}/>
             {label}
           </NavLink>
         ))}
       </nav>
 
       {/* Perfil en el pie */}
-      <div className="relative border-t border-white/10 px-3 py-4">
+      <div className="relative border-t border-neutral-light/20 p-4">
         {menuAbierto && (
           <SidebarPopover
             onGoPerfil={irAPerfil}
@@ -137,10 +127,10 @@ export default function SidebarNav() {
         <button
           type="button"
           onClick={() => setMenuAbierto((v) => !v)}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-white/10"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-neutral-light/10 outline-none focus:ring-2 focus:ring-action/50"
         >
           {/* Avatar */}
-          <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full">
+          <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full border border-neutral-light/20">
             {avatarUrl ? (
               <img
                 src={avatarUrl}
@@ -149,21 +139,21 @@ export default function SidebarNav() {
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-neutral-main">
-                <span className="font-saira text-xs font-bold text-neutral-extra-dark">
+              <div className="flex h-full w-full items-center justify-center bg-base">
+                <span className="text-body-s font-semibold text-identity">
                   {obtenerInicialesNombre(nombre)}
                 </span>
               </div>
             )}
           </div>
 
-          <span className="min-w-0 flex-1 truncate text-body-s font-medium text-white">
+          <span className="min-w-0 flex-1 text-wrap text-title-m text-neutral-white">
             {nombre}
           </span>
 
           <MoreHorizontal
-            size={16}
-            className={`shrink-0 transition-colors ${menuAbierto ? 'text-white' : 'text-neutral-main'}`}
+            size={18}
+            className={`shrink-0 transition-colors ${menuAbierto ? 'text-action' : 'text-neutral-main'}`}
           />
         </button>
       </div>
