@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BellDot, Bolt } from 'lucide-react';
+import { BellDot } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationsContext';
 import { obtenerInicialesNombre } from '../../utils/avatar.js';
@@ -25,7 +25,7 @@ function AvatarButton({ avatarUrl, nombre, onClick, className = 'h-8 w-8' }) {
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center rounded-full bg-neutral-main">
-          <span className="font-saira text-xs font-bold text-neutral-extra-dark">
+          <span className="text-label-caption text-neutral-extra-dark">
             {obtenerInicialesNombre(nombre)}
           </span>
         </div>
@@ -61,47 +61,31 @@ export default function Header() {
   };
   const irANotificaciones = () => navigate('/notificaciones');
 
-  const header = !esPerfil ? (
-    <header className="bg-identity px-4 h-16 flex items-center justify-between gap-3">
-      <img src={logotipoWhite} alt="GEOUNSAM" className="h-5 shrink-0" />
-
-      <div className="flex items-center gap-3 ml-auto">
-        <button
-          type="button"
-          onClick={irANotificaciones}
-          className="relative text-neutral-white"
-          aria-label="Notificaciones"
-        >
-          <BellDot size={22} />
-          {hayNotificaciones ? (
-            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-action ring-2 ring-identity" />
-          ) : null}
-        </button>
-
-        <AvatarButton
-          avatarUrl={avatarUrl}
-          nombre={nombre}
-          onClick={abrirMenu}
-        />
-      </div>
-    </header>
-  ) : (
-    <header className="bg-identity px-5 h-16 flex items-center justify-between relative">
-      <div className="w-8 h-8" />
-      <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
-      <button
-        type="button"
-        onClick={abrirMenu}
-        aria-label="Abrir menú de perfil"
-      >
-        <Bolt size={24} className="text-neutral-main" />
-      </button>
-    </header>
-  );
-
   return (
     <>
-      {header}
+      <header className="bg-identity px-4 h-16 flex items-center justify-between gap-3">
+        <img src={logotipoWhite} alt="GEOUNSAM" className="h-5 shrink-0" />
+
+        <div className="flex items-center gap-3 ml-auto">
+          <button
+            type="button"
+            onClick={irANotificaciones}
+            className="relative text-neutral-white"
+            aria-label="Notificaciones"
+          >
+            <BellDot size={22} />
+            {hayNotificaciones ? (
+              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-action ring-2 ring-identity" />
+            ) : null}
+          </button>
+
+          <AvatarButton
+            avatarUrl={avatarUrl}
+            nombre={nombre}
+            onClick={abrirMenu}
+          />
+        </div>
+      </header>
       <ProfileOverlay
         open={menuAbierto}
         avatarUrl={avatarUrl}
