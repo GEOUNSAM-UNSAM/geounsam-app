@@ -1,4 +1,5 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import Buscar from './pages/Buscar/index.jsx';
 import Mapa from './pages/Mapa/index.jsx';
 import Cursada from './pages/Cursada/index.jsx';
@@ -19,6 +20,7 @@ import NotFound from './pages/NotFound/index.jsx';
 import Navbar from './components/Navbar/index.jsx';
 import Header from './components/Header/index.jsx';
 import SidebarNav, { TopNavbar } from './components/Sidebar/index.jsx';
+import NotificationDrawer from './components/NotificationDrawer/index.jsx';
 import PantallaCarga from './components/PantallaCarga/index.jsx';
 import {
   CareerSelectionRoute,
@@ -31,30 +33,37 @@ import {
 } from './guards/RouteGuard.jsx';
 
 function AppLayout() {
+  const [showNotifs, setShowNotifs] = useState(false);
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-base">
+    <div className="flex flex-col lg:flex-row h-screen overflow-hidden bg-base">
       
-      {/* --- TOP HEADER (Mobile) --- */}
-      <div className="lg:hidden">
-        <Header />
-      </div>
+      {/* --- SIDEBAR LATERAL (Desktop) --- */}
+      <SidebarNav />
 
-      {/* --- FRANJA AZUL HORIZONTAL (Desktop) --- */}
-      <TopNavbar />
+      <div className="flex flex-1 flex-col overflow-hidden relative">
+        {/* --- TOP HEADER (Mobile) --- */}
+        <div className="lg:hidden">
+          <Header />
+        </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* --- SIDEBAR LATERAL (Desktop) --- */}
-        <SidebarNav />
+        {/* --- FRANJA SUPERIOR (Desktop) --- */}
+        <TopNavbar toggleNotifs={() => setShowNotifs(!showNotifs)} showNotifs={showNotifs} />
 
-        {/* --- CONTENIDO PRINCIPAL (Acá va el Buscador y demás páginas) --- */}
-        <main className="flex-1 overflow-y-auto relative">
+        {/* --- CONTENIDO PRINCIPAL --- */}
+        <main className="flex-1 overflow-y-auto relative bg-neutral-white">
           <Outlet />
         </main>
-      </div>
 
-      {/* --- BOTTOM NAVBAR (Mobile) --- */}
-      <div className="lg:hidden">
-        <Navbar />
+        {/* --- PANEL LATERAL DE NOTIFICACIONES (Desktop) --- */}
+        {showNotifs && (
+          <NotificationDrawer onClose={() => setShowNotifs(false)} />
+        )}
+
+        {/* --- BOTTOM NAVBAR (Mobile) --- */}
+        <div className="lg:hidden">
+          <Navbar />
+        </div>
       </div>
     </div>
   );
