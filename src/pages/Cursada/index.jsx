@@ -128,10 +128,10 @@ export default function Cursada() {
                 </div>
 
                 {/* CONTENEDOR DE CLASES */}
-                <div className="relative flex flex-col gap-4 lg:gap-6">
+                <div className="relative flex flex-col gap-3">
                   {clasesHoy.length > 0 ? (
                     clasesHoy.map((clase) => (
-                      <div className="relative z-10 flex lg:gap-6 group w-full">
+                      <div className="relative z-10 flex group w-full">
                         {/* Tarjeta de la Materia*/}
                         <div className="flex-1 w-full">
                           <CardMateria
@@ -143,25 +143,23 @@ export default function Cursada() {
                       </div>
                     ))
                   ) : (
-                    <div className="w-full">
+                    <div className="flex w-full flex-col gap-3">
                       <CardSinClases />
                       {proximasClases && (
-                        <div className="mt-8">
+                        <>
                           <LabelDia
                             nombre={proximasClases.dia.nombre}
                             num={proximasClases.dia.num}
                             prefijo="PRÓXIMAS CLASES"
                           />
-                          <div className="mt-4 flex flex-col gap-4">
-                            {proximasClases.clases.map((clase) => (
-                              <CardMateria
-                                key={clase.id}
-                                clase={clase}
-                                onOpen={() => abrirDetalleAula(clase)}
-                              />
-                            ))}
-                          </div>
-                        </div>
+                          {proximasClases.clases.map((clase) => (
+                            <CardMateria
+                              key={clase.id}
+                              clase={clase}
+                              onOpen={() => abrirDetalleAula(clase)}
+                            />
+                          ))}
+                        </>
                       )}
                     </div>
                   )}
