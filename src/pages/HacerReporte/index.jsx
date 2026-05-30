@@ -110,58 +110,66 @@ export default function HacerReporte() {
         </h1>
       </div>
 
-      <main className="flex min-h-0 flex-1 flex-col px-8 pb-6 pt-2 lg:max-w-[560px]">
-        <section className="flex flex-col gap-3">
-          <p className="text-body-s uppercase text-identity">
-            ¿De qué tipo es tu reporte?
-          </p>
+      <main className="flex min-h-0 flex-1 flex-col px-8 pb-6 pt-2 lg:px-8 lg:pb-8 lg:pt-0">
+        <div className="flex min-h-0 flex-1 flex-col lg:w-full">
+          <section className="flex flex-col gap-3">
+            <p className="text-body-s uppercase text-identity">
+              ¿De qué tipo es tu reporte?
+            </p>
 
-          <div className="flex flex-col gap-3">
-            {TIPOS_REPORTE.map((tipo) => (
-              <SelectableOptionCard
-                key={tipo.id}
-                icon={tipo.icon}
-                title={tipo.titulo}
-                description={tipo.descripcion}
-                iconContainerClass={tipo.iconContainerClass}
-                selected={tipoSeleccionado === tipo.id}
-                onSelect={() => setTipoSeleccionado(tipo.id)}
-              />
-            ))}
+            <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
+              {TIPOS_REPORTE.map((tipo) => (
+                <SelectableOptionCard
+                  key={tipo.id}
+                  icon={tipo.icon}
+                  title={tipo.titulo}
+                  description={tipo.descripcion}
+                  iconContainerClass={tipo.iconContainerClass}
+                  selected={tipoSeleccionado === tipo.id}
+                  onSelect={() => setTipoSeleccionado(tipo.id)}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-5 flex flex-col gap-2">
+            <label
+              htmlFor="descripcion-reporte"
+              className="text-body-s uppercase text-identity"
+            >
+              Descripción
+            </label>
+            <textarea
+              id="descripcion-reporte"
+              value={descripcion}
+              onChange={(event) => setDescripcion(event.target.value)}
+              placeholder="Contanos qué pasó, en que lugar de la app y cuáles fueron tus pasos..."
+              className="min-h-[60px] w-full resize-none rounded-[15px] border border-neutral-light bg-neutral-white px-5 py-3 text-body-s text-neutral-extra-dark outline-none placeholder:text-neutral-dark focus:border-action lg:min-h-[140px]"
+            />
+          </section>
+
+          <section className="mt-6 flex items-start gap-2 rounded-[20px] border-2 border-action bg-state-blue p-4 text-neutral-extra-dark">
+            <Siren size={20} className="mt-0.5 shrink-0 text-action" />
+            <p className="text-body-m">
+              Revisamos los reportes únicamente con el fin de mejorar la app y
+              tu experiencia
+            </p>
+          </section>
+
+          <div className="mt-auto flex flex-col gap-6 pt-16 lg:mt-6 lg:flex-row lg:items-center lg:gap-3 lg:pt-0">
+            <BotonPrincipal
+              texto={enviando ? 'Enviando...' : 'Enviar reporte'}
+              onClick={enviarReporte}
+              disabled={enviando}
+              className="lg:flex-1"
+            />
+            <BotonOutline
+              texto="Cancelar"
+              onClick={volver}
+              disabled={enviando}
+              className="lg:h-[44px] lg:flex-1"
+            />
           </div>
-        </section>
-
-        <section className="mt-5 flex flex-col gap-2">
-          <label
-            htmlFor="descripcion-reporte"
-            className="text-body-s uppercase text-identity"
-          >
-            Descripción
-          </label>
-          <textarea
-            id="descripcion-reporte"
-            value={descripcion}
-            onChange={(event) => setDescripcion(event.target.value)}
-            placeholder="Contanos qué pasó, en que lugar de la app y cuáles fueron tus pasos..."
-            className="min-h-[60px] w-full resize-none rounded-[15px] border border-neutral-light bg-neutral-white px-5 py-3 text-body-s text-neutral-extra-dark outline-none placeholder:text-neutral-dark focus:border-action"
-          />
-        </section>
-
-        <section className="mt-6 flex items-start gap-2 rounded-[20px] border-2 border-action bg-state-blue p-4 text-neutral-extra-dark">
-          <Siren size={20} className="mt-0.5 shrink-0 text-action" />
-          <p className="text-body-m">
-            Revisamos los reportes únicamente con el fin de mejorar la app y tu
-            experiencia
-          </p>
-        </section>
-
-        <div className="mt-auto flex flex-col gap-6 pt-16">
-          <BotonPrincipal
-            texto={enviando ? 'Enviando...' : 'Enviar reporte'}
-            onClick={enviarReporte}
-            disabled={enviando}
-          />
-          <BotonOutline texto="Cancelar" onClick={volver} disabled={enviando} />
         </div>
       </main>
 
