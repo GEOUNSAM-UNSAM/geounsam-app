@@ -55,6 +55,10 @@ export default function Header() {
     setMenuAbierto(false);
     navigate('/perfil');
   };
+  const irAReporte = () => {
+    setMenuAbierto(false);
+    navigate('/hacer-reporte');
+  };
   const irALogout = () => {
     setMenuAbierto(false);
     navigate('/logout');
@@ -110,6 +114,7 @@ export default function Header() {
         nivel={nivel}
         onClose={cerrarMenu}
         onGoPerfil={irAPerfil}
+        onGoReporte={irAReporte}
         onLogout={irALogout}
       />
     </>

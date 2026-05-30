@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import { MoreHorizontal, User, TableProperties, LogOut } from 'lucide-react';
+import { Bug, MoreHorizontal, User, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { obtenerInicialesNombre } from '../../utils/avatar';
 import logotipoWhite from '../../assets/logotipo_white.svg';
 import { NAV_ITEMS } from '../../config/navItems';
 
-function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
+function SidebarPopover({ onGoPerfil, onGoReporte, onLogout, onClose }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -42,6 +42,20 @@ function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
         </div>
         <div>
           <p className="text-body-m text-neutral-white">Perfil</p>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        onClick={onGoReporte}
+        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-neutral-light/10"
+        role="menuitem"
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-light/10">
+          <Bug size={16} className="text-neutral-white" />
+        </div>
+        <div>
+          <p className="text-body-m text-neutral-white">Hacer un reporte</p>
         </div>
       </button>
 
@@ -88,6 +102,10 @@ export default function SidebarNav() {
     setMenuAbierto(false);
     navigate('/perfil');
   };
+  const irAReporte = () => {
+    setMenuAbierto(false);
+    navigate('/hacer-reporte');
+  };
   const irALogout = () => {
     setMenuAbierto(false);
     navigate('/logout');
@@ -119,6 +137,7 @@ export default function SidebarNav() {
         {menuAbierto && (
           <SidebarPopover
             onGoPerfil={irAPerfil}
+            onGoReporte={irAReporte}
             onLogout={irALogout}
             onClose={() => setMenuAbierto(false)}
           />
