@@ -162,7 +162,7 @@ export default function Inicio() {
               <SectionTitle>{inicioState.programacionTitulo}</SectionTitle>
               {inicioState.programacion.length > 0 ? (
                 <>
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-3">
                     {inicioState.programacion.map((clase) => (
                       <CardMateria
                         key={clase.id}
