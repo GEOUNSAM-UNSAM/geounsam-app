@@ -6,6 +6,7 @@ import {
   TableProperties,
   User,
   X,
+  Bug,
 } from 'lucide-react';
 import { obtenerInicialesNombre } from '../../../utils/avatar';
 
@@ -71,6 +72,7 @@ export default function ProfileOverlay({
   nivel,
   onClose,
   onGoPerfil,
+  onGoReporte,
   onLogout,
 }) {
   useEffect(() => {
@@ -160,10 +162,10 @@ export default function ProfileOverlay({
             onClick={onGoPerfil}
           />
           <OverlayAction
-            icon={TableProperties}
-            title="Editar información"
-            description="Nombre, carrera, foto"
-            disabled
+            icon={Bug}
+            title="Hacer un reporte"
+            description="Notificá si tuviste un error o si querés sugerir nuevas ideas"
+            onClick={onGoReporte}
           />
         </div>
 

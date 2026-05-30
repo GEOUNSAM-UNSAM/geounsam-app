@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
-import { MoreHorizontal, User, TableProperties, LogOut } from 'lucide-react';
+import { useNavigate, NavLink, useLocation } from 'react-router-dom';
+import { Bug, MoreHorizontal, User, LogOut, Bell } from 'lucide-react';
+
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationsContext';
 import { obtenerInicialesNombre } from '../../utils/avatar';
 import logotipoWhite from '../../assets/logotipo_white.svg';
 import { NAV_ITEMS } from '../../config/navItems';
 
-function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
+function SidebarPopover({ onGoPerfil, onGoReporte, onLogout, onClose }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -45,6 +47,20 @@ function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
         </div>
       </button>
 
+      <button
+        type="button"
+        onClick={onGoReporte}
+        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-neutral-light/10"
+        role="menuitem"
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-light/10">
+          <Bug size={16} className="text-neutral-white" />
+        </div>
+        <div>
+          <p className="text-body-m text-neutral-white">Hacer un reporte</p>
+        </div>
+      </button>
+
       {/* Separador */}
       <div className="mx-4 border-t border-neutral-light/20" />
 
@@ -64,10 +80,46 @@ function SidebarPopover({ onGoPerfil, onLogout, onClose }) {
   );
 }
 
-export function TopNavbar() {
+export function TopNavbar({ toggleNotifs, showNotifs }) {
+  const location = useLocation();
+  const { notificaciones } = useNotifications();
+  const notifCount = notificaciones?.filter(n => !n.read)?.length || 0;
+
+  const getTitle = () => {
+    if (location.pathname.includes('/inicio')) return 'Inicio';
+    if (location.pathname.includes('/buscar')) return 'Buscar';
+    if (location.pathname.includes('/mapa')) return 'Mapa Interactivo';
+    if (location.pathname.includes('/cursada')) return 'Mi Cursada';
+    if (location.pathname.includes('/hacer-reporte')) return 'Hacer un reporte';
+    if (location.pathname.includes('/perfil')) return 'Mi Perfil';
+    return 'Panel de Control';
+  };
+
   return (
-    <header className="hidden lg:flex w-full h-[70px] shrink-0 bg-identity items-center px-8 z-50 border-b border-neutral-light/20">
-      <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
+    <header className="hidden lg:flex w-full h-[70px] shrink-0 bg-identity items-center justify-between px-8 z-10 shadow-sm">
+      <div>
+        <h1 className="text-heading-l text-neutral-light">{getTitle()}</h1>
+      </div>
+      
+      <div className="flex items-center gap-6">
+        <button
+          type="button"
+          onClick={toggleNotifs}
+          className={`relative p-2.5 rounded-xl transition-all ${
+            showNotifs
+              ? 'bg-action/20'
+              : ''
+          }`}
+          title="Centro de Notificaciones"
+        >
+          <Bell size={20} className={`${showNotifs ? 'text-action' : 'text-neutral-main hover:text-neutral-white'}`} />
+            {notifCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-neutral-white bg-error text-[10px] font-extrabold text-neutral-white ">
+                {notifCount}
+              </span>
+            )}
+        </button>
+      </div>
     </header>
   );
 }
@@ -88,13 +140,22 @@ export default function SidebarNav() {
     setMenuAbierto(false);
     navigate('/perfil');
   };
+  const irAReporte = () => {
+    setMenuAbierto(false);
+    navigate('/hacer-reporte');
+  };
   const irALogout = () => {
     setMenuAbierto(false);
     navigate('/logout');
   };
 
   return (
-    <aside className="hidden lg:flex w-[220px] shrink-0 flex-col bg-identity">
+    <aside className="hidden lg:flex w-[220px] shrink-0 flex-col bg-identity z-20">
+      
+      <div className="flex h-[70px] shrink-0 items-center px-6  bg-identity">
+        <img src={logotipoWhite} alt="GEOUNSAM" className="h-5" />
+      </div>
+
       <nav className="flex flex-1 flex-col gap-2 p-4">
         {NAV_ITEMS.map(({ label, path, icon: Icon }) => (
           <NavLink
@@ -108,7 +169,7 @@ export default function SidebarNav() {
               }`
             }
           >
-            <Icon size={20}/>
+            <Icon size={20} />
             {label}
           </NavLink>
         ))}
@@ -119,6 +180,7 @@ export default function SidebarNav() {
         {menuAbierto && (
           <SidebarPopover
             onGoPerfil={irAPerfil}
+            onGoReporte={irAReporte}
             onLogout={irALogout}
             onClose={() => setMenuAbierto(false)}
           />

@@ -51,7 +51,7 @@ export default function CardMateria({ clase, onOpen }) {
             <button
                 type="button"
                 onClick={onOpen}
-                className={`flex w-full items-stretch gap-3 rounded-[30px] border-l-4 px-4 py-4 text-left ${estilos.cardClass} ${estilos.borderClass}`}
+                className={`flex w-full items-stretch gap-3 lg:shadow-sm rounded-[30px] border-l-4 px-4 py-4 text-left ${estilos.cardClass} ${estilos.borderClass}`}
             >
                 <CardContent clase={clase} detalle={detalle} showChevron />
             </button>
