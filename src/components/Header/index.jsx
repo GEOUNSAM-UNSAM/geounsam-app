@@ -79,7 +79,7 @@ export default function Header() {
           >
             <BellDot size={22} />
             {hayNotificaciones ? (
-              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-action ring-2 ring-identity" />
+              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-status-red ring-2 ring-identity" />
             ) : null}
           </button>
 

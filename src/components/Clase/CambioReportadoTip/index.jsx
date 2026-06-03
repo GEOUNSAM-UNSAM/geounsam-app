@@ -12,7 +12,7 @@ export default function CambioReportadoTip({ reporte }) {
                 <Siren size={20} />
             </div>
 
-            <div className="min-w-0 flex-1 font-saira text-base leading-6 text-neutral-extra-dark">
+            <div className="min-w-0 flex-1 text-body-m text-neutral-extra-dark">
                 <p>Cambio reportado {reporte.tiempo.toLowerCase()}</p>
                 <div className="flex min-w-0 items-center gap-2">
                     <span className="truncate">{valorOriginal}</span>

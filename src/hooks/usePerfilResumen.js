@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getAlumnoCarreras } from '../services/alumnos'
-import { getEstadisticas, getNivel } from '../services/perfil'
 
 const INITIAL_STATE = {
 	carrera: '',
-	estadisticas: null,
-	nivel: null,
 }
 
 export default function usePerfilResumen(userId, enabled = true) {
@@ -16,19 +13,10 @@ export default function usePerfilResumen(userId, enabled = true) {
 
 		let mounted = true
 
-		Promise.all([
-			getAlumnoCarreras(userId),
-			getEstadisticas(userId),
-			getNivel(userId),
-		])
-			.then(([carreras, estadisticas, nivel]) => {
+		Promise.all([getAlumnoCarreras(userId)])
+			.then(([carreras]) => {
 				if (!mounted) return
-
-				setResumen({
-					carrera: carreras[0]?.carreras?.nombre ?? '',
-					estadisticas: estadisticas ?? null,
-					nivel: nivel ?? null,
-				})
+				setResumen({carrera: carreras[0]?.carreras?.nombre ?? ''})
 			})
 			.catch((error) => {
 				console.error(error)

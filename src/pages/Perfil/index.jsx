@@ -1,23 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getInsignias } from '../../services/perfil';
 import usePerfilResumen from '../../hooks/usePerfilResumen';
 import { LogOut } from 'lucide-react';
 
 export default function Perfil() {
   const { user } = useAuth();
-  const [insignias, setInsignias] = useState([]);
-  const { carrera, estadisticas, nivel } = usePerfilResumen(user?.id);
+  const { carrera } = usePerfilResumen(user?.id);
 
   const nombre = user?.user_metadata?.full_name || 'Usuario';
   const email = user?.email || 'estudiante@unsam.edu.ar';
   const avatarUrl = user?.user_metadata?.avatar_url;
-
-  useEffect(() => {
-    if (!user) return;
-    getInsignias(user.id).then(setInsignias).catch(console.error);
-  }, [user]);
 
   const navigate = useNavigate();
   const handleLogout = () => navigate('/logout');

@@ -1,5 +1,5 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Buscar from './pages/Buscar/index.jsx';
 import Mapa from './pages/Mapa/index.jsx';
 import Cursada from './pages/Cursada/index.jsx';
@@ -35,6 +35,31 @@ import {
 
 function AppLayout() {
   const [showNotifs, setShowNotifs] = useState(false);
+  useEffect(() => {
+    // 1. Bloquear Pinch-to-Zoom en Chrome/Edge/Firefox (Trackpad detectado como wheel + Ctrl)
+    const handleWheel = (event) => {
+      if (event.ctrlKey) {
+        event.preventDefault();
+      }
+    };
+
+    // 2. Bloquear Pinch-to-Zoom en Safari (macOS)
+    const handleGesture = (event) => {
+      event.preventDefault();
+    };
+
+    // Es crítico usar { passive: false } para que preventDefault() funcione
+    document.addEventListener('wheel', handleWheel, { passive: false });
+    document.addEventListener('gesturestart', handleGesture, { passive: false });
+    document.addEventListener('gesturechange', handleGesture, { passive: false });
+
+    // Limpieza de eventos al desmontar el componente
+    return () => {
+      document.removeEventListener('wheel', handleWheel);
+      document.removeEventListener('gesturestart', handleGesture);
+      document.removeEventListener('gesturechange', handleGesture);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row h-screen overflow-hidden bg-base">
@@ -106,7 +131,6 @@ function App() {
         <Route element={<RequireCareerRoute />}>
           {/* no usan el layout compartido */}
           <Route path="/notificaciones" element={<Notificaciones />} />
-          <Route path="/reportar-cambio" element={<ReportarCambio />} />
 
           {/* sí usan el layout principal con Header + Navbar */}
           <Route element={<AppLayout />}>
@@ -122,6 +146,7 @@ function App() {
               element={<DetalleAula />}
             />
             <Route path="/aulas/:aulaId" element={<DetalleAula />} />
+            <Route path="/reportar-cambio" element={<ReportarCambio />} />
           </Route>
         </Route>
 
