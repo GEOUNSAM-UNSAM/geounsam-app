@@ -2,6 +2,7 @@ import { X, CircleCheck, MoveRight, TriangleAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationsContext';
 import samuLupa from '../../assets/samu_lupa.png';
+import BotonGhost from '../BotonGhost';
 
 function NotificationIcon({ tipo }) {
   if (tipo === 'confirmado') {
@@ -22,11 +23,11 @@ function CambioDetalle({ detalle }) {
   if (!detalle) return null;
   return (
     <div className="flex min-w-0 items-center gap-2 pb-1">
-      <span className="truncate font-saira text-xs leading-4 text-neutral-dark line-through">
+      <span className="truncate text-label-caption text-neutral-dark line-through">
         {detalle.anterior}
       </span>
       <MoveRight size={16} className="shrink-0 text-neutral-dark" />
-      <span className="truncate font-saira text-xs leading-4 text-data-orange-500">
+      <span className="truncate text-label-caption text-data-orange-500">
         {detalle.nuevo}
       </span>
     </div>
@@ -42,17 +43,17 @@ function NotificacionCard({ notificacion, onOpen }) {
     >
       <NotificationIcon tipo={notificacion.tipo} />
       <div className="min-w-0 flex-1">
-        <p className="truncate font-saira text-sm font-semibold leading-5 text-neutral-extra-dark">
+        <p className="truncate text-body-s text-neutral-extra-dark">
           {notificacion.titulo}
         </p>
         {notificacion.descripcion ? (
-          <p className="line-clamp-2 font-saira text-xs leading-4 text-neutral-dark mt-0.5">
+          <p className="line-clamp-2 text-body-s text-neutral-dark mt-0.5">
             {notificacion.descripcion}
           </p>
         ) : (
           <div className="mt-0.5"><CambioDetalle detalle={notificacion.detalle} /></div>
         )}
-        <p className="font-saira text-[10px] font-medium leading-3 text-neutral-main mt-1.5">
+        <p className="text-label-caption text-neutral-main mt-1.5">
           {notificacion.tiempo}
         </p>
       </div>
@@ -97,12 +98,11 @@ export default function NotificationDrawer({ onClose }) {
         <h3 className="font-bold text-identity text-title-m">Notificaciones</h3>
         <div className="flex items-center gap-3">
           {hayNotificaciones && (
-            <button 
-              onClick={limpiarTodo} 
-              className="text-action text-body-s font-semibold hover:underline"
-            >
-              Limpiar todo
-            </button>
+            <BotonGhost
+              texto="Limpiar todo"
+              onClick={limpiarTodo}
+              className='font-semibold'
+            />
           )}
           <button 
             onClick={onClose} 
@@ -123,7 +123,7 @@ export default function NotificationDrawer({ onClose }) {
         ) : hayNotificaciones ? (
           <div className="flex flex-col pb-4">
             {error && (
-              <p className="px-5 py-3 font-saira text-sm leading-4 text-error bg-state-red/10">
+              <p className="px-5 py-3 text-label-caption text-error bg-state-red/10">
                 {error}
               </p>
             )}

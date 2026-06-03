@@ -14,6 +14,8 @@ export default function ActionButtons({
     onConfirmChange,
     onDenyChange,
 }) {
+    const typographyClass = "text-title-m";
+
     if (changeMode) {
         return (
             <div className="grid w-full grid-cols-2 gap-4 px-4 py-4">
@@ -21,13 +23,13 @@ export default function ActionButtons({
                     texto="Confirmar cambio"
                     disabled={!canConfirmChange}
                     onClick={onConfirmChange}
-                    className="min-h-0 !bg-data-orange-500 px-3 py-2 !text-identity disabled:!bg-neutral-light disabled:!text-neutral-dark [&>span]:text-lg [&>span]:font-semibold [&>span]:leading-8"
+                    className={`min-h-0 px-3 py-2 !bg-data-orange-500 !text-identity disabled:!bg-neutral-light disabled:!text-neutral-dark ${typographyClass}`}
                 />
                 <BotonOutline
                     texto="Denegar cambio"
                     disabled={!canDenyChange}
                     onClick={onDenyChange}
-                    className="h-auto !border-error px-3 py-1.5 !text-error disabled:!border-neutral-light disabled:!text-neutral-dark [&>span]:text-lg [&>span]:font-semibold [&>span]:leading-8"
+                    className={`h-auto px-3 py-1.5 !border-error !text-error disabled:!border-neutral-light disabled:!text-neutral-dark ${typographyClass}`}
                 />
             </div>
         );
@@ -53,13 +55,13 @@ export default function ActionButtons({
                 texto={confirmLabel}
                 disabled={confirmDisabled}
                 onClick={onConfirm}
-                className={`min-h-0 px-3 py-2 [&>span]:text-lg [&>span]:font-semibold [&>span]:leading-8 ${confirmClass}`}
+                className={`min-h-0 px-3 py-2 ${confirmClass} ${typographyClass}`}
             />
             <BotonOutline
                 texto="Reportar cambio"
                 disabled={reportDisabled}
                 onClick={onReport}
-                className={`h-auto px-3 py-1.5 [&>span]:text-lg [&>span]:font-semibold [&>span]:leading-8 ${reportClass}`}
+                className={`h-auto px-3 py-1.5 ${reportClass} ${typographyClass}`}
             />
         </div>
     );

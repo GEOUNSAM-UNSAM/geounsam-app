@@ -85,12 +85,12 @@ export default function ActionToast({ toast, onClose }) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className={`truncate font-saira text-base leading-6 ${variant.text}`}>
+          <p className={`truncate text-body-m text-base ${variant.text}`}>
             {currentToast.title}
           </p>
           {currentToast.description ? (
             <p
-              className={`mt-2 truncate font-saira text-xs font-medium leading-3 ${
+              className={`mt-2 truncate text-label-caption ${
                 variant.description ?? "text-neutral-dark"
               }`}
             >
@@ -98,12 +98,6 @@ export default function ActionToast({ toast, onClose }) {
             </p>
           ) : null}
         </div>
-
-        {currentToast.xp ? (
-          <p className={`w-[60px] shrink-0 font-saira text-base leading-6 ${variant.text}`}>
-            {currentToast.xp}
-          </p>
-        ) : null}
       </div>
     </div>
   );

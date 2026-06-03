@@ -17,10 +17,10 @@ export default function ValidacionComunitaria({ validacion }) {
     return (
         <section className="w-full rounded-[30px] bg-neutral-white px-6 pb-5 pt-3">
             <div className="flex items-center justify-between gap-3">
-                <h2 className="font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                <h2 className="text-title-m text-neutral-extra-dark">
                     Validación comunitaria
                 </h2>
-                <p className={`font-saira text-xs font-medium leading-3 ${counterColor}`}>
+                <p className={`text-label-caption ${counterColor}`}>
                     {confirmaciones} / {validacion.total}
                 </p>
             </div>
@@ -32,7 +32,7 @@ export default function ValidacionComunitaria({ validacion }) {
                         style={{ width: `${progress}%` }}
                     />
                 </div>
-                <p className="font-saira text-xs font-medium leading-3 text-neutral-dark">
+                <p className="text-label-caption text-neutral-dark">
                     {detalle}
                 </p>
             </div>

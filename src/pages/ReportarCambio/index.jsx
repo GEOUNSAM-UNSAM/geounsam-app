@@ -357,7 +357,7 @@ export default function ReportarCambio() {
       <div className="flex min-h-screen flex-col bg-base">
         <ReporteHeader onBack={() => navigate(-1)} />
         <main className="flex flex-1 items-center justify-center px-8">
-          <p className="text-center font-saira text-sm text-neutral-main">
+          <p className="text-center text-body-s text-neutral-main">
             No hay información de clase disponible. Volvé a tu cursada e intentá nuevamente.
           </p>
         </main>
@@ -366,10 +366,10 @@ export default function ReportarCambio() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-base">
+    <div className="flex flex-col bg-base min-h-[86dvh] lg:max-h-screen lg:min-h-full">
       <ReporteHeader onBack={volver} />
 
-      <main className="flex min-h-0 flex-1 flex-col gap-3 px-8 pt-3">
+      <main className="flex min-h-0 max-h-full flex-1 flex-col gap-3 px-8 pt-3">
         <Stepper activeStep={step} />
 
         {step === 1 ? (

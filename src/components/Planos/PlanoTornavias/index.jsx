@@ -283,11 +283,11 @@ export default function PlanoTornavias({
           <div className="flex items-center justify-center rounded-[20px] border border-neutral-main bg-neutral-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)]">
             <div className="min-w-0 flex-1">
               <div className="flex min-w-0 flex-col items-start justify-center gap-1 rounded-[30px]">
-                <p className="font-saira text-base leading-6 text-neutral-extra-dark">
+                <p className="text-body-m text-neutral-extra-dark">
                   {formatRoomLabel(selectedRoom.path.label || selectedRoom.path.id)}
                 </p>
                 <span
-                  className={`flex h-6 items-center justify-center rounded-full px-2 font-saira text-xs font-medium leading-3 ${
+                  className={`flex h-6 items-center justify-center rounded-full px-2 text-label-caption ${
                     CHIP_CLASSES[selectedRoom.estado] || CHIP_CLASSES.libre
                   }`}
                 >
@@ -295,10 +295,10 @@ export default function PlanoTornavias({
                 </span>
                 {selectedRoom.info?.materia ? (
                   <>
-                    <p className="max-w-full truncate font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                    <p className="max-w-full truncate text-title-m text-neutral-extra-dark">
                       {selectedRoom.info.materia}
                     </p>
-                    <div className="flex max-w-full items-center gap-2 overflow-hidden font-saira text-sm leading-4 text-neutral-extra-dark">
+                    <div className="flex max-w-full items-center gap-2 overflow-hidden text-body-s text-neutral-extra-dark">
                       <p className="shrink-0">{selectedRoom.info.comision}</p>
                       <p className="shrink-0">-</p>
                       <p className="truncate">{selectedRoom.info.horario}</p>
@@ -331,7 +331,7 @@ export default function PlanoTornavias({
                         pisoSlug,
                       });
                     }}
-                    className="flex w-full items-center justify-center gap-1 rounded-[10px] border border-action px-3 py-1.5 font-saira text-xs font-medium leading-3 text-neutral-extra-dark whitespace-nowrap"
+                    className="flex w-full items-center justify-center gap-1 rounded-[10px] border border-action px-3 py-1.5 text-label-caption text-neutral-extra-dark whitespace-nowrap"
                   >
                     Ver detalle
                     <ArrowRight size={16} className="shrink-0 text-neutral-extra-dark" />
@@ -350,7 +350,7 @@ export default function PlanoTornavias({
                 className="w-3 h-3 rounded-sm"
                 style={{ backgroundColor: est.color }}
               />
-              <span className="font-saira text-xs text-neutral-main">{est.label}</span>
+              <span className="text-label-caption text-neutral-main">{est.label}</span>
             </div>
           ))}
         </div>

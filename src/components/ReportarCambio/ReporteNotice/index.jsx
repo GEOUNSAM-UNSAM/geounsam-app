@@ -20,7 +20,7 @@ export default function ReporteNotice({ variant = "location" }) {
       >
         <Icon size={isRemote ? 18 : 20} strokeWidth={2} />
       </span>
-      <p className="font-saira text-base leading-6 text-neutral-extra-dark">
+      <p className="text-body-m text-neutral-extra-dark">
         {text}
       </p>
     </div>

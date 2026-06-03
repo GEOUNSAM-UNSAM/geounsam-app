@@ -12,7 +12,7 @@ export default function UbicacionActions({
                 type="button"
                 onClick={onVerEdificio}
                 disabled={!puedeVerEdificio}
-                className="flex h-9 items-center gap-1.5 rounded-lg border border-identity px-3 font-saira text-sm font-medium leading-4 text-neutral-extra-dark disabled:opacity-50"
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-identity px-3 text-body-s text-neutral-extra-dark disabled:opacity-50"
             >
                 <MapPin size={16} className="text-identity" />
                 Edificio
@@ -22,7 +22,7 @@ export default function UbicacionActions({
                 type="button"
                 onClick={onVerAula}
                 disabled={!puedeVerAula}
-                className="flex h-9 items-center gap-1.5 rounded-lg border border-identity px-3 font-saira text-sm font-medium leading-4 text-neutral-extra-dark disabled:opacity-50"
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-identity px-3 text-body-s text-neutral-extra-dark disabled:opacity-50"
             >
                 <DoorOpen size={16} className="text-identity" />
                 Aula

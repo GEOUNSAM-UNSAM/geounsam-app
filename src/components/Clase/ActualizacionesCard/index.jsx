@@ -3,7 +3,7 @@ export default function ActualizacionesCard({ actualizaciones }) {
 
     return (
         <section className="w-full rounded-[30px] bg-neutral-white px-4 py-5">
-            <h2 className="px-3 font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+            <h2 className="px-3 text-title-m text-neutral-extra-dark">
                 Últimas actualizaciones
             </h2>
 
@@ -12,10 +12,10 @@ export default function ActualizacionesCard({ actualizaciones }) {
                     <div key={item.id}>
                         <div className="flex items-center gap-2 px-3 py-2">
                             <span className={`h-1.5 w-1.5 rounded-full ${item.color}`} />
-                            <p className="min-w-0 flex-1 truncate font-saira text-base leading-6 text-neutral-extra-dark">
+                            <p className="min-w-0 flex-1 truncate text-body-m text-neutral-extra-dark">
                                 {item.texto}
                             </p>
-                            <p className="shrink-0 font-saira text-xs font-medium leading-3 text-neutral-main">
+                            <p className="shrink-0 text-label-caption text-neutral-main">
                                 {item.tiempo}
                             </p>
                         </div>

@@ -33,12 +33,12 @@ function OverlayAction({
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <p
-          className={`font-saira text-[22px] font-semibold leading-8 ${textClass}`}
+          className={`text-heading-l ${textClass}`}
         >
           {title}
         </p>
         {description ? (
-          <p className={`font-saira text-sm leading-4 ${descriptionClass}`}>
+          <p className={`text-body-s ${descriptionClass}`}>
             {description}
           </p>
         ) : null}
@@ -93,10 +93,6 @@ export default function ProfileOverlay({
   if (!open) return null;
 
   const iniciales = obtenerInicialesNombre(nombre);
-  const chipNivel =
-    nivel?.nombre && Number.isFinite(nivel?.xpActual)
-      ? `${nivel.nombre} - ${nivel.xpActual} XP`
-      : null;
   return (
     <div
       className="fixed inset-0 z-[60] bg-identity"
@@ -109,7 +105,7 @@ export default function ProfileOverlay({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-base"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-white"
             aria-label="Cerrar menú"
           >
             <X size={20} />
@@ -126,39 +122,28 @@ export default function ProfileOverlay({
             />
           ) : (
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-main">
-              <span className="font-saira text-2xl font-bold text-neutral-extra-dark">
+              <span className="text-heading-xl text-neutral-extra-dark">
                 {iniciales}
               </span>
             </div>
           )}
 
-          <h2 className="mt-0.5 font-saira text-[28px] font-bold leading-10 text-base">
+          <span className="mt-0.5 text-heading-xl text-neutral-light text-center ">
             {nombre}
-          </h2>
+          </span>
 
           {carrera ? (
-            <p className="mt-0.5 font-saira text-sm leading-4 text-base text-center">
+            <p className="mt-0.5 text-body-s text-neutral-light text-center">
               {carrera}
             </p>
           ) : null}
-
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-            {chipNivel ? (
-              <div className="flex items-center gap-2 rounded-full bg-action px-3 py-2">
-                <Star size={16} className="text-neutral-extra-dark" />
-                <span className="font-saira text-sm leading-4 text-neutral-extra-dark">
-                  {chipNivel}
-                </span>
-              </div>
-            ) : null}
-          </div>
         </div>
 
         <div className="mt-2 flex flex-col gap-1 border-t border-neutral-dark/60 pt-1">
           <OverlayAction
             icon={User}
             title="Perfil"
-            description="Estadísticas e insignias"
+            description="Información de tu cuenta y carrera"
             onClick={onGoPerfil}
           />
           <OverlayAction
