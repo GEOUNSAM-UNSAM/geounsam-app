@@ -8,18 +8,18 @@ export default function VirtualStep() {
 
       <section className="flex flex-col gap-3 py-3">
         <div className="flex flex-col gap-2">
-          <p className="font-saira text-base leading-6 text-identity">
+          <p className="text-body-m text-identity">
             PASA A VIRTUAL
           </p>
-          <p className="font-saira text-sm leading-4 text-neutral-extra-dark">
+          <p className="text-body-s text-neutral-extra-dark">
             Sin ubicación necesaria
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-4 py-5">
+        <div className="flex flex-col items-center gap-4 py-3">
           <div className="relative flex w-full flex-col items-center">
-            <div className="flex min-h-[152px] w-full items-center rounded-[20px] border border-action bg-neutral-white px-3 py-5">
-              <p className="w-full text-center font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+            <div className="flex min-h-[152px] w-full lg:w-3/4 items-center rounded-[20px] border border-action bg-neutral-white p-3">
+              <p className="w-full text-center text-title-m text-neutral-extra-dark">
                 La clase presencial se cancela y pasa a ser virtual. La
                 comunidad puede confirmarlo desde cualquier lugar.
               </p>

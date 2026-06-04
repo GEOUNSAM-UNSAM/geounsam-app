@@ -10,7 +10,7 @@ function renderRoute(children) {
 function AccessErrorNotice({ message }) {
     return (
         <div className="fixed left-4 right-4 top-4 z-[60] rounded-xl border border-error bg-state-red px-4 py-3 shadow-md">
-            <p className="font-saira text-sm leading-5 text-neutral-extra-dark">
+            <p className="text-body-s text-neutral-extra-dark">
                 Error de acceso: {message}
             </p>
         </div>

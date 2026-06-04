@@ -106,7 +106,6 @@ function App() {
         <Route element={<RequireCareerRoute />}>
           {/* no usan el layout compartido */}
           <Route path="/notificaciones" element={<Notificaciones />} />
-          <Route path="/reportar-cambio" element={<ReportarCambio />} />
 
           {/* sí usan el layout principal con Header + Navbar */}
           <Route element={<AppLayout />}>
@@ -122,6 +121,7 @@ function App() {
               element={<DetalleAula />}
             />
             <Route path="/aulas/:aulaId" element={<DetalleAula />} />
+            <Route path="/reportar-cambio" element={<ReportarCambio />} />
           </Route>
         </Route>
 

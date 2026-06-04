@@ -108,7 +108,7 @@ export default function Tip({
 
   return (
     <section
-      className={`flex items-start gap-2 rounded-[20px] text-neutral-extra-dark ${styles.container}`}
+      className={`flex gap-2 rounded-[20px] items-center text-neutral-extra-dark ${styles.container}`}
     >
       <IconComponent
         size={20}

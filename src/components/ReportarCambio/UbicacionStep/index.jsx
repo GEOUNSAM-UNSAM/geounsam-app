@@ -14,7 +14,7 @@ function ChipEdificio({ item, selected, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect(item.id)}
-      className={`flex h-6 items-center rounded-full px-2 font-saira text-xs font-medium leading-3 ${
+      className={`flex h-6 items-center rounded-full px-2 text-label-caption ${
         selected
           ? "bg-action text-neutral-extra-dark"
           : "border border-neutral-light text-neutral-main"
@@ -35,13 +35,13 @@ function AulaRow({ aula, selected, onSelect }) {
       }`}
     >
       <span
-        className={`min-w-0 flex-1 truncate font-saira text-base leading-6 ${
+        className={`min-w-0 flex-1 truncate text-body-m ${
           selected ? "text-identity" : "text-neutral-extra-dark"
         }`}
       >
         {aula.nombre}
       </span>
-      <span className="shrink-0 font-saira text-xs font-medium leading-3 text-neutral-main">
+      <span className="shrink-0 text-label-caption text-neutral-main">
         {getPisoCorto(aula.piso)}
       </span>
     </button>
@@ -64,16 +64,16 @@ export default function UbicacionStep({
 
       <section className="flex flex-col gap-3 py-3">
         <div className="flex flex-col gap-2">
-          <p className="font-saira text-base leading-6 text-identity">
+          <p className="text-body-m text-identity">
             NUEVA UBICACIÓN
           </p>
-          <p className="font-saira text-sm leading-4 text-neutral-extra-dark">
+          <p className="text-body-s text-neutral-extra-dark">
             ¿A qué edificio y aula cambió?
           </p>
         </div>
 
         <div className="flex flex-col gap-3 rounded-[20px] bg-neutral-white p-3">
-          <p className="font-saira text-sm leading-4 text-identity">EDIFICIO</p>
+          <p className="text-body-s text-identity">EDIFICIO</p>
           <div className="flex flex-wrap gap-3">
             {edificios.map((item) => (
               <ChipEdificio
@@ -87,14 +87,14 @@ export default function UbicacionStep({
         </div>
 
         <div className="flex flex-col gap-3 rounded-[20px] bg-neutral-white p-3">
-          <p className="font-saira text-sm leading-4 text-identity">AULA</p>
+          <p className="text-body-s text-identity">AULA</p>
 
           <label className="flex h-10 items-center gap-2 rounded-full bg-base px-6 text-neutral-dark">
             <Search size={16} className="shrink-0 text-neutral-extra-dark" />
             <input
               value={queryAula}
               onChange={(event) => onQueryAula(event.target.value)}
-              className="min-w-0 flex-1 bg-transparent font-saira text-base leading-6 outline-none placeholder:text-neutral-dark"
+              className="min-w-0 flex-1 bg-transparent text-body-m outline-none placeholder:text-neutral-dark"
               placeholder="Buscar..."
             />
           </label>
@@ -109,7 +109,7 @@ export default function UbicacionStep({
               />
             ))}
             {aulas.length === 0 ? (
-              <p className="rounded-[15px] bg-base px-5 py-3 font-saira text-sm text-neutral-main">
+              <p className="rounded-[15px] bg-base px-5 py-3 text-body-s text-neutral-main">
                 No encontramos aulas para ese edificio.
               </p>
             ) : null}

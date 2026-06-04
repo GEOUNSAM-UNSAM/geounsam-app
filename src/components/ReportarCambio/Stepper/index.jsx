@@ -6,7 +6,7 @@ export default function Stepper({ activeStep }) {
       {[1, 2, 3].map((step, index) => (
         <div key={step} className="flex flex-1 items-center gap-2 last:flex-none">
           <div
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-saira text-sm leading-4 ${
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-body-s ${
               step < activeStep
                 ? "bg-status-green text-neutral-extra-dark"
                 : step === activeStep

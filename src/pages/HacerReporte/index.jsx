@@ -7,6 +7,8 @@ import BotonPrincipal from '../../components/BotonPrincipal';
 import SelectableOptionCard from '../../components/SelectableOptionCard';
 import { useAuth } from '../../context/AuthContext';
 import { enviarReporteApp } from '../../services/reportesApp';
+import Tip from '../../components/Tip';
+import samuAnotando from '../../assets/samu_anotando.png';
 
 const TIPOS_REPORTE = [
   {
@@ -95,23 +97,26 @@ export default function HacerReporte() {
   };
 
   return (
-    <div className="flex min-h-full flex-col bg-base pb-24 lg:pb-8">
-      <div className="flex h-[92px] items-center gap-3 bg-base px-6 py-3 lg:px-8">
+    <div className="flex min-h-full flex-col bg-base gap-5">
+      <div className="flex h-[92px] items-center gap-3 bg-identity px-6 py-3 lg:hidden">
         <button
           type="button"
           onClick={volver}
-          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center text-identity"
+          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center text-action"
           aria-label="Volver"
         >
           <ArrowLeft size={30} />
         </button>
-        <h1 className="text-heading-xl truncate text-identity">
+        <h1 className="text-heading-xl truncate text-neutral-white">
           Hacer un reporte
         </h1>
       </div>
 
-      <main className="flex min-h-0 flex-1 flex-col px-8 pb-6 pt-2 lg:px-8 lg:pb-8 lg:pt-0">
-        <div className="flex min-h-0 flex-1 flex-col lg:w-full">
+      <main className="flex flex-1 flex-col self-center w-full px-8 lg:pt-8 lg:max-w-full lg:px-8">
+        <div className="flex self-center">
+          <img src={samuAnotando} alt="" className="h-[400px] w-auto object-contain hidden lg:block" />
+        </div>
+        <div className="flex flex-1 flex-col lg:w-full justify-evenly lg:justify-start lg:gap-8">
           <section className="flex flex-col gap-3">
             <p className="text-body-s uppercase text-identity">
               ¿De qué tipo es tu reporte?
@@ -148,26 +153,22 @@ export default function HacerReporte() {
             />
           </section>
 
-          <section className="mt-6 flex items-start gap-2 rounded-[20px] border-2 border-action bg-state-blue p-4 text-neutral-extra-dark">
-            <Siren size={20} className="mt-0.5 shrink-0 text-action" />
-            <p className="text-body-m">
-              Revisamos los reportes únicamente con el fin de mejorar la app y
-              tu experiencia
-            </p>
-          </section>
+          <Tip
+            icon={Siren}
+            description="Revisamos los reportes únicamente con el fin de mejorar la app y tu experiencia"
+          />
 
-          <div className="mt-auto flex flex-col gap-6 pt-16 lg:mt-6 lg:flex-row lg:items-center lg:gap-3 lg:pt-0">
+          <div className="flex flex-col py-6 gap-6 justify-self-end lg:pt-0">
             <BotonPrincipal
               texto={enviando ? 'Enviando...' : 'Enviar reporte'}
               onClick={enviarReporte}
               disabled={enviando}
-              className="lg:flex-1"
             />
             <BotonOutline
               texto="Cancelar"
               onClick={volver}
               disabled={enviando}
-              className="lg:h-[44px] lg:flex-1"
+              className="lg:hidden"
             />
           </div>
         </div>

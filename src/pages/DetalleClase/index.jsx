@@ -151,7 +151,7 @@ export default function DetalleClase() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-base pb-20">
+    <div className="flex h-full flex-col bg-base">
       <DetalleHeader detalle={detalleVista} onBack={volver} />
 
       <main className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-8 pb-4 pt-5">
@@ -172,7 +172,7 @@ export default function DetalleClase() {
 
         {feedback ? (
           <p
-            className={`rounded-[20px] px-4 py-3 text-center font-saira text-sm font-medium leading-4 ${
+            className={`rounded-[20px] px-4 py-3 text-center text-body-s ${
               feedback.tipo === "success"
                 ? "bg-state-green text-data-green-800"
                 : "bg-state-red text-error"

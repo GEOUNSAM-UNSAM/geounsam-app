@@ -14,22 +14,22 @@ export default function ClaseCard({ clase }) {
     return (
         <section className="flex w-full items-end gap-3 rounded-[30px] border-l-2 border-identity bg-neutral-white p-5">
             <div className="min-w-0 flex-1">
-                <h2 className="font-saira text-lg font-semibold leading-8 text-neutral-extra-dark">
+                <h2 className="text-title-m text-neutral-extra-dark">
                     {clase.nombre}
                 </h2>
-                <p className="font-saira text-base leading-6 text-neutral-extra-dark">
+                <p className="text-body-m text-neutral-extra-dark">
                     {clase.fin ? `${clase.inicio} - ${clase.fin}` : clase.inicio}
                 </p>
             </div>
 
             <div className="flex shrink-0 flex-col items-end gap-1.5">
                 {clase.comision ? (
-                    <span className="rounded-full border border-identity px-2 py-1 font-saira text-xs font-medium leading-3 text-neutral-extra-dark">
+                    <span className="rounded-full border border-identity px-2 py-1 text-label-caption text-neutral-extra-dark">
                         {clase.comision}
                     </span>
                 ) : null}
                 <span
-                    className={`rounded-full border px-2 py-1 font-saira text-xs font-medium leading-3 ${getModalidadClass(modalidad)}`}
+                    className={`rounded-full border px-2 py-1 text-label-caption ${getModalidadClass(modalidad)}`}
                 >
                     {getModalidadLabel(modalidad)}
                 </span>

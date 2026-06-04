@@ -10,16 +10,16 @@ function ClaseResumen({ clase, modalidad }) {
   return (
     <section className="flex w-full items-end justify-center rounded-[30px] border-2 border-neutral-main p-5 text-neutral-main">
       <div className="min-w-0 flex-1">
-        <h2 className="truncate font-saira text-lg font-semibold leading-8">
+        <h2 className="truncate text-heading-l">
           {clase.nombre}
         </h2>
-        <p className="font-saira text-base leading-6 text-neutral-main">
+        <p className="text-body-m text-neutral-main">
           {horario}
         </p>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1">
         <span
-          className={`flex h-6 items-center justify-center rounded-full border px-2 font-saira text-xs font-medium leading-3 ${
+          className={`flex h-6 items-center justify-center rounded-full border px-2 text-label-caption ${
             modalidad === "virtual"
               ? "border-data-purple-500 text-data-purple-900"
               : "border-neutral-main text-neutral-main"
@@ -28,7 +28,7 @@ function ClaseResumen({ clase, modalidad }) {
           {getModalidadLabel(modalidad)}
         </span>
         {clase.comision ? (
-          <span className="flex h-6 items-center justify-center rounded-full border border-neutral-main px-2 font-saira text-xs font-medium leading-3">
+          <span className="flex h-6 items-center justify-center rounded-full border border-neutral-main px-2 text-label-caption">
             {clase.comision}
           </span>
         ) : null}
@@ -53,10 +53,10 @@ export function TipoCambioCard({ item, selected, onSelect }) {
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="block truncate font-saira text-[22px] font-semibold leading-8 text-neutral-extra-dark">
+        <span className="block truncate text-heading-l text-neutral-extra-dark">
           {item.titulo}
         </span>
-        <span className="block truncate font-saira text-sm leading-4 text-neutral-dark">
+        <span className="block truncate text-body-s text-neutral-dark">
           {item.descripcion}
         </span>
       </span>
@@ -84,16 +84,16 @@ export default function TipoCambioStep({
   return (
     <>
       <section className="flex flex-col gap-3">
-        <p className="font-saira text-sm leading-4 text-identity">MATERIA</p>
+        <p className="text-body-s text-identity">MATERIA</p>
         <ClaseResumen clase={clase} modalidad={modalidad} />
       </section>
 
       <section className="flex flex-col gap-3 py-3">
         <div className="flex flex-col gap-2">
-          <p className="font-saira text-base leading-6 text-identity">
+          <p className="text-body-m text-identity">
             ¿QUÉ CAMBIÓ?
           </p>
-          <p className="font-saira text-sm leading-4 text-neutral-extra-dark">
+          <p className="text-body-m text-neutral-extra-dark">
             Elegí el tipo de cambio ocurrido
           </p>
         </div>

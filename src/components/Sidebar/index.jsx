@@ -92,7 +92,7 @@ export function TopNavbar({ toggleNotifs, showNotifs }) {
     if (location.pathname.includes('/cursada')) return 'Mi Cursada';
     if (location.pathname.includes('/hacer-reporte')) return 'Hacer un reporte';
     if (location.pathname.includes('/perfil')) return 'Mi Perfil';
-    return 'Panel de Control';
+    return '';
   };
 
   return (

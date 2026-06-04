@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationsContext';
 import logotipoWhite from '../../assets/logotipo_white.svg';
 import samuLupa from '../../assets/samu_lupa.png';
+import BotonGhost from '../../components/BotonGhost';
 
 function NotificationIcon({ tipo }) {
   if (tipo === 'confirmado') {
@@ -25,11 +26,11 @@ function CambioDetalle({ detalle }) {
 
   return (
     <div className="flex min-w-0 items-center gap-2 pb-1">
-      <span className="truncate font-saira text-sm leading-4 text-neutral-dark line-through">
+      <span className="truncate text-label-caption text-neutral-dark line-through">
         {detalle.anterior}
       </span>
       <MoveRight size={20} className="shrink-0 text-neutral-dark" />
-      <span className="truncate font-saira text-sm leading-4 text-data-orange-500">
+      <span className="truncate text-label-caption text-data-orange-500">
         {detalle.nuevo}
       </span>
     </div>
@@ -46,17 +47,17 @@ function NotificacionCard({ notificacion, onOpen }) {
       <NotificationIcon tipo={notificacion.tipo} />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate font-saira text-base leading-6 text-neutral-extra-dark">
+        <p className="truncate text-body-m text-neutral-extra-dark">
           {notificacion.titulo}
         </p>
         {notificacion.descripcion ? (
-          <p className="line-clamp-2 font-saira text-sm leading-4 text-neutral-dark">
+          <p className="line-clamp-2 text-body-s text-neutral-dark">
             {notificacion.descripcion}
           </p>
         ) : (
           <CambioDetalle detalle={notificacion.detalle} />
         )}
-        <p className="font-saira text-xs font-medium leading-3 text-neutral-main">
+        <p className="text-label-caption text-neutral-main">
           {notificacion.tiempo}
         </p>
       </div>
@@ -120,13 +121,10 @@ export default function Notificaciones() {
             Notificaciones
           </h1>
           {hayNotificaciones ? (
-            <button
-              type="button"
+            <BotonGhost
+              texto="Limpiar todo"
               onClick={limpiarTodo}
-              className="shrink-0 font-faustina text-base font-medium leading-6 text-action"
-            >
-              Limpiar todo
-            </button>
+            />
           ) : null}
         </div>
       </div>
@@ -140,7 +138,7 @@ export default function Notificaciones() {
       ) : hayNotificaciones ? (
         <main className="flex-1 pt-3">
           {error ? (
-            <p className="px-5 pb-3 font-saira text-sm leading-4 text-error">
+            <p className="px-5 pb-3 text-label-caption text-error">
               {error}
             </p>
           ) : null}
