@@ -17,7 +17,7 @@ export default function AuthInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-saira text-sm leading-6 text-neutral-extra-dark">{label}</label>
+      <label className="text-body-s text-neutral-extra-dark">{label}</label>
       <div className="relative">
         <input
           type={inputType}
@@ -26,7 +26,7 @@ export default function AuthInput({
           onChange={onChange}
           placeholder={placeholder}
           aria-invalid={Boolean(error)}
-          className={`w-full h-10 bg-neutral-white rounded-xl pl-5 font-saira text-base leading-6 text-neutral-extra-dark placeholder:text-neutral-main ${error ? 'border border-error' : 'border border-identity'} ${isPassword ? 'pr-10' : 'pr-4'}`}
+          className={`w-full h-10 bg-neutral-white rounded-xl pl-5 text-body-m text-neutral-extra-dark placeholder:text-neutral-main ${error ? 'border border-error' : 'border border-identity'} ${isPassword ? 'pr-10' : 'pr-4'}`}
           {...inputProps}
         />
         {isPassword && (
@@ -44,7 +44,7 @@ export default function AuthInput({
         )}
       </div>
       {error && (
-        <p className="font-saira text-sm leading-5 text-error">{error}</p>
+        <p className="text-body-s text-error">{error}</p>
       )}
     </div>
   )

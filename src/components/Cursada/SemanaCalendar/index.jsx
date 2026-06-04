@@ -11,12 +11,12 @@ export default function SemanaCalendar({ diasSemana, diaIdx, diasConClases, onSe
               activo ? 'bg-identity' : ''
             }`}
           >
-            <span className={`font-saira font-medium text-xs leading-none ${
+            <span className={`text-body-m ${
               activo ? 'text-neutral-light' : 'text-neutral-main'
             }`}>
               {dia.label}
             </span>
-            <span className={`font-saira font-semibold text-[18px] leading-8 ${
+            <span className={`text-title-m ${
               activo ? 'text-[#efefef]' : 'text-neutral-extra-dark'
             }`}>
               {dia.num}

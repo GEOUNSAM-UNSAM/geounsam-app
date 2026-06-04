@@ -7,7 +7,7 @@ function TimeSelect({ value, onChange, horas }) {
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-w-0 flex-1 appearance-none bg-transparent font-saira text-sm leading-5 text-neutral-extra-dark outline-none"
+        className="min-w-0 flex-1 appearance-none bg-transparent text-body-m text-neutral-extra-dark outline-none"
       >
         {horas.map((hora) => (
           <option key={hora} value={hora}>
@@ -27,25 +27,25 @@ export default function HorarioStep({ clase, horas, nuevoInicio, nuevoFin, onIni
 
       <section className="flex flex-col gap-3 py-3">
         <div className="flex flex-col gap-2">
-          <p className="font-saira text-base leading-6 text-identity">
+          <p className="text-body-m text-identity">
             NUEVO HORARIO
           </p>
-          <p className="font-saira text-sm leading-4 text-neutral-extra-dark">
+          <p className="text-body-s text-neutral-extra-dark">
             ¿A qué hora cambió la clase?
           </p>
         </div>
 
         <div className="flex flex-col gap-3 rounded-[20px] bg-neutral-white p-3">
-          <p className="font-saira text-sm leading-4 text-identity">
+          <p className="text-body-s text-identity">
             HORARIO ACTUAL
           </p>
-          <p className="w-full text-center font-saira text-[22px] font-semibold leading-8 text-neutral-main">
+          <p className="w-full text-center text-title-m text-neutral-main">
             {clase.inicio} - {clase.fin}
           </p>
         </div>
 
         <div className="flex flex-col gap-3 rounded-[20px] bg-neutral-white p-3">
-          <p className="font-saira text-sm leading-4 text-identity">
+          <p className="text-body-s text-identity">
             NUEVO HORARIO
           </p>
           <div className="flex w-full items-center justify-center gap-3">
