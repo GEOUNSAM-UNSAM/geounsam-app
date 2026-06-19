@@ -7,6 +7,7 @@ import Perfil from './pages/Perfil/index.jsx';
 import Inicio from './pages/Inicio/index.jsx';
 import DetalleAula from './pages/DetalleAula/index.jsx';
 import DetalleClase from './pages/DetalleClase/index.jsx';
+import DetalleMateria from './pages/DetalleMateria/index.jsx';
 import ReportarCambio from './pages/ReportarCambio/index.jsx';
 import HacerReporte from './pages/HacerReporte/index.jsx';
 import Notificaciones from './pages/Notificaciones/index.jsx';
@@ -114,6 +115,7 @@ function App() {
             <Route path="/mapa" element={<Mapa />} />
             <Route path="/cursada" element={<Cursada />} />
             <Route path="/cursada/clases/:horarioId" element={<DetalleClase />} />
+            <Route path="/materias/:comisionId" element={<DetalleMateria />} />
             <Route path="/hacer-reporte" element={<HacerReporte />} />
             <Route path="/perfil" element={<Perfil />} />
             <Route

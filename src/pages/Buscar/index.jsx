@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   getMateriasSugeridasDeCarrera,
   buscarMaterias,
@@ -18,6 +18,7 @@ import VistaResultados from "./VistaResultados";
 
 export default function Buscar() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [comisionesGuardadas, setComisionesGuardadas] = useState(new Set());
   const [comisionesPendientes, setComisionesPendientes] = useState(new Set());
@@ -72,6 +73,12 @@ export default function Buscar() {
 
   const buscarMateria = (materia) => {
     updateQuery(materia.nombre);
+  };
+
+  const verDetalle = (resultado) => {
+    navigate(`/materias/${resultado.comisionId}`, {
+      state: { comision: resultado },
+    });
   };
 
   const toggleComision = async (resultado) => {
@@ -160,6 +167,7 @@ export default function Buscar() {
             comisionesGuardadas={comisionesGuardadas}
             comisionesPendientes={comisionesPendientes}
             onTogglePin={toggleComision}
+            onVerDetalle={verDetalle}
           />
         ) : (
           <div className="px-8 pt-7 pb-8 lg:px-12 lg:pt-2 flex-1">

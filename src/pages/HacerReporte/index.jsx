@@ -114,7 +114,7 @@ export default function HacerReporte() {
 
       <main className="flex flex-1 flex-col self-center w-full px-8 lg:pt-8 lg:max-w-full lg:px-8">
         <div className="flex self-center">
-          <img src={samuAnotando} alt="" className="h-[400px] w-auto object-contain hidden lg:block" />
+          <img src={samuAnotando} alt="" className="h-[280px] w-auto object-contain hidden lg:block" />
         </div>
         <div className="flex flex-1 flex-col lg:w-full justify-evenly lg:justify-start lg:gap-8">
           <section className="flex flex-col gap-3">

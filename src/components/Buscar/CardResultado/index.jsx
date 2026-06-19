@@ -1,10 +1,11 @@
-import { Heart } from "lucide-react";
+import { Heart, ChevronRight } from "lucide-react";
 
 export default function CardResultado({
   resultado,
   isPinned,
   isPending = false,
   onTogglePin,
+  onVerDetalle,
 }) {
   return (
     <div
@@ -19,11 +20,21 @@ export default function CardResultado({
         <span className="text-heading-l text-neutral-extra-dark truncate w-full">
           {resultado.nombre}
         </span>
-        {resultado.horarios.map((h, i) => (
+        {resultado.horariosResumen.map((h, i) => (
           <span key={i} className="text-body-s text-neutral-extra-dark flex gap-2">
             {h.dia} {h.inicio} - {h.fin}
           </span>
         ))}
+        {onVerDetalle ? (
+          <button
+            type="button"
+            onClick={() => onVerDetalle(resultado)}
+            className="inline-flex self-start items-center gap-1 mt-2 text-title-m text-identity hover:underline outline-none"
+          >
+            Ver detalle
+            <ChevronRight size={16} />
+          </button>
+        ) : null}
       </div>
       <button
         type="button"

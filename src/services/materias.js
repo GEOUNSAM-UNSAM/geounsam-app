@@ -20,8 +20,8 @@ async function _cargarMaterias() {
       id, nombre,
       comisiones(
         id, codigo,
-        aula:aulas(id, nombre, edificio:edificios(nombre)),
-        horarios(dia, inicio, fin)
+        aula:aulas(id, nombre, piso, edificio_id, edificio:edificios(id, nombre)),
+        horarios(id, dia, inicio, fin, modalidad)
       )
     `);
   if (error) throw error;
@@ -39,25 +39,69 @@ export async function buscarMaterias(query) {
   materias.forEach((materia) => {
     if (normalizar(materia.nombre).includes(q)) {
       materia.comisiones?.forEach((comision) => {
-        const aulaLabel = formatAulaLabel(comision.aula?.nombre);
         resultados.push({
-          comisionId: comision.id,
-          materiaId: materia.id,
-          nombre: materia.nombre,
-          codigo: comision.codigo,
-          horarios: (comision.horarios ?? []).map((h) => ({
+          ...buildComisionDetalle(materia, comision),
+          // Horarios en formato display (HH:MM) para la card de resultado
+          horariosResumen: (comision.horarios ?? []).map((h) => ({
             dia: h.dia,
             inicio: h.inicio.slice(0, 5),
             fin: h.fin.slice(0, 5),
           })),
-          aula: aulaLabel,
-          edificio: comision.aula?.edificio?.nombre ?? "",
         });
       });
     }
   });
 
   return resultados;
+}
+
+// Construye el objeto de detalle de una comisión (consumido por /materias/:comisionId).
+// `horarios` queda en el shape que espera buildClaseDetalleFromHorario para poder
+// navegar a /cursada/clases/:horarioId desde cada franja.
+function buildComisionDetalle(materia, comision) {
+  const comisionRef = {
+    id: comision.id,
+    codigo: comision.codigo,
+    aula: comision.aula ?? null,
+    materia: { id: materia.id, nombre: materia.nombre },
+  };
+  return {
+    comisionId: comision.id,
+    materiaId: materia.id,
+    nombre: materia.nombre,
+    codigo: comision.codigo,
+    aula: formatAulaLabel(comision.aula?.nombre),
+    edificio: comision.aula?.edificio?.nombre ?? "",
+    horarios: (comision.horarios ?? []).map((h) => ({
+      id: h.id,
+      dia: h.dia,
+      inicio: h.inicio,
+      fin: h.fin,
+      modalidad: h.modalidad ?? "presencial",
+      aula: comision.aula ?? null,
+      comision: comisionRef,
+    })),
+  };
+}
+
+export async function getComisionDetalle(comisionId) {
+  if (!comisionId) return null;
+
+  const { data, error } = await supabase
+    .from("comisiones")
+    .select(`
+      id, codigo,
+      aula:aulas(id, nombre, piso, edificio_id, edificio:edificios(id, nombre)),
+      horarios(id, dia, inicio, fin, modalidad),
+      materia:materias!inner(id, nombre)
+    `)
+    .eq("id", comisionId)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  return buildComisionDetalle(data.materia, data);
 }
 
 export async function getMateriasSugeridasDeCarrera(userId) {

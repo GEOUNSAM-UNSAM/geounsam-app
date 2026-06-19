@@ -114,6 +114,7 @@ function crearClaseItem(materia, comision, horario, extras = {}) {
         detalleClaseState: {
             clase: {
                 id: `${materia.id}-${comision.id}-${horario.id}`,
+                enCursada: true,
                 nombre: materia.nombre,
                 comision: comision.codigo,
                 inicio: horario.inicio.slice(0, 5),

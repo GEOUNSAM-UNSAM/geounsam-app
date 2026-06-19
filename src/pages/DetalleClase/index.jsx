@@ -170,6 +170,16 @@ export default function DetalleClase() {
 
         <CambioReportadoTip reporte={reporteCambio} />
 
+        {detalle.tieneClase && !detalle.enCursada ? (
+          <Tip
+            icon={Siren}
+            title="Esta materia no está en tu cursada"
+            description="Agregala a tu cursada para poder confirmar asistencia o reportar cambios"
+            actionLabel="Agregar a mi cursada"
+            actionTo={claseState?.comisionId ? `/materias/${claseState.comisionId}` : "/buscar"}
+          />
+        ) : null}
+
         {feedback ? (
           <p
             className={`rounded-[20px] px-4 py-3 text-center text-body-s ${

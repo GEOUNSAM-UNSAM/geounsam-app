@@ -1,6 +1,6 @@
 import { Map } from "lucide-react";
 import { ICONOS_SVG } from "../../../data/iconosSvg";
-import { COLORES_CATEGORIA } from "../../../data/edificios";
+import { COLORES_CATEGORIA, SEDES } from "../../../data/edificios";
 
 export default function DetalleSeleccion({
   marcadorSeleccionado,
@@ -40,7 +40,9 @@ export default function DetalleSeleccion({
               {marcadorSeleccionado.nombre}
             </h3>
             <p className="text-body-s text-neutral-dark truncate mt-1">
-              {marcadorSeleccionado.horario || "Campus Miguelete, San Martín"}
+              {marcadorSeleccionado.horario ||
+                SEDES[marcadorSeleccionado.sede]?.ubicacion ||
+                "Campus Miguelete, San Martín"}
             </p>
           </div>
 
