@@ -5,7 +5,7 @@ function formatAulaLabel(nombreAula) {
   return /^\d+$/.test(nombreAula) ? `Aula ${nombreAula}` : nombreAula;
 }
 
-export function buildClaseDetalleFromHorario(horario) {
+export function buildClaseDetalleFromHorario(horario, enCursada = true) {
   const comision = horario?.comision;
   const materia = comision?.materia;
   const aula = horario?.aula ?? comision?.aula ?? null;
@@ -29,6 +29,7 @@ export function buildClaseDetalleFromHorario(horario) {
 
   return {
     id: `${materia?.id ?? "materia"}-${comision?.id ?? "comision"}-${horario.id}`,
+    enCursada,
     nombre: materia?.nombre ?? "Materia",
     comision: comision?.codigo ?? null,
     inicio: String(horario.inicio ?? "").slice(0, 5),
@@ -91,7 +92,7 @@ export function buildDetalleClase(clase) {
     agendaTitulo: "Clases de hoy",
     validacion: null,
     actualizaciones: [],
-    enCursada: true,
+    enCursada: Boolean(clase?.enCursada),
     esVirtual: Boolean(clase?.esVirtual),
     tieneClase: Boolean(clase),
     confirmacion: {
@@ -99,7 +100,7 @@ export function buildDetalleClase(clase) {
       aulaId: clase?.aulaId ?? null,
       comisionId: clase?.comisionId ?? null,
       modalidad: clase?.modalidad ?? "presencial",
-      puedeConfirmar: Boolean(clase?.horarioId),
+      puedeConfirmar: Boolean(clase?.horarioId && clase?.enCursada),
     },
   };
 }

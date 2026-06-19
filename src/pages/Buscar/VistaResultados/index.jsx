@@ -7,6 +7,7 @@ export default function VistaResultados({
   comisionesGuardadas,
   comisionesPendientes,
   onTogglePin,
+  onVerDetalle,
 }) {
   const totalComisiones = resultados.length;
 
@@ -52,6 +53,7 @@ export default function VistaResultados({
                 isPinned={comisionesGuardadas.has(resultado.comisionId)}
                 isPending={comisionesPendientes.has(resultado.comisionId)}
                 onTogglePin={onTogglePin}
+                onVerDetalle={onVerDetalle}
               />
             ))}
           </div>

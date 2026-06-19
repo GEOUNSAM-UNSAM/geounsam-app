@@ -103,7 +103,9 @@ export function useDetalleLogic({
     };
   }, [user?.id]);
 
-  const puedeConfirmar = Boolean(user && detalle.confirmacion.puedeConfirmar);
+  const puedeConfirmar = Boolean(
+    user && detalle.confirmacion.puedeConfirmar && detalle.enCursada,
+  );
   const puedeReportar = Boolean(
     user &&
       horarioId &&

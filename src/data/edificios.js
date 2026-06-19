@@ -18,11 +18,11 @@ export const COLORES_CATEGORIA = {
 };
 
 export const SEDES = {
-  miguelete: { nombre: "Campus Miguelete", coords: [-34.57992, -58.52301], zoom: 16.4 },
-  economia_negocios: { nombre: "Economía y Negocios", coords: [-34.5769697620566, -58.541290288969215], zoom: 18 },
-  cusam: { nombre: "CUSAM", coords: [-34.520915803090425, -58.597014046027326], zoom: 16 },
-  secundaria: { nombre: "Escuela Secundaria", coords: [-34.5399, -58.5899], zoom: 15 },
-  volta: { nombre: "Edificio Volta", coords: [-34.60539780093534, -58.37852766192748], zoom: 19 },
+  miguelete: { nombre: "Campus Miguelete", ubicacion: "Campus Miguelete, San Martín", coords: [-34.57992, -58.52301], zoom: 16.4 },
+  economia_negocios: { nombre: "Economía y Negocios", ubicacion: "Sede Caseros", coords: [-34.5769697620566, -58.541290288969215], zoom: 18 },
+  cusam: { nombre: "CUSAM", ubicacion: "CUSAM, San Martín", coords: [-34.520915803090425, -58.597014046027326], zoom: 16 },
+  secundaria: { nombre: "Escuela Secundaria", ubicacion: "Escuela Secundaria, San Martín", coords: [-34.5399, -58.5899], zoom: 15 },
+  volta: { nombre: "Edificio Volta", ubicacion: "Sede Volta", coords: [-34.60539780093534, -58.37852766192748], zoom: 19 },
 };
 
 export const MARCADORES = [

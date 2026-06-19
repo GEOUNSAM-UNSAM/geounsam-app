@@ -70,6 +70,7 @@ export function getClasesParaDia(materias, diaDB) {
         detalleClaseState: {
           clase: {
             id: `${materia.id}-${comision.id}-${horario.id}`,
+            enCursada: true,
             nombre: materia.nombre,
             comision: comision.codigo,
             inicio: horario.inicio.slice(0, 5),
