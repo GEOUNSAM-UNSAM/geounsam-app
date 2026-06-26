@@ -68,13 +68,13 @@ export default function ReporteEnviadoModal({
         </p>
 
         <BotonPrincipal
-          text="Ver en mi cursada"
+          texto="Ver en mi cursada"
           onClick={onVerCursada}
           className="w-full"
         />
 
         <BotonGhost
-          text="Volver al inicio"
+          texto="Volver al inicio"
           onClick={onVolverInicio}
         />
       </div>
